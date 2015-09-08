@@ -1,0 +1,15 @@
+# Compiled Sources #
+*.pyc
+
+# Logs #
+*.log
+
+# Unit Testing #
+*.coverage
+
+# IDE Generated Files #
+*.idea
+
+# OS Generated Files #
+*.DS_Store
+*.DS_Store?
