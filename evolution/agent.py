@@ -11,10 +11,15 @@ class AgentDescriptor(object):
 
     def __init__(self):
 
-        self.agents = 10
-        self.params_len = 12
-        self.params_lower_bounds = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5.0, 0.0]
-        self.params_upper_bounds = [20.0, 1.0, 1.0, 20.0, 1.0, 5.0, 5.0, 0.75, 1.0, 180.0, 100.0, 360.0]
+        self.agents = 40
+        self.params_len = 7
+        self.params_lower_bounds = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        self.params_upper_bounds = [1.0, 1.0, 360.0, 1.0, 20.0, 20.0, 1.0]
+
+    @abstractmethod
+    def factory(self):
+
+        pass
 
 
 class Agent(object):

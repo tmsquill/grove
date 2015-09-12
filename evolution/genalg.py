@@ -1,14 +1,13 @@
+from argos import ARGoSAgent
 from agent import Agent
 from generation import Generation
 
 import logging
 import random
+import numpy as np
 import stats
 import sys
 import time
-import numpy as np
-
-from argos import ARGoSAgent
 
 
 class GeneticAlgorithmDescriptor:
@@ -16,13 +15,12 @@ class GeneticAlgorithmDescriptor:
     def __init__(self):
 
         self.general = {
-            'generations': 20,
-            'population': 40
+            'generations': 30,
         }
 
         self.selection = {
             'truncation': {
-                'elite_size': 4,
+                'elite_size': 8,
             },
             'tournament': {
                 'size': 10,
@@ -43,13 +41,8 @@ class GeneticAlgorithmDescriptor:
                     2: 0.10,
                     3: 0.10,
                     4: 0.10,
-                    5: 0.0,
+                    5: 0.10,
                     6: 0.10,
-                    7: 0.10,
-                    8: 0.10,
-                    9: 0.10,
-                    10: 0.10,
-                    11: 0.10
                 }
             }
         }
@@ -85,10 +78,8 @@ class GeneticAlgorithm:
             logging.info(" Generation %s ".center(120, '-') % str(generation))
 
             self.fitness(generation)
-            print 'Fitness'
             stats.report(self.agents, generation)
             self.selection('Truncation')()
-            print 'Truncation Selection'
             stats.report(self.agents, generation)
             self.crossover('One-Point')()
             self.mutate('Gaussian')()
@@ -119,20 +110,20 @@ class GeneticAlgorithm:
             :return:
             """
 
-            print type(self.agents)
+            logging.info(' Truncation Selection '.center(120, '-'))
+            logging.info('(Before) Length: ' + str(len(self.agents)))
 
-            print 'Len' + str(len(self.agents))
             for agent in self.agents:
-                print str(agent)
+                logging.info(str(agent))
 
             self.agents.sort()
             self.agents.reverse()
-
             self.agents = self.agents[:self.ga_descriptor.selection['truncation']['elite_size']]
 
-            print 'Len' + str(len(self.agents))
+            logging.info('(After) Length: ' + str(len(self.agents)))
+
             for agent in self.agents:
-                print str(agent)
+                logging.info(str(agent))
 
         def tournament():
             """
@@ -145,11 +136,12 @@ class GeneticAlgorithm:
 
             fittest = None
 
-            for i in xrange(self.ga_descriptor.selection['tournament']['size']):
+            for x in xrange(self.ga_descriptor.selection['tournament']['size']):
 
-                agent = self.agents[random(1, self.agent_descriptor.general['population'])]
+                agent = self.agents[random.randint(0, self.agent_descriptor.general['population']) - 1]
 
-                if (fittest is None or agent.fitness > fittest.fitness):
+                if fittest is None or agent.fitness > fittest.fitness:
+
                     fittest = agent
 
             return fittest
@@ -164,10 +156,12 @@ class GeneticAlgorithm:
         def one_point():
             """
             One-point crossover involves generating a random index in the each of the parents' genome sequences.
-            Then children are created by combining the first slice of the first parent with the second slice of the
+            Then offspring are created by combining the first slice of the first parent with the second slice of the
             second parent (or vice versa).
             :return:
             """
+
+            logging.info(' One-Point Crossover '.center(120, '-'))
 
             tmp = []
 
@@ -176,16 +170,15 @@ class GeneticAlgorithm:
                 parent1 = random.choice(self.agents)
                 parent2 = random.choice(self.agents)
 
-                print 'Parent 1: ' + str(parent1)
-                print 'Parent 2: ' + str(parent2)
+                logging.info('Parent 1: ' + str(parent1))
+                logging.info('Parent 2: ' + str(parent2))
 
-                # TODO Make generic
-                child1 = ARGoSAgent(self.agent_descriptor)
-                child2 = ARGoSAgent(self.agent_descriptor)
+                child1 = self.agent_descriptor.factory()
+                child2 = self.agent_descriptor.factory()
 
                 split = random.randint(0, self.agent_descriptor.params_len - 1)
 
-                print 'Split: ' + str(split)
+                logging.info('Split: ' + str(split))
 
                 child1.params[0:split] = parent1.params[0:split]
                 child1.params[split:self.agent_descriptor.params_len] = parent2.params[split:self.agent_descriptor.params_len]
@@ -193,8 +186,8 @@ class GeneticAlgorithm:
                 child2.params[0:split] = parent2.params[0:split]
                 child2.params[split:self.agent_descriptor.params_len] = parent1.params[split:self.agent_descriptor.params_len]
 
-                print 'Child 1: ' + str(child1)
-                print 'Child 2: ' + str(child2)
+                logging.info('Child 1: ' + str(child1))
+                logging.info('Child 2: ' + str(child2) + '\n')
 
                 tmp.append(child1)
                 tmp.append(child2)
@@ -210,25 +203,33 @@ class GeneticAlgorithm:
 
             tmp = []
 
-            for x in xrange((self.ga_descriptor.general['population_size'] - self.ga_descriptor.selection['elite_size']) / 2):
+            for x in xrange((self.agent_descriptor.agents - len(self.agents)) / 2):
 
                 parent1 = random.choice(self.agents)
                 parent2 = random.choice(self.agents)
 
-                child1 = Agent()
-                child2 = Agent()
+                logging.info('Parent 1: ' + str(parent1))
+                logging.info('Parent 2: ' + str(parent2))
 
-                # TODO - Fix parameters length.
-                split1 = random.randint(0, len(self.agents[0].parameters))
-                split2 = random.randint(0, len(self.agents[0].parameters))
+                child1 = self.agent_descriptor.factory()
+                child2 = self.agent_descriptor.factory()
 
-                child1.parameters[1:split1] = parent1.parameters[1:split1]
-                child1.parameters[split1:split2] = parent1.parameters[split1:split2]
-                child1.parameters[split2:len(self.agents[0].parameters)] = parent2.parameters[split2:len(self.agents[0].parameters)]
+                split1 = random.randint(0, self.agent_descriptor.params_len - 1)
+                split2 = random.randint(0, self.agent_descriptor.params_len - 1)
 
-                child2.parameters[1:split1] = parent2.parameters[1:split1]
-                child2.parameters[split1:split2] = parent2.parameters[split1:split2]
-                child2.parameters[split2:len(self.agents[0].parameters)] = parent1.parameters[split2:len(self.agents[0].parameters)]
+                logging.info('(1) Split: ' + str(split1))
+                logging.info('(2) Split: ' + str(split2))
+
+                child1.params[1:split1] = parent1.params[1:split1]
+                child1.params[split1:split2] = parent2.params[split1:split2]
+                child1.params[split2:len(self.agents[0].params)] = parent1.params[split2:self.agent_descriptor.params_len - 1]
+
+                child2.params[1:split1] = parent2.params[1:split1]
+                child2.params[split1:split2] = parent1.params[split1:split2]
+                child2.params[split2:len(self.agents[0].params)] = parent2.params[split2:self.agent_descriptor.params_len - 1]
+
+                logging.info('Child 1: ' + str(child1))
+                logging.info('Child 2: ' + str(child2) + '\n')
 
                 tmp.append(child1)
                 tmp.append(child2)
@@ -236,28 +237,37 @@ class GeneticAlgorithm:
             self.agents.extend(tmp)
 
         def uniform():
+            """
+            Uniform crossover uses a fixed mixing ratio between two parents to form offspring.
+            """
 
             tmp = []
 
-            for x in xrange((self.ga_descriptor.general['population_size'] - self.ga_descriptor.selection['elite_size']) / 2):
+            for x in xrange((self.agent_descriptor.agents - len(self.agents)) / 2):
 
                 parent1 = random.choice(self.agents)
                 parent2 = random.choice(self.agents)
 
-                child1 = Agent()
-                child2 = Agent()
+                logging.info('Parent 1: ' + str(parent1))
+                logging.info('Parent 2: ' + str(parent2))
 
-                for parameter in xrange(len(self.agents[0].parameters)):
+                child1 = self.agent_descriptor.factory()
+                child2 = self.agent_descriptor.factory()
+
+                for param in xrange(self.agent_descriptor.params_len):
 
                     if bool(random.getrandbits(1)):
 
-                        child1.parameters[parameter] = parent1.parameters[parameter]
-                        child2.parameters[parameter]= parent2.parameters[parameter]
+                        child1.params[param] = parent1.params[param]
+                        child2.params[param] = parent2.params[param]
 
                     else:
 
-                        child1.parameters[parameter] = parent2.parameters[parameter]
-                        child2.parameters[parameter] = parent1.parameters[parameter]
+                        child1.params[param] = parent2.params[param]
+                        child2.params[param] = parent1.params[param]
+
+                logging.info('Child 1: ' + str(child1))
+                logging.info('Child 2: ' + str(child2) + '\n')
 
                 tmp.append(child1)
                 tmp.append(child2)
@@ -273,19 +283,29 @@ class GeneticAlgorithm:
     def mutate(self, mutation_type):
 
         def uniform():
+            """
+            Uniform mutation replaces the value of the chosen gene with a uniform random value within the specified
+            bounds of the gene.
+            """
 
             for agent in self.agents:
 
-                for parameter in agent.parameters:
+                for idx, param in enumerate(agent.params):
 
-                    if random.uniform(0.0, 1.0) <= self.ga_descriptor.mutate['uniform'][parameter]:
+                    if random.uniform(0.0, 1.0) <= self.ga_descriptor.mutate['uniform'][param]:
 
-                        val = random.uniform(self.ga_descriptor.mutate['uniform']['lower_bounds'][parameter],
-                                             self.ga_descriptor.mutate['uniform']['upper_bounds'][parameter])
+                        val = random.uniform(
+                            self.ga_descriptor.mutate['uniform']['lower_bounds'][param],
+                            self.ga_descriptor.mutate['uniform']['upper_bounds'][param]
+                        )
 
-                        parameter = val
+                        agent.params[idx] = val
 
         def gaussian():
+            """
+            Gaussian mutation adds a unit gaussian distributed value to the chosen gene. Bounds checking ensures
+            the mutation does not violate legal ranges for the gene.
+            """
 
             for agent in self.agents:
 

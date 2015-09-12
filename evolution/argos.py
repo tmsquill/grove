@@ -27,6 +27,10 @@ class ARGoSAgentDescriptor(AgentDescriptor):
 
         return agents
 
+    def factory(self):
+
+        return ARGoSAgent(self)
+
 
 class ARGoSAgent(Agent):
 
@@ -47,18 +51,13 @@ class ARGoSAgent(Agent):
     def run(self):
 
         self.config['argos-configuration']['framework']['experiment']['@random_seed'] = str(random.randint(1, 1000000))
-        self.config['argos-configuration']['controllers']['iAnt_controller']['params']['CPFA']['@pheromoneRate'] = str(round(self.params[0], 5))
-        self.config['argos-configuration']['controllers']['iAnt_controller']['params']['CPFA']['@pheromoneDecayRate'] = str(round(self.params[1], 5))
-        self.config['argos-configuration']['controllers']['iAnt_controller']['params']['CPFA']['@travelGiveupProbability'] = str(round(self.params[2], 5))
-        self.config['argos-configuration']['controllers']['iAnt_controller']['params']['CPFA']['@siteFidelityRate'] = str(round(self.params[3], 5))
-        self.config['argos-configuration']['controllers']['iAnt_controller']['params']['CPFA']['@informedSearchDecay'] = str(round(self.params[4], 5))
-        self.config['argos-configuration']['controllers']['iAnt_controller']['params']['CPFA']['@searchRadius'] = str(round(self.params[5], 5))
-        self.config['argos-configuration']['controllers']['iAnt_controller']['params']['CPFA']['@searchStepSize'] = str(round(self.params[6], 5))
-        self.config['argos-configuration']['controllers']['iAnt_controller']['params']['CPFA']['@distanceTolerance'] = str(round(self.params[7], 5))
-        self.config['argos-configuration']['controllers']['iAnt_controller']['params']['CPFA']['@searchGiveupProbability'] = str(round(self.params[8], 5))
-        self.config['argos-configuration']['controllers']['iAnt_controller']['params']['CPFA']['@angleTolerance'] = str(round(self.params[9], 5))
-        self.config['argos-configuration']['controllers']['iAnt_controller']['params']['CPFA']['@maxRobotSpeed'] = str(round(self.params[10], 5))
-        self.config['argos-configuration']['controllers']['iAnt_controller']['params']['CPFA']['@uninformedSearchCorrelation'] = str(round(self.params[11], 5))
+        self.config['argos-configuration']['loop_functions']['CPFA']['@ProbabilityOfSwitchingToSearching'] = str(round(self.params[0], 5))
+        self.config['argos-configuration']['loop_functions']['CPFA']['@ProbabilityOfReturningToNest'] = str(round(self.params[1], 5))
+        self.config['argos-configuration']['loop_functions']['CPFA']['@UninformedSearchVariation'] = str(round(self.params[2], 5))
+        self.config['argos-configuration']['loop_functions']['CPFA']['@RateOfInformedSearchDecay'] = str(round(self.params[3], 5))
+        self.config['argos-configuration']['loop_functions']['CPFA']['@RateOfSiteFidelity'] = str(round(self.params[4], 5))
+        self.config['argos-configuration']['loop_functions']['CPFA']['@RateOfLayingPheromone'] = str(round(self.params[5], 5))
+        self.config['argos-configuration']['loop_functions']['CPFA']['@RateOfPheromoneDecay'] = str(round(self.params[6], 5))
 
         with open(self.argos_xml, 'w') as xml:
 
