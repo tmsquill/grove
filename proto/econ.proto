@@ -1,0 +1,46 @@
+package proto;
+
+message Item {
+	required int32 id = 1;
+	required string name = 2;
+	optional int32 defense = 3;
+}
+
+message Inventory {
+	required int32 coin = 1;
+	repeated Item items = 2;
+}
+
+message Strategy {
+	required double param1 = 1;
+	required double param2 = 2;
+	required double param3 = 3;
+	required double param4 = 4;
+	required double param5 = 5;
+	required double param6 = 6;
+	required double param7 = 7;
+	required double param8 = 8;
+}
+
+message EconAgent {
+	required int32 aid = 1;
+	required Inventory inventory = 2;
+	required Strategy strategy = 3;
+}
+
+message Ingredient {
+	required int32 item_id = 1;
+	required int32 count = 2;
+}
+
+message Recipe {
+	required int32 id = 1;
+	required int32 output_item_id = 2;
+	repeated Ingredient ingredients = 3;
+}
+
+message World {
+	repeated Item armors = 1;
+	repeated Item crafting_materials = 2;
+	repeated Recipe recipes = 3;
+}

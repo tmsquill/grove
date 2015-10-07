@@ -1,0 +1,32 @@
+\begin{thebibliography}{1}
+
+\bibitem{Dictionary.com2015}
+The free on-line dictionary of computing.
+\newblock \url{http://dictionary.reference.com/browse/genetic algorithm}.
+\newblock [Online; accessed 05-Febuary-2015].
+
+\bibitem{iAntArgosWiki}
+Xml configuration file.
+\newblock
+  \url{https://github.com/BCLab-UNM/iAnt-ARGoS/wiki/%5B2%5D-XML-Configuration-File}.
+\newblock [Online; accessed 26-April-2015].
+
+\bibitem{dorigo:aco}
+M.~Dorigo.
+\newblock Ant colony optimization: Artificial ants as a computational
+  intelligence technique.
+\newblock page~2, 2006.
+
+\bibitem{hecker:CPFA}
+J.~P. Hecker.
+\newblock Beyond pheromones: evolving error-tolerant, flexible, and scalable
+  ant-inspired robot swarms.
+\newblock page~8, 2015.
+
+\bibitem{stolleis:traps}
+K.~Stolleis.
+\newblock The ant and the trap: Evolution of ant-inspired obstacle avoidance in
+  a multi-agent robotic system.
+\newblock page~9, 2015.
+
+\end{thebibliography}

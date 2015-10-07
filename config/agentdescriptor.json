@@ -1,0 +1,17 @@
+{
+	"params_len": 7,
+  	"params_lower_bounds": [
+    	0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
+  	],
+  	"params_upper_bounds": [
+    	1.0, 1.0, 180.0, 1.0, 20.0, 20.0, 1.0
+  	],
+  	"obs_params_len": 12,
+  	"obs_params_lower_bounds": [
+    	0.0, 1.5, 1.5, 0.0, 1.5, 1.5, 0.0, 1.5, 1.5, 0.0, 1.5, 1.5
+  	],
+  	"obs_params_upper_bounds": [
+    	90.0, 5.0, 5.0, 90.0, 5.0, 5.0, 90.0, 5.0, 5.0, 90.0, 5.0, 5.0
+  	],
+  	"argos_xml": "./experiments/iAnt_Obstacles.xml"
+}

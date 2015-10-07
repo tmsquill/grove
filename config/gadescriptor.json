@@ -1,0 +1,28 @@
+{
+    "general": {
+        "generations": 40,
+        "population": 40
+    },
+    "selection": {
+        "truncation": {
+            "elite_size": 8
+        },
+        "tournament": {
+            "size": 10,
+            "probability": 0.9
+        }
+    },
+    "crossover": {
+
+    },
+    "mutate": {
+        "uniform": {
+            "probability": [],
+            "lower_bounds": [],
+            "upper_bounds": []
+        },
+        "gaussian": {
+            "probability": [0.10, 0.10, 0.10, 0.10, 0.10, 0.10, 0.10]
+        }
+    }
+}
