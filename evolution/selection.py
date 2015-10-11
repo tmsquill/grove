@@ -1,5 +1,6 @@
 __author__ = 'Troy Squillaci'
 
+import logging
 import random
 
 
@@ -10,8 +11,15 @@ def truncation(ga=None):
     :return:
     """
 
+    logging.info(' Truncation Selection '.center(180, '='))
+    logging.info(" (Before) Population Size %s ".center(180, '-') % len(ga.agents))
+    logging.info('\n' + '\n'.join(map(str, ga.agents)))
+
     ga.agents = ga.agents[:ga.ga_descriptor.config['selection']['truncation']['elite_size']]
     ga.obs_agents = ga.obs_agents[:ga.ga_descriptor.config['selection']['truncation']['elite_size']]
+
+    logging.info(" (After) Population Size %s ".center(180, '-') % len(ga.agents))
+    logging.info('\n' + '\n'.join(map(str, ga.agents)))
 
 
 def tournament(ga=None):

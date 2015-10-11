@@ -30,22 +30,19 @@ class Generation:
         result = ''
 
         result += 'GID: ' + str(self.id) + '\n'
-        result += '(Agent)\n'
 
-        for agent in self.agents:
-            result += str(agent) + '\n'
+        result += '\n'.join(map(str, self.agents))
 
+        result += '\niAnt Agents Statistics'
         result += ' Min: ' + str(self.min)
         result += ' Max: ' + str(self.max)
         result += ' Mean: ' + str(self.mean)
         result += ' Median: ' + str(self.median)
         result += ' Standard Deviation: ' + str(self.std)
 
-        result += '(Obstacle Agents)\n'
+        result += '\n'.join(map(str, self.agents))
 
-        for obs_agent in self.obs_agents:
-            result += str(obs_agent) + '\n'
-
+        result += '\nObstacle Agents Statistics'
         result += ' Min: ' + str(self.obs_min)
         result += ' Max: ' + str(self.obs_max)
         result += ' Mean: ' + str(self.obs_mean)

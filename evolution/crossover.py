@@ -12,7 +12,7 @@ def one_point(ga=None):
     :return:
     """
 
-    logging.info(' One-Point Crossover '.center(120, '-'))
+    logging.info(' One-Point Crossover '.center(180, '='))
 
     tmp = []
     obs_tmp = []

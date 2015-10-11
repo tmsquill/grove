@@ -88,7 +88,7 @@ class Agent(object):
 
         for idx, param in enumerate(self.params):
 
-            result += ' ' + str(idx) + ': ' + str(param)
+            result += ' ' + str(idx) + ': ' + "{:4f}".format(param)
 
         return result
 
@@ -154,7 +154,7 @@ class ObstacleAgent(object):
 
         for idx, param in enumerate(self.params):
 
-            result += ' ' + str(idx) + ': ' + str(param)
+            result += ' ' + str(idx) + ': ' + "{:4f}".format(param)
 
         return result
 

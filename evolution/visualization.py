@@ -99,15 +99,8 @@ class Visualization:
 
             data.append(current)
 
-        print 'Python List Form:\n' + str(data)
-
         data = np.asarray(data)
-
-        print 'Numpy Array Form:\n' + str(data)
-
         data = np.transpose(data)
-
-        print 'After Transpose::\n' + str(data)
 
         x_axis_len = np.arange(len(self.generations))
 
@@ -215,15 +208,8 @@ class Visualization:
 
             data.append(current)
 
-        print 'Python List Form:\n' + str(data)
-
         data = np.asarray(data)
-
-        print 'Numpy Array Form:\n' + str(data)
-
         data = np.transpose(data)
-
-        print 'After Transpose::\n' + str(data)
 
         x_axis_len = np.arange(len(self.generations))
 
@@ -325,4 +311,3 @@ class Visualization:
         p_figure = Figure(data=p_data, layout=p_layout)
 
         py.plot(p_figure, filename='(Obstacles) Elite Fitness Scores')
-

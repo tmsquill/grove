@@ -31,7 +31,11 @@ def gaussian(ga=None):
     the mutation does not violate legal ranges for the gene.
     """
 
+    logging.info(' Gaussian Mutation '.center(180, '='))
+
     for agent in ga.agents:
+
+        logging.info('(Before) ' + str(agent))
 
         for idx, param in enumerate(agent.params):
 
@@ -42,14 +46,18 @@ def gaussian(ga=None):
                     scale=(0.05 * ga.agent_descriptor.config['params_upper_bounds'][idx])
                 )
 
-                while ga.agent_descriptor.config['params_lower_bounds'][idx] < 0 or val > ga.agent_descriptor.config['params_upper_bounds'][idx]:
+                while val < ga.agent_descriptor.config['params_lower_bounds'][idx] or val > ga.agent_descriptor.config['params_upper_bounds'][idx]:
 
                     val = np.random.normal(
                         loc=param,
                         scale=(0.05 * ga.agent_descriptor.config['params_upper_bounds'][idx])
                     )
 
+                logging.info('Mutating Parameter ' + str(idx) + ': ' + str(param) + ' -> ' + str(val))
+
                 agent.params[idx] = val
+
+        logging.info('(After) ' + str(agent))
 
     for obs_agent in ga.obs_agents:
 

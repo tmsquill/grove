@@ -1,6 +1,6 @@
 {
     "general": {
-        "generations": 20,
+        "generations": 50,
         "population": 40
     },
     "selection": {
