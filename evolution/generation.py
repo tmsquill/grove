@@ -40,7 +40,7 @@ class Generation:
         result += ' Median: ' + str(self.median)
         result += ' Standard Deviation: ' + str(self.std)
 
-        result += '\n'.join(map(str, self.agents))
+        result += '\n'.join(map(str, self.obs_agents))
 
         result += '\nObstacle Agents Statistics'
         result += ' Min: ' + str(self.obs_min)

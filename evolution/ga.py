@@ -69,7 +69,7 @@ class GeneticAlgorithm:
         start_time = time.time()
 
         for generation in self.generations:
-            logging.info(" Generation %s ".center(180, '-') % str(generation.id))
+            logging.info(" Generation %s ".center(180, '*') % str(generation.id))
 
             self.fitness(generation)
             self.agents.sort()
