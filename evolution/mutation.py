@@ -33,48 +33,30 @@ def gaussian(ga=None):
 
     logging.info(' Gaussian Mutation '.center(180, '='))
 
-    for agent in ga.agents:
+    for a_idx, agent_set in enumerate(ga.agents):
 
-        logging.info('(Before) ' + str(agent))
+        for agent in agent_set:
 
-        for idx, param in enumerate(agent.params):
+            logging.info('(Before) ' + str(agent))
 
-            if random.uniform(0.0, 1.0) <= ga.ga_descriptor.config['mutate']['gaussian']['probability'][idx]:
+            for idx, param in enumerate(agent.params):
 
-                val = np.random.normal(
-                    loc=param,
-                    scale=(0.05 * ga.agent_descriptor.config['params_upper_bounds'][idx])
-                )
-
-                while val < ga.agent_descriptor.config['params_lower_bounds'][idx] or val > ga.agent_descriptor.config['params_upper_bounds'][idx]:
+                if random.uniform(0.0, 1.0) <= agent.config['mutatation']['gaussian'][idx]:
 
                     val = np.random.normal(
                         loc=param,
-                        scale=(0.05 * ga.agent_descriptor.config['params_upper_bounds'][idx])
+                        scale=(0.05 * agent.params_upper_bounds[idx])
                     )
 
-                logging.info('Mutating Parameter ' + str(idx) + ': ' + str(param) + ' -> ' + str(val))
+                    while val < agent.params_lower_bounds[idx] or val > agent.params_upper_bounds[idx]:
 
-                agent.params[idx] = val
+                        val = np.random.normal(
+                            loc=param,
+                            scale=(0.05 * agent.params_upper_bounds[idx])
+                        )
 
-        logging.info('(After) ' + str(agent))
+                    logging.info('Mutating Parameter ' + str(idx) + ': ' + str(param) + ' -> ' + str(val))
 
-    for obs_agent in ga.obs_agents:
+                    agent.params[idx] = val
 
-        for idx, param in enumerate(obs_agent.params):
-
-            if random.uniform(0.0, 1.0) <= 0.10:
-
-                val = np.random.normal(
-                    loc=param,
-                    scale=(0.05 * ga.agent_descriptor.config['obs_params_upper_bounds'][idx])
-                )
-
-                while abs(val) < ga.agent_descriptor.config['obs_params_lower_bounds'][idx] < 0 or abs(val) > ga.agent_descriptor.config['obs_params_upper_bounds'][idx]:
-
-                    val = np.random.normal(
-                        loc=param,
-                        scale=(0.05 * ga.agent_descriptor.config['obs_params_upper_bounds'][idx])
-                    )
-
-                obs_agent.params[idx] = val
+            logging.info('(After) ' + str(agent))

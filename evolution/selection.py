@@ -12,14 +12,14 @@ def truncation(ga=None):
     """
 
     logging.info(' Truncation Selection '.center(180, '='))
-    logging.info(" (Before) Population Size %s ".center(180, '-') % len(ga.agents))
-    logging.info('\n' + '\n'.join(map(str, ga.agents)))
 
-    ga.agents = ga.agents[:ga.ga_descriptor.config['selection']['truncation']['elite_size']]
-    ga.obs_agents = ga.obs_agents[:ga.ga_descriptor.config['selection']['truncation']['elite_size']]
+    logging.info(" (Before) Population Size %s ".center(180, '-') % len(ga.agents[0]))
+    logging.info('\n' + '\n'.join(map(str, ga.agents[0])))
 
-    logging.info(" (After) Population Size %s ".center(180, '-') % len(ga.agents))
-    logging.info('\n' + '\n'.join(map(str, ga.agents)))
+    ga.agents = [agent_set[:ga.config['selection']['truncation']['elite_size']] for agent_set in ga.agents]
+
+    logging.info(" (After) Population Size %s ".center(180, '-') % len(ga.agents[0]))
+    logging.info('\n' + '\n'.join(map(str, ga.agents[0])))
 
 
 def tournament(ga=None):

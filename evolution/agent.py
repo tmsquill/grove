@@ -1,5 +1,6 @@
 __author__ = 'Troy Squillaci'
 
+import abc
 import itertools
 import json
 import numpy as np
@@ -7,70 +8,70 @@ import random
 import xmltodict
 
 
-class AgentDescriptor:
+config = None
 
-    aid = itertools.count().next
 
-    def __init__(self, config=None):
+def init_agents(population):
 
-        if config is None:
+    foragers = []
+    obstacles = []
 
-            raise Exception
+    for i in xrange(population):
 
-        self.config = config
+        forager = ForagerAgent.factory()
+        obstacle = ObstacleAgent.factory()
+        mean = float(i) / population
 
-    def init_agents(self, population):
+        for idx, param in enumerate(forager.params):
 
-        agents = []
-        obs_agents = []
+            param = forager.params_upper_bounds[idx] * np.random.normal(loc=mean, scale=0.05)
 
-        for x in xrange(population):
+            if param < forager.params_lower_bounds[idx]:
+                param = forager.params_lower_bounds[idx]
+            elif param > forager.params_upper_bounds[idx]:
+                param = forager.params_upper_bounds[idx]
 
-            agent, obs_agent = self.factory()
-            mean = float(float(x) / population)
+            forager.params[idx] = param
 
-            for idx, param in enumerate(agent.params):
+        print 'Forager ' + str(i) + ' ' + str(forager)
+        foragers.append(forager)
 
-                param = self.config['params_upper_bounds'][idx] * np.random.normal(loc=mean, scale=0.05)
-                if param < self.config['params_lower_bounds'][idx]: param = self.config['params_lower_bounds'][idx]
-                elif param > self.config['params_upper_bounds'][idx]: param = self.config['params_upper_bounds'][idx]
-                agent.params[idx] = param
+        for idx, param in enumerate(obstacle.params):
 
-            print 'Agent ' + str(x) + ' ' + str(agent)
-            agents.append(agent)
+            param = obstacle.params_upper_bounds[idx] * np.random.normal(loc=mean, scale=0.05)
 
-            for idx, param in enumerate(obs_agent.params):
+            if param < obstacle.params_lower_bounds[idx]:
+                param = obstacle.params_lower_bounds[idx]
+            elif param > obstacle.params_upper_bounds[idx]:
+                param = obstacle.params_upper_bounds[idx]
 
-                param = self.config['obs_params_upper_bounds'][idx] * np.random.normal(loc=mean, scale=0.05)
-                if param < self.config['obs_params_lower_bounds'][idx]: param = self.config['obs_params_lower_bounds'][idx]
-                elif param > self.config['obs_params_upper_bounds'][idx]: param = self.config['obs_params_upper_bounds'][idx]
-                obs_agent.params[idx] = param
+            obstacle.params[idx] = param
 
-            obs_agents.append(obs_agent)
+        print 'Obstacle ' + str(i) + ' ' + str(obstacle)
+        obstacles.append(obstacle)
 
-        return agents, obs_agents
+    return [foragers, obstacles]
 
-    def factory(self):
 
-        id = AgentDescriptor.aid()
+def pretty_config():
 
-        return Agent(self, id), ObstacleAgent(self, id)
-
-    def __str__(self):
-
-        return json.dumps(self.config, sort_keys=True, indent=4)
+    return json.dumps(config, sort_keys=True, indent=4)
 
 
 class Agent(object):
 
-    def __init__(self, descriptor, id):
+    __metaclass__ = abc.ABCMeta
 
-        self.id = id
-        self.config = []
+    aid = itertools.count().next
+
+    def __init__(self):
+
+        self.id = Agent.aid()
         self.fitness = -1
-        self.params = [random.uniform(descriptor.config['params_lower_bounds'][i],
-                                      descriptor.config['params_upper_bounds'][i])
-                       for i in xrange(descriptor.config['params_len'])]
+        self.params_lower_bounds = config[self.__class__.__name__]['params_lower_bounds']
+        self.params_upper_bounds = config[self.__class__.__name__]['params_upper_bounds']
+        self.params = [random.uniform(lower, upper) for lower, upper in zip(self.params_lower_bounds, self.params_upper_bounds)]
+        self.params_len = len(self.params)
 
     def __lt__(self, other):
 
@@ -83,16 +84,35 @@ class Agent(object):
     def __str__(self):
 
         result = ''
-        result += 'AID: ' + str(self.id)
-        result += ' Fitness: ' + str(self.fitness)
-
-        for idx, param in enumerate(self.params):
-
-            result += ' ' + str(idx) + ': ' + "{:4f}".format(param)
+        result += __name__ + 'ID: ' + str(self.id)
+        result += ' Fitness: ' + str(self.fitness) + ' '
+        result += ' '.join([str(idx) + ': ' + "{:4f}".format(param) for idx, param in enumerate(self.params)])
 
         return result
 
-    def update_xml(self, argos_xml):
+    @abc.abstractmethod
+    def factory(self):
+        """Factory method to instantiate a new Agent object."""
+
+    @abc.abstractmethod
+    def execute(self, argos_xml):
+        """Executes appropriate code needed to evaluate the fitness of the agent."""
+
+
+class ForagerAgent(Agent):
+
+    def __init__(self):
+
+        super(ForagerAgent, self).__init__()
+
+        self.config = []
+
+    @staticmethod
+    def factory():
+
+        return ForagerAgent()
+
+    def execute(self, argos_xml):
 
         with open(argos_xml, 'r') as xml:
 
@@ -116,49 +136,30 @@ class Agent(object):
             xml.truncate()
 
 
-class ObstacleAgent(object):
+class ObstacleAgent(Agent):
 
-    def __init__(self, descriptor, id):
+    def __init__(self):
 
-        self.id = id
+        super(ObstacleAgent, self).__init__()
+
         self.config = []
-        self.fitness = -1
-        self.params = []
 
-        for i in xrange(descriptor.config['obs_params_len']):
+        for i in xrange(self.params_len):
 
-            lower = descriptor.config['obs_params_lower_bounds'][i]
-            upper = descriptor.config['obs_params_upper_bounds'][i]
+            param = random.uniform(-self.params_upper_bounds[i], self.params_upper_bounds[i])
 
-            param = random.uniform(-upper, upper)
+            while abs(param) < self.params_lower_bounds[i]:
 
-            while abs(param) < lower:
+                param = random.uniform(-self.params_upper_bounds[i], self.params_upper_bounds[i])
 
-                param = random.uniform(-upper, upper)
+            self.params[i] = param
 
-            self.params.append(param)
+    @staticmethod
+    def factory():
 
-    def __lt__(self, other):
+        return ForagerAgent()
 
-        return self.fitness < other.fitness
-
-    def __gt__(self, other):
-
-        return self.fitness > other.fitness
-
-    def __str__(self):
-
-        result = ''
-        result += 'OAID: ' + str(self.id)
-        result += ' Fitness: ' + str(self.fitness)
-
-        for idx, param in enumerate(self.params):
-
-            result += ' ' + str(idx) + ': ' + "{:4f}".format(param)
-
-        return result
-
-    def update_xml(self, argos_xml):
+    def execute(self, argos_xml):
 
         with open(argos_xml, 'r') as xml:
 

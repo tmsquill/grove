@@ -14,53 +14,38 @@ def one_point(ga=None):
 
     logging.info(' One-Point Crossover '.center(180, '='))
 
-    tmp = []
-    obs_tmp = []
-    params_len = ga.agent_descriptor.config['params_len']
-    obs_params_len = ga.agent_descriptor.config['obs_params_len']
+    for agent_set in ga.agents:
 
-    for x in xrange((ga.ga_descriptor.config['general']['population'] - len(ga.agents)) / 2):
+        offspring = []
 
-        parent1 = random.choice(ga.agents)
-        parent2 = random.choice(ga.agents)
+        for sentinel in xrange((ga.config['general']['population'] - len(agent_set)) / 2):
 
-        obs_parent1 = random.choice(ga.obs_agents)
-        obs_parent2 = random.choice(ga.obs_agents)
+            parent1 = random.choice(ga.agents)
+            parent2 = random.choice(ga.agents)
 
-        logging.info('Parent 1: ' + str(parent1))
-        logging.info('Parent 2: ' + str(parent2))
+            logging.info('Parent 1: ' + str(parent1))
+            logging.info('Parent 2: ' + str(parent2))
 
-        child1, obs_child1 = ga.agent_descriptor.factory()
-        child2, obs_child2 = ga.agent_descriptor.factory()
+            child1 = parent1.__class__.factory()
+            child2 = parent2.__class__.factory()
 
-        split = random.randint(0, params_len - 1)
-        obs_split = random.randint(0, obs_params_len - 1)
+            split = random.randint(0, parent1.params_len - 1)
 
-        logging.info('Split: ' + str(split))
+            logging.info('Split: ' + str(split))
 
-        child1.params[0:split] = parent1.params[0:split]
-        child1.params[split:params_len] = parent2.params[split:params_len]
+            child1.params[0:split] = parent1.params[0:split]
+            child1.params[split:parent1.params_len] = parent2.params[split:parent1.params_len]
 
-        obs_child1.params[0:obs_split] = obs_parent1.params[0:obs_split]
-        obs_child1.params[obs_split:obs_params_len] = obs_parent2.params[obs_split:obs_params_len]
+            child2.params[0:split] = parent2.params[0:split]
+            child2.params[split:parent1.params_len] = parent1.params[split:parent1.params_len]
 
-        child2.params[0:split] = parent2.params[0:split]
-        child2.params[split:params_len] = parent1.params[split:params_len]
+            logging.info('Child 1: ' + str(child1))
+            logging.info('Child 2: ' + str(child2) + '\n')
 
-        obs_child2.params[0:obs_split] = obs_parent2.params[0:obs_split]
-        obs_child2.params[obs_split:obs_params_len] = obs_parent1.params[obs_split:obs_params_len]
+            offspring.append(child1)
+            offspring.append(child2)
 
-        logging.info('Child 1: ' + str(child1))
-        logging.info('Child 2: ' + str(child2) + '\n')
-
-        tmp.append(child1)
-        tmp.append(child2)
-
-        obs_tmp.append(obs_child1)
-        obs_tmp.append(obs_child2)
-
-    ga.agents.extend(tmp)
-    ga.obs_agents.extend(obs_tmp)
+        agent_set.extend(offspring)
 
 
 def two_point(ga=None):

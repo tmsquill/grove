@@ -3,6 +3,7 @@ __author__ = 'Troy Squillaci'
 from generation import Generation
 from visualization import Visualization
 
+import agent
 import crossover
 import mutation
 import selection
@@ -27,38 +28,31 @@ def argos(argos_xml=None, agent=None, obs_agent=None):
     return agent, obs_agent
 
 
-class GeneticAlgorithmDescriptor:
-    def __init__(self, config=None):
-        if config is None:
-            raise Exception
+config = None
 
-        self.config = config
 
-    def __str__(self):
-        return json.dumps(self.config, sort_keys=True, indent=4)
+def pretty_config():
+
+    return json.dumps(config, sort_keys=True, indent=4)
 
 
 class GeneticAlgorithm:
-    def __init__(self, agent_descriptor=None, ga_descriptor=None):
+    def __init__(self):
         # Logging
         now = time.strftime("%I:%M-D%dM%mY%Y")
         logging.basicConfig(filename=now + '.log', level=logging.DEBUG)
-        logging.info(' GW2 Evolution Log '.center(180, '='))
+        logging.info(' Genetic Algorithm Log '.center(180, '='))
 
         # Multi-processing
         self.pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
 
-        # GA Initialization
-        self.agent_descriptor = agent_descriptor
-        self.ga_descriptor = ga_descriptor
+        logging.info(' Agent Configuration '.center(180, '-'))
+        logging.info('\n' + str(agent.config))
+        logging.info(' GA Configuration '.center(180, '-'))
+        logging.info('\n' + str(config))
 
-        logging.info(' Agent Descriptor '.center(180, '-'))
-        logging.info('\n' + str(self.agent_descriptor))
-        logging.info(' GA Descriptor '.center(180, '-'))
-        logging.info('\n' + str(self.ga_descriptor))
-
-        self.generations = [Generation() for x in xrange(self.ga_descriptor.config['general']['generations'])]
-        self.agents, self.obs_agents = agent_descriptor.init_agents(self.ga_descriptor.config['general']['population'])
+        self.generations = [Generation() for x in xrange(config['general']['generations'])]
+        self.agents = agent.init_agents(config['general']['population'])
 
         logging.info(' Agent Initialization '.center(180, '-'))
         logging.info('\n' + '\n'.join(map(str, self.agents)))
@@ -72,12 +66,13 @@ class GeneticAlgorithm:
             logging.info(" Generation %s ".center(180, '*') % str(generation.id))
 
             self.fitness(generation)
-            self.agents.sort()
-            self.agents.reverse()
-            self.obs_agents.sort()
-            self.obs_agents.reverse()
-            generation.generate_stats(self.agents, self.obs_agents)
-            generation.bind_agents(self.agents, self.obs_agents)
+
+            for agent_set in self.agents:
+                agent_set.sort()
+                agent_set.reverse()
+
+            generation.generate_stats(self.agents)
+            generation.bind_agents(self.agents)
             logging.info('\n' + str(generation))
             selection.truncation(self)
             crossover.one_point(self)
@@ -90,8 +85,7 @@ class GeneticAlgorithm:
         show = [True] * 12
         show_obs = [True] * 12
 
-        visual = Visualization(self.agent_descriptor, self.generations,
-                               self.ga_descriptor.config['selection']['truncation']['elite_size'])
+        visual = Visualization(agent.config, self.generations, config['selection']['truncation']['elite_size'])
         visual.plot_elite('Min', show)
         visual.plot_elite('Max', show)
         visual.plot_elite('Mean', show)
@@ -107,11 +101,11 @@ class GeneticAlgorithm:
         print (" Generation %s ".center(180, '-') % str(generation.id))
 
         results = [self.pool.apply_async(argos, args=(
-            self.agent_descriptor.config['argos_xml'][:-4] + '_' + str(number) +
-            self.agent_descriptor.config['argos_xml'][-4:], agent, obs_agent))
-                   for number, agent, obs_agent in zip(list(xrange(40)), self.agents, self.obs_agents)]
+            agent.config['argos_xml'][:-4] + '_' + str(number) +
+            agent.config['argos_xml'][-4:], forager, obstacle))
+                   for number, forager, obstacle in zip(list(xrange(40)), self.agents[0], self.agents[1])]
 
         output = [p.get() for p in results]
 
-        self.agents = [agent_out[0] for agent_out in output]
-        self.obs_agents = [obs_agent_out[1] for obs_agent_out in output]
+        self.agents[0] = [agent_out[0] for agent_out in output]
+        self.agents[1] = [obs_agent_out[1] for obs_agent_out in output]

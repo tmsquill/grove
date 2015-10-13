@@ -13,17 +13,11 @@ class Generation:
 
         self.id = Generation.gid()
         self.agents = []
-        self.obs_agents = []
-        self.min = -1
-        self.max = -1
-        self.mean = -1
-        self.median = -1
-        self.std = -1
-        self.obs_min = -1
-        self.obs_max = -1
-        self.obs_mean = -1
-        self.obs_median = -1
-        self.obs_std = -1
+        self.min = []
+        self.max = []
+        self.mean = []
+        self.median = []
+        self.std = []
 
     def __str__(self):
 
@@ -31,44 +25,31 @@ class Generation:
 
         result += 'GID: ' + str(self.id) + '\n'
 
-        result += '\n'.join(map(str, self.agents))
+        for agent_set, min, max, mean, median, std in zip(self.agents, self.min, self.max, self.mean, self.median, self.std):
 
-        result += '\niAnt Agents Statistics'
-        result += ' Min: ' + str(self.min)
-        result += ' Max: ' + str(self.max)
-        result += ' Mean: ' + str(self.mean)
-        result += ' Median: ' + str(self.median)
-        result += ' Standard Deviation: ' + str(self.std)
+            result += '\n'.join(map(str, agent_set))
 
-        result += '\n'.join(map(str, self.obs_agents))
-
-        result += '\nObstacle Agents Statistics'
-        result += ' Min: ' + str(self.obs_min)
-        result += ' Max: ' + str(self.obs_max)
-        result += ' Mean: ' + str(self.obs_mean)
-        result += ' Median: ' + str(self.obs_median)
-        result += ' Standard Deviation: ' + str(self.obs_std)
+            result += '\n' + agent_set[0].__class__.__name__ + ' Agents Statistics'
+            result += ' Min: ' + str(min)
+            result += ' Max: ' + str(max)
+            result += ' Mean: ' + str(mean)
+            result += ' Median: ' + str(median)
+            result += ' Standard Deviation: ' + str(std)
 
         return result
 
-    def bind_agents(self, agents, obs_agents):
+    def bind_agents(self, agents):
 
         self.agents = copy.deepcopy(agents)
-        self.obs_agents = copy.deepcopy(obs_agents)
 
-    def generate_stats(self, agents, obs_agents):
+    def generate_stats(self, agents):
 
-        fitness_scores = [agent.fitness for agent in agents]
-        obs_fitness_scores = [obs_agent.fitness for obs_agent in obs_agents]
+        for agent_set in agents:
 
-        self.min = np.min(fitness_scores)
-        self.max = np.max(fitness_scores)
-        self.mean = np.mean(fitness_scores)
-        self.median = np.median(fitness_scores)
-        self.std = np.std(fitness_scores)
+            fitness_scores = [agent.fitness for agent in agent_set]
 
-        self.obs_min = np.min(obs_fitness_scores)
-        self.obs_max = np.max(obs_fitness_scores)
-        self.obs_mean = np.mean(obs_fitness_scores)
-        self.obs_median = np.median(obs_fitness_scores)
-        self.obs_std = np.std(obs_fitness_scores)
+            self.min.append(np.min(fitness_scores))
+            self.max.append(np.max(fitness_scores))
+            self.mean.append(np.mean(fitness_scores))
+            self.median.append(np.median(fitness_scores))
+            self.std.append(np.std(fitness_scores))
