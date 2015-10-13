@@ -1,0 +1,99 @@
+{
+    "ForagerAgent": {
+        "params_lower_bounds": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+        ],
+        "params_upper_bounds": [
+            1.0,
+            1.0,
+            180.0,
+            1.0,
+            20.0,
+            20.0,
+            1.0
+        ],
+        "params_mutational_probability": [
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1
+        ],
+        "params_names": [
+            "Probability Of Switching To Searching",
+            "Probability Of Returning To Nest",
+            "Uninformed Search Variation",
+            "Rate Of Informed Search Decay",
+            "Rate Of Site Fidelity",
+            "Rate Of Laying Pheromone",
+            "Rate Of Pheromone Decay"
+        ]
+    },
+    "ObstacleAgent": {
+        "params_lower_bounds": [
+            0.0,
+            1.5,
+            1.5,
+            0.0,
+            1.5,
+            1.5,
+            0.0,
+            1.5,
+            1.5,
+            0.0,
+            1.5,
+            1.5
+        ],
+        "params_upper_bounds": [
+            90.0,
+            5.0,
+            5.0,
+            90.0,
+            5.0,
+            5.0,
+            90.0,
+            5.0,
+            5.0,
+            90.0,
+            5.0,
+            5.0
+        ],
+        "params_mutational_probability": [
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1
+        ],
+        "params_names": [
+            "(Obstacle 1) Orientation",
+            "(Obstacle 1) Position X",
+            "(Obstacle 1) Position Y",
+            "(Obstacle 2) Orientation",
+            "(Obstacle 2) Position X",
+            "(Obstacle 2) Position Y",
+            "(Obstacle 3) Orientation",
+            "(Obstacle 3) Position X",
+            "(Obstacle 3) Position Y",
+            "(Obstacle 4) Orientation",
+            "(Obstacle 4) Position X",
+            "(Obstacle 4) Position Y",
+        ]
+    },
+    "argos_xml": "./experiments/iAnt_Obstacles.xml"
+}

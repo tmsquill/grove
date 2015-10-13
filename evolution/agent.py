@@ -33,7 +33,6 @@ def init_agents(population):
 
             forager.params[idx] = param
 
-        print 'Forager ' + str(i) + ' ' + str(forager)
         foragers.append(forager)
 
         for idx, param in enumerate(obstacle.params):
@@ -47,7 +46,6 @@ def init_agents(population):
 
             obstacle.params[idx] = param
 
-        print 'Obstacle ' + str(i) + ' ' + str(obstacle)
         obstacles.append(obstacle)
 
     return [foragers, obstacles]

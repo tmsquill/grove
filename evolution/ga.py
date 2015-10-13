@@ -16,6 +16,7 @@ import subprocess
 import time
 
 
+# TODO Move this.
 def argos(argos_xml=None, agent=None, obs_agent=None):
     agent.update_xml(argos_xml)
     obs_agent.update_xml(argos_xml)
@@ -37,11 +38,13 @@ def pretty_config():
 
 
 class GeneticAlgorithm:
+
     def __init__(self):
+
         # Logging
         now = time.strftime("%I:%M-D%dM%mY%Y")
-        logging.basicConfig(filename=now + '.log', level=logging.DEBUG)
-        logging.info(' Genetic Algorithm Log '.center(180, '='))
+        logging.basicConfig(filename=config['log'] + '/' + now + '.log', level=logging.DEBUG)
+        logging.info(' Log for py.evolve '.center(180, '='))
 
         # Multi-processing
         self.pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
@@ -51,25 +54,29 @@ class GeneticAlgorithm:
         logging.info(' GA Configuration '.center(180, '-'))
         logging.info('\n' + str(config))
 
-        self.generations = [Generation() for x in xrange(config['general']['generations'])]
+        self.generations = [Generation() for sentinel in xrange(config['general']['generations'])]
+        # TODO Consider Dynamic Injection
         self.agents = agent.init_agents(config['general']['population'])
 
-        logging.info(' Agent Initialization '.center(180, '-'))
-        logging.info('\n' + '\n'.join(map(str, self.agents)))
+        logging.info(' Agent Initialization '.center(180, '='))
+
+        for agent_set in self.agents:
+            logging.info('\n' + agent_set[0].__class__.__name__ + '\n' + '\n'.join(map(str, agent_set)))
 
     def evolve(self):
-        logging.info(' Evolution '.center(180, '-') + '\n')
+        logging.info(' Evolution '.center(180, '=') + '\n')
 
         start_time = time.time()
 
         for generation in self.generations:
             logging.info(" Generation %s ".center(180, '*') % str(generation.id))
+            print 'Generation ' + str(generation.id)
 
-            self.fitness(generation)
+            self.fitness()
 
-            for agent_set in self.agents:
-                agent_set.sort()
-                agent_set.reverse()
+            for idx, agent_set in enumerate(self.agents):
+                self.agents[idx] = agent_set.sort()
+                self.agents[idx] = agent_set.reverse()
 
             generation.generate_stats(self.agents)
             generation.bind_agents(self.agents)
@@ -83,22 +90,15 @@ class GeneticAlgorithm:
 
         # Apply Visualization
         show = [True] * 12
-        show_obs = [True] * 12
 
-        visual = Visualization(agent.config, self.generations, config['selection']['truncation']['elite_size'])
+        visual = Visualization(self.generations)
         visual.plot_elite('Min', show)
         visual.plot_elite('Max', show)
         visual.plot_elite('Mean', show)
         visual.plot_elite('Median', show)
         visual.plot_fitness()
-        visual.plot_obs_elite('Min', show_obs)
-        visual.plot_obs_elite('Max', show_obs)
-        visual.plot_obs_elite('Mean', show_obs)
-        visual.plot_obs_elite('Median', show_obs)
-        visual.plot_obs_fitness()
 
-    def fitness(self, generation):
-        print (" Generation %s ".center(180, '-') % str(generation.id))
+    def fitness(self):
 
         results = [self.pool.apply_async(argos, args=(
             agent.config['argos_xml'][:-4] + '_' + str(number) +

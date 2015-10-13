@@ -1,0 +1,7 @@
+{
+    "general": {
+        "generations": 50,
+        "population": 40
+    },
+    "log": "log"
+}
