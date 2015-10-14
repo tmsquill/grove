@@ -41,7 +41,7 @@ def gaussian(ga=None):
 
             for idx, param in enumerate(agent.params):
 
-                if random.uniform(0.0, 1.0) <= agent.config['mutatation']['gaussian'][idx]:
+                if random.uniform(0.0, 1.0) <= agent.params_mutational_probability[idx]:
 
                     val = np.random.normal(
                         loc=param,
@@ -60,3 +60,5 @@ def gaussian(ga=None):
                     agent.params[idx] = val
 
             logging.info('(After) ' + str(agent))
+
+        ga.agents[a_idx] = agent_set

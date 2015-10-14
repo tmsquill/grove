@@ -70,6 +70,7 @@ class Agent(object):
         self.params_upper_bounds = config[self.__class__.__name__]['params_upper_bounds']
         self.params = [random.uniform(lower, upper) for lower, upper in zip(self.params_lower_bounds, self.params_upper_bounds)]
         self.params_len = len(self.params)
+        self.params_mutational_probability = config[self.__class__.__name__]['params_mutational_probability']
 
     def __lt__(self, other):
 
@@ -82,8 +83,8 @@ class Agent(object):
     def __str__(self):
 
         result = ''
-        result += __name__ + 'ID: ' + str(self.id)
-        result += ' Fitness: ' + str(self.fitness) + ' '
+        result += self.__class__.__name__ + ' ID: ' + "{:4}".format(self.id)
+        result += ' Fitness: ' + "{:8f}".format(self.fitness) + ' '
         result += ' '.join([str(idx) + ': ' + "{:4f}".format(param) for idx, param in enumerate(self.params)])
 
         return result
@@ -93,7 +94,7 @@ class Agent(object):
         """Factory method to instantiate a new Agent object."""
 
     @abc.abstractmethod
-    def execute(self, argos_xml):
+    def execute_fitness(self, argos_xml):
         """Executes appropriate code needed to evaluate the fitness of the agent."""
 
 
@@ -103,34 +104,34 @@ class ForagerAgent(Agent):
 
         super(ForagerAgent, self).__init__()
 
-        self.config = []
-
     @staticmethod
     def factory():
 
         return ForagerAgent()
 
-    def execute(self, argos_xml):
+    def execute_fitness(self, argos_xml):
+
+        forager_config = None
 
         with open(argos_xml, 'r') as xml:
 
-            self.config = xmltodict.parse(xml)
+            forager_config = xmltodict.parse(xml)
 
         # General
-        self.config['argos-configuration']['framework']['experiment']['@random_seed'] = str(random.randint(1, 1000000))
+        forager_config['argos-configuration']['framework']['experiment']['@random_seed'] = str(random.randint(1, 1000000))
 
         # iAnt Robots
-        self.config['argos-configuration']['loop_functions']['CPFA']['@ProbabilityOfSwitchingToSearching'] = str(round(self.params[0], 5))
-        self.config['argos-configuration']['loop_functions']['CPFA']['@ProbabilityOfReturningToNest'] = str(round(self.params[1], 5))
-        self.config['argos-configuration']['loop_functions']['CPFA']['@UninformedSearchVariation'] = str(round(self.params[2], 5))
-        self.config['argos-configuration']['loop_functions']['CPFA']['@RateOfInformedSearchDecay'] = str(round(self.params[3], 5))
-        self.config['argos-configuration']['loop_functions']['CPFA']['@RateOfSiteFidelity'] = str(round(self.params[4], 5))
-        self.config['argos-configuration']['loop_functions']['CPFA']['@RateOfLayingPheromone'] = str(round(self.params[5], 5))
-        self.config['argos-configuration']['loop_functions']['CPFA']['@RateOfPheromoneDecay'] = str(round(self.params[6], 5))
+        forager_config['argos-configuration']['loop_functions']['CPFA']['@ProbabilityOfSwitchingToSearching'] = str(round(self.params[0], 5))
+        forager_config['argos-configuration']['loop_functions']['CPFA']['@ProbabilityOfReturningToNest'] = str(round(self.params[1], 5))
+        forager_config['argos-configuration']['loop_functions']['CPFA']['@UninformedSearchVariation'] = str(round(self.params[2], 5))
+        forager_config['argos-configuration']['loop_functions']['CPFA']['@RateOfInformedSearchDecay'] = str(round(self.params[3], 5))
+        forager_config['argos-configuration']['loop_functions']['CPFA']['@RateOfSiteFidelity'] = str(round(self.params[4], 5))
+        forager_config['argos-configuration']['loop_functions']['CPFA']['@RateOfLayingPheromone'] = str(round(self.params[5], 5))
+        forager_config['argos-configuration']['loop_functions']['CPFA']['@RateOfPheromoneDecay'] = str(round(self.params[6], 5))
 
         with open(argos_xml, 'w') as xml:
 
-            xml.write(xmltodict.unparse(self.config, pretty=True))
+            xml.write(xmltodict.unparse(forager_config, pretty=True))
             xml.truncate()
 
 
@@ -139,8 +140,6 @@ class ObstacleAgent(Agent):
     def __init__(self):
 
         super(ObstacleAgent, self).__init__()
-
-        self.config = []
 
         for i in xrange(self.params_len):
 
@@ -155,36 +154,36 @@ class ObstacleAgent(Agent):
     @staticmethod
     def factory():
 
-        return ForagerAgent()
+        return ObstacleAgent()
 
-    def execute(self, argos_xml):
+    def execute_fitness(self, argos_xml):
 
         with open(argos_xml, 'r') as xml:
 
-            self.config = xmltodict.parse(xml)
+            obstacle_config = xmltodict.parse(xml)
 
         # Obstacles
-        self.config['argos-configuration']['arena']['box'][0]['body']['@orientation'] = \
+        obstacle_config['argos-configuration']['arena']['box'][0]['body']['@orientation'] = \
             str(round(self.params[0], 3)) + ',0,0'
-        self.config['argos-configuration']['arena']['box'][0]['body']['@position'] = \
+        obstacle_config['argos-configuration']['arena']['box'][0]['body']['@position'] = \
             str(round(self.params[1], 3)) + ',' + str(round(self.params[2], 3)) + ',0'
 
-        self.config['argos-configuration']['arena']['box'][1]['body']['@orientation'] = \
+        obstacle_config['argos-configuration']['arena']['box'][1]['body']['@orientation'] = \
             str(round(self.params[3], 3)) + ',0,0'
-        self.config['argos-configuration']['arena']['box'][1]['body']['@position'] = \
+        obstacle_config['argos-configuration']['arena']['box'][1]['body']['@position'] = \
             str(round(self.params[4], 3)) + ',' + str(round(self.params[5], 3)) + ',0'
 
-        self.config['argos-configuration']['arena']['box'][2]['body']['@orientation'] = \
+        obstacle_config['argos-configuration']['arena']['box'][2]['body']['@orientation'] = \
             str(round(self.params[6], 3)) + ',0,0'
-        self.config['argos-configuration']['arena']['box'][2]['body']['@position'] = \
+        obstacle_config['argos-configuration']['arena']['box'][2]['body']['@position'] = \
             str(round(self.params[7], 3)) + ',' + str(round(self.params[8], 3)) + ',0'
 
-        self.config['argos-configuration']['arena']['box'][3]['body']['@orientation'] = \
+        obstacle_config['argos-configuration']['arena']['box'][3]['body']['@orientation'] = \
             str(round(self.params[9], 3)) + ',0,0'
-        self.config['argos-configuration']['arena']['box'][3]['body']['@position'] = \
+        obstacle_config['argos-configuration']['arena']['box'][3]['body']['@position'] = \
             str(round(self.params[10], 3)) + ',' + str(round(self.params[11], 3)) + ',0'
 
         with open(argos_xml, 'w') as xml:
 
-            xml.write(xmltodict.unparse(self.config, pretty=True))
+            xml.write(xmltodict.unparse(obstacle_config, pretty=True))
             xml.truncate()

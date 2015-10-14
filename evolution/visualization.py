@@ -8,123 +8,44 @@ from plotly.graph_objs import *
 import numpy as np
 
 
-def normalize(self, current_data):
+def extract(all=None):
 
-    for idx, data in enumerate(current_data):
-        data /= self.agent_descriptor.config['params_upper_bounds'][idx]
-        current_data[idx] = data
+    all_stats = []
 
-    return current_data
+    for i in xrange(len(all[0])):
 
-def plot_all(generations=None, proportion=0.2):
+        all_stats.append([stat[i] for stat in all])
 
-    pass
 
-def plot_min(generations=None, proportion=0.2):
+def plot_scatter(generations=None, proportion=0.2, analysis_type=None):
+
+    all= []
 
     for generation in generations:
 
-        for agent_set in generation.agents:
+        data = []
 
-            current = agent_set[ga.config['general']['population'] * proportion - 1].params
+        agent_subsets = [agent_set[:int(proportion * len(agent_set))] for agent_set in generation]
 
-def plot_elite(analysis_type, parameter_toggle):
+        for agent_set in agent_subsets:
 
-    # Holds the raw data to be plotted.
-    data = []
-
-    # Gather / Calculate data.
-    for generation in self.generations:
-
-        for agent_set in generation.agents:
-
-            current = np.empty(0)
-
-            # Minimum
-            if analysis_type == 'Min':
-
-                current = generation.agents[self.elite_size - 1].params
-                current = self.normalize(current)
-
-            # Maximum
-            elif analysis_type == 'Max':
-
-                current = generation.agents[0].params
-                current = self.normalize(current)
-
-            # Mean
-            elif analysis_type == 'Mean':
-
-                current = np.asarray(generation.agents[0].params)
-
-                for elite in xrange(1, self.elite_size):
-                    current += np.asarray(generation.agents[elite].params)
-
-                current /= self.elite_size
-                current = self.normalize(current)
-
-            # Median
-            elif analysis_type == 'Median':
-
-                current = np.asarray(generation.agents[0].params)
-
-                for elite in xrange(1, self.elite_size):
-                    current = np.vstack((current, np.asarray(generation.agents[elite].params)))
-
-                current = np.median(current, axis=0)
-                current = self.normalize(current)
-
-            # Variance
-            elif analysis_type == 'Variance':
-
-                current = np.asarray(generation.agents[0].params)
-
-                for elite in xrange(1, self.elite_size):
-                    current = np.vstack((current, np.asarray(generation.agents[elite].params)))
-
-                current = np.var(current, axis=0)
-                current = self.normalize(current)
-
-            # Standard Deviation
-            elif analysis_type == 'Standard Deviation':
-
-                current = np.asarray(generation.agents[0].params)
-
-                for elite in xrange(1, self.elite_size):
-                    current = np.vstack((current, np.asarray(generation.agents[elite].params)))
-
-                current = np.std(current, axis=0)
-                current = self.normalize(current)
+            current = analysis_type(agent_set)
+            current = np.max(np.abs(current), axis=0)
 
             data.append(current)
 
-    data = np.asarray(data)
-    data = np.transpose(data)
+        all.append(data)
 
-    x_axis_len = np.arange(len(self.generations))
+    print str(all)
+
+    prepared_data = extract(all)
+
+    x_axis_len = np.arange(len(generations))
 
     p_scatters = []
 
     if parameter_toggle[0]:
         p_scatters.append(Scatter(name='Probability Of Switching To Searching', x=x_axis_len, y=data[0]))
-
-    if parameter_toggle[1]:
-        p_scatters.append(Scatter(name='Probability Of Returning To Nest', x=x_axis_len, y=data[1]))
-
-    if parameter_toggle[2]:
-        p_scatters.append(Scatter(name='Uninformed Search Variation', x=x_axis_len, y=data[2]))
-
-    if parameter_toggle[3]:
-        p_scatters.append(Scatter(name='Rate Of Informed Search Decay', x=x_axis_len, y=data[3]))
-
-    if parameter_toggle[4]:
-        p_scatters.append(Scatter(name='Rate Of Site Fidelity', x=x_axis_len, y=data[4]))
-
-    if parameter_toggle[5]:
-        p_scatters.append(Scatter(name='Rate Of Laying Pheromone', x=x_axis_len, y=data[5]))
-
-    if parameter_toggle[6]:
-        p_scatters.append(Scatter(name='Rate Of Pheromone Decay', x=x_axis_len, y=data[6]))
 
     # Plot the data.
     p_data = Data(p_scatters)

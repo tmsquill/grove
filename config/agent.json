@@ -35,6 +35,15 @@
             "Rate Of Site Fidelity",
             "Rate Of Laying Pheromone",
             "Rate Of Pheromone Decay"
+        ],
+        "params_plot": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
         ]
     },
     "ObstacleAgent": {
@@ -92,7 +101,21 @@
             "(Obstacle 3) Position Y",
             "(Obstacle 4) Orientation",
             "(Obstacle 4) Position X",
-            "(Obstacle 4) Position Y",
+            "(Obstacle 4) Position Y"
+        ],
+        "params_plot": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
         ]
     },
     "argos_xml": "./experiments/iAnt_Obstacles.xml"
