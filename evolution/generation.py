@@ -2,7 +2,6 @@ __author__ = 'Troy Squillaci'
 
 import copy
 import itertools
-import numpy as np
 
 
 class Generation:

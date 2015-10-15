@@ -1,8 +1,5 @@
 __author__ = 'Troy Squillaci'
 
-import agent
-import ga
-
 import plotly.plotly as py
 from plotly.graph_objs import *
 import numpy as np

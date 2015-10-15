@@ -1,19 +1,18 @@
 __author__ = 'Troy Squillaci'
 
-from generation import Generation
-
-import agent
-import crossover
-import mutation
-import selection
-import visualization
-
 import json
 import logging
 import multiprocessing
 import re
 import subprocess
 import time
+
+from generation import Generation
+import agent
+import crossover
+import mutation
+import selection
+from visualization import visualization
 
 
 # TODO Move this.
