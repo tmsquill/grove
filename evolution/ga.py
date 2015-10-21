@@ -12,6 +12,7 @@ import agent
 import crossover
 import mutation
 import selection
+import utils
 from visualization import visualization
 
 
@@ -87,14 +88,14 @@ class GeneticAlgorithm:
         logging.info("Evolution finished in %s seconds " % (time.time() - start_time))
         print "Evolution finished in %s seconds " % (time.time() - start_time)
 
-        visualization.plot_fitness()
+        utils.generate_csv(self.generations)
 
     def fitness(self):
 
         results = [self.pool.apply_async(
             argos,
             args=(agent.config['argos_xml'][:-4] + '_' + str(number) + agent.config['argos_xml'][-4:], forager, obstacle))
-                   for number, forager, obstacle in zip(list(xrange(40)), self.agents[0], self.agents[1])]
+                   for number, forager, obstacle in zip(list(xrange(config['general']['population'])), self.agents[0], self.agents[1])]
 
         output = [p.get() for p in results]
 

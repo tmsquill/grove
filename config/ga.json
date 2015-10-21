@@ -1,6 +1,6 @@
 {
     "general": {
-        "generations": 50,
+        "generations": 40,
         "population": 40
     },
     "log": "log"

@@ -1,4 +1,8 @@
 {
+    "agent_types": [
+        "ForagerAgent",
+        "ObstacleAgent"
+    ],
     "ForagerAgent": {
         "params_lower_bounds": [
             0.0,
@@ -35,6 +39,15 @@
             "Rate Of Site Fidelity",
             "Rate Of Laying Pheromone",
             "Rate Of Pheromone Decay"
+        ],
+        "params_abbr_names": [
+            "PSS",
+            "PRN",
+            "USV",
+            "RISD",
+            "RSF",
+            "RLP",
+            "RPD"
         ],
         "params_plot": [
             1,
@@ -102,6 +115,20 @@
             "(Obstacle 4) Orientation",
             "(Obstacle 4) Position X",
             "(Obstacle 4) Position Y"
+        ],
+        "params_abbr_names": [
+            "O1_ORIX",
+            "O1_POSX",
+            "O1_POSY",
+            "O2_ORIX",
+            "O2_POSX",
+            "O2_POSY",
+            "O3_ORIX",
+            "O3_POSX",
+            "O3_POSY",
+            "O4_ORIX",
+            "O4_POSX",
+            "O4_POSY"
         ],
         "params_plot": [
             1,

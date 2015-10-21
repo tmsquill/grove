@@ -12,6 +12,7 @@ class Generation:
 
         self.id = Generation.gid()
         self.agents = []
+        self.agents_map = {}
 
     def __str__(self):
 
@@ -28,3 +29,11 @@ class Generation:
     def bind_agents(self, agents):
 
         self.agents = copy.deepcopy(agents)
+
+        for idx, agent_set in enumerate(self.agents):
+
+            self.agents_map[agent_set[0].__class__.__name__] = idx
+
+    def csv(self, agent_idx):
+
+        return [[[self.id] + [agent.id] + [agent.fitness] + agent.params].pop(0) for agent in self.agents[agent_idx]]
