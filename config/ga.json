@@ -1,7 +1,24 @@
 {
     "general": {
         "generations": 40,
-        "population": 40
+        "population": 10
+    },
+    "proxies": {
+        "population": 10,
+        "selection": [
+            "truncation",
+            "tournament"
+        ],
+        "crossover": [
+            "one_point",
+            "two_point",
+            "uniform"
+        ],
+        "mutation": [
+            "boundary",
+            "uniform",
+            "gaussian"
+        ]
     },
     "log": "log"
 }

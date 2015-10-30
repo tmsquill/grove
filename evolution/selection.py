@@ -4,7 +4,7 @@ import logging
 import random
 
 
-def truncation(ga=None, proportion=0.2):
+def truncation(self, ga=None, proportion=0.2):
     """
     Truncation selection orders agents of the population by fitness then chooses some proportion of the fittest
     agents for use in the reproduction phase.
@@ -13,20 +13,16 @@ def truncation(ga=None, proportion=0.2):
 
     logging.info(' Truncation Selection '.center(180, '='))
 
-    for agent_set in ga.agents:
+    logging.info(" (Before) {0} Population Size {1} ".center(180, '-').format(ga.active_agents[0].__class__.__name__, len(ga.active_agents)))
+    logging.info('\n' + '\n'.join(map(str, ga.active_agents)) + '\n')
 
-        logging.info(" (Before) {0} Population Size {1} ".center(180, '-').format(agent_set[0].__class__.__name__, len(agent_set)))
-        logging.info('\n' + '\n'.join(map(str, agent_set)) + '\n')
+    ga.active_agents = ga.active_agents[:int(proportion * len(ga.active_agents))]
 
-    ga.agents = [agent_set[:int(proportion * len(agent_set))] for agent_set in ga.agents]
-
-    for agent_set in ga.agents:
-
-        logging.info(" (After) {0} Population Size {1} ".center(180, '-').format(agent_set[0].__class__.__name__, len(agent_set)))
-        logging.info('\n' + '\n'.join(map(str, agent_set)) + '\n')
+    logging.info(" (After) {0} Population Size {1} ".center(180, '-').format(ga.active_agents[0].__class__.__name__, len(ga.active_agents)))
+    logging.info('\n' + '\n'.join(map(str, ga.active_agents)) + '\n')
 
 
-def tournament(ga=None):
+def tournament(self, ga=None):
     """
     Tournament selection involves holding several "tournaments" amongst randomly chosen subsets of agents in
     the population. Winners of the tournaments move on for use in the reproduction phase. Changing the

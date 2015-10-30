@@ -5,27 +5,49 @@ import numpy as np
 import random
 
 
-def uniform(ga=None):
+def boundary(self, ga=None):
+    """
+    Boundary mutation replaces chosen genes within the genome with either lower or upper bounds for each respective
+    gene.
+    """
+
+    logging.info(' Boundary Mutation '.center(180, '='))
+
+    for agent in ga.active_agents:
+
+        logging.info('(Before) ' + str(agent))
+
+        for idx, param in enumerate(agent.params):
+
+            if random.uniform(0.0, 1.0) <= agent.params_mutational_probability[idx]:
+
+                agent.params[idx] = random.choice([agent.params_lower_bounds[idx], agent.params_upper_bounds[idx]])
+
+        logging.info('(After) ' + str(agent))
+
+
+def uniform(self, ga=None):
     """
     Uniform mutation replaces the value of the chosen gene with a uniform random value within the specified
     bounds of the gene.
     """
 
-    for agent in ga.agents:
+    logging.info(' Uniform Mutation '.center(180, '='))
+
+    for agent in ga.active_agents:
+
+        logging.info('(Before) ' + str(agent))
 
         for idx, param in enumerate(agent.params):
 
-            if random.uniform(0.0, 1.0) <= ga.ga_descriptor.config['mutate']['uniform'][param]:
+            if random.uniform(0.0, 1.0) <= agent.params_mutational_probability[idx]:
 
-                val = random.uniform(
-                    ga.ga_descriptor.config['mutate']['uniform']['lower_bounds'][param],
-                    ga.ga_descriptor.config['mutate']['uniform']['upper_bounds'][param]
-                )
+                agent.params[idx] = random.uniform(agent.params_lower_bounds[idx], agent.params_upper_bounds[idx])
 
-                agent.params[idx] = val
+        logging.info('(After) ' + str(agent))
 
 
-def gaussian(ga=None):
+def gaussian(self, ga=None):
     """
     Gaussian mutation adds a unit gaussian distributed value to the chosen gene. Bounds checking ensures
     the mutation does not violate legal ranges for the gene.
@@ -33,32 +55,28 @@ def gaussian(ga=None):
 
     logging.info(' Gaussian Mutation '.center(180, '='))
 
-    for a_idx, agent_set in enumerate(ga.agents):
+    for agent in ga.active_agents:
 
-        for agent in agent_set:
+        logging.info('(Before) ' + str(agent))
 
-            logging.info('(Before) ' + str(agent))
+        for idx, param in enumerate(agent.params):
 
-            for idx, param in enumerate(agent.params):
+            if random.uniform(0.0, 1.0) <= agent.params_mutational_probability[idx]:
 
-                if random.uniform(0.0, 1.0) <= agent.params_mutational_probability[idx]:
+                val = np.random.normal(
+                    loc=param,
+                    scale=(0.05 * agent.params_upper_bounds[idx])
+                )
+
+                while val < agent.params_lower_bounds[idx] or val > agent.params_upper_bounds[idx]:
 
                     val = np.random.normal(
                         loc=param,
                         scale=(0.05 * agent.params_upper_bounds[idx])
                     )
 
-                    while val < agent.params_lower_bounds[idx] or val > agent.params_upper_bounds[idx]:
+                logging.info('Mutating Parameter ' + str(idx) + ': ' + str(param) + ' -> ' + str(val))
 
-                        val = np.random.normal(
-                            loc=param,
-                            scale=(0.05 * agent.params_upper_bounds[idx])
-                        )
+                agent.params[idx] = val
 
-                    logging.info('Mutating Parameter ' + str(idx) + ': ' + str(param) + ' -> ' + str(val))
-
-                    agent.params[idx] = val
-
-            logging.info('(After) ' + str(agent))
-
-        ga.agents[a_idx] = agent_set
+        logging.info('(After) ' + str(agent))

@@ -5,6 +5,10 @@ import itertools
 
 
 class Generation:
+    """
+    Represents a generation from the evolutionary process. Maintains a snapshot of the populations during that time.
+    Particularly useful for logging and saving data for future data analysis.
+    """
 
     gid = itertools.count().next
 

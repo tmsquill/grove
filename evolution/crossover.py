@@ -5,7 +5,7 @@ import random
 
 
 # TODO Alternative access to config.
-def one_point(ga=None, config=None):
+def one_point(self, ga=None, config=None):
     """
     One-point crossover involves generating a random index in the each of the parents' genome sequences.
     Then offspring are created by combining the first slice of the first parent with the second slice of the
@@ -52,7 +52,7 @@ def one_point(ga=None, config=None):
 
 
 # TODO Alternative access to config.
-def two_point(ga=None, config=None):
+def two_point(self, ga=None, config=None):
     """
     Two-point crossover is essentially the same as one-point crossover, but with two slices of the parent
     genome sequences.
@@ -102,7 +102,7 @@ def two_point(ga=None, config=None):
 
 
 # TODO Alternative access to config.
-def uniform(ga=None, config=None):
+def uniform(self, ga=None, config=None):
     """
     Uniform crossover uses a fixed mixing ratio between two parents to form offspring.
     """
