@@ -4,9 +4,8 @@ import json
 import logging
 import multiprocessing
 import random
-import re
-import subprocess
 import time
+
 
 from generation import Generation
 import agent
@@ -14,20 +13,8 @@ import crossover
 import mutation
 import proxies
 import selection
+from simulation import argos
 import utils
-
-
-# TODO Move this.
-def argos(argos_xml=None, agent=None, obs_agent=None):
-    agent.execute_fitness(argos_xml)
-    obs_agent.execute_fitness(argos_xml)
-
-    output = subprocess.check_output(['argos3 -n -c ' + argos_xml], shell=True, stderr=subprocess.STDOUT)
-    result = re.search(r'\s(\d+),\s(\d+),\s(\d+)', output)
-    agent.fitness = float(float(result.group(1)) / 256)
-    obs_agent.fitness = 1 - agent.fitness
-
-    return agent, obs_agent
 
 
 config = None
@@ -72,11 +59,13 @@ class GeneticAlgorithm:
             logging.info('\n' + '\n'.join(map(str, agent_set)))
 
     def evolve(self):
+
         logging.info(' Evolution '.center(180, '=') + '\n')
 
         start_time = time.time()
 
         for generation in self.generations:
+
             logging.info(" Generation %s ".center(180, '*') % str(generation.id))
             print 'Generation ' + str(generation.id)
 
@@ -105,7 +94,7 @@ class GeneticAlgorithm:
     def fitness(self):
 
         results = [self.pool.apply_async(
-            argos,
+            argos.argos,
             args=(agent.config['argos_xml'][:-4] + '_' + str(number) + agent.config['argos_xml'][-4:], forager, obstacle))
                    for number, forager, obstacle in zip(list(xrange(config['general']['population'])), self.all_agents[0], self.all_agents[1])]
 
