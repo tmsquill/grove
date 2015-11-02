@@ -3,9 +3,11 @@ __author__ = 'Troy Squillaci'
 import logging
 import random
 
+import config
+
 
 # TODO Alternative access to config.
-def one_point(self, ga=None, config=None):
+def one_point(self, ga=None):
     """
     One-point crossover involves generating a random index in the each of the parents' genome sequences.
     Then offspring are created by combining the first slice of the first parent with the second slice of the
@@ -21,7 +23,7 @@ def one_point(self, ga=None, config=None):
 
         offspring = []
 
-        for sentinel in xrange((config['general']['population'] - len(agent_set)) / 2):
+        for sentinel in xrange((config.global_config['ga']['general']['population'] - len(agent_set)) / 2):
 
             parent1 = random.choice(agent_set)
             parent2 = random.choice(agent_set)
@@ -52,7 +54,7 @@ def one_point(self, ga=None, config=None):
 
 
 # TODO Alternative access to config.
-def two_point(self, ga=None, config=None):
+def two_point(self, ga=None):
     """
     Two-point crossover is essentially the same as one-point crossover, but with two slices of the parent
     genome sequences.
@@ -67,7 +69,7 @@ def two_point(self, ga=None, config=None):
 
         offspring = []
 
-        for sentinel in xrange((config['general']['population'] - len(agent_set)) / 2):
+        for sentinel in xrange((config.global_config['ga']['general']['population'] - len(agent_set)) / 2):
 
             parent1 = random.choice(agent_set)
             parent2 = random.choice(agent_set)
@@ -102,7 +104,7 @@ def two_point(self, ga=None, config=None):
 
 
 # TODO Alternative access to config.
-def uniform(self, ga=None, config=None):
+def uniform(self, ga=None):
     """
     Uniform crossover uses a fixed mixing ratio between two parents to form offspring.
     """
@@ -115,7 +117,7 @@ def uniform(self, ga=None, config=None):
 
         offspring = []
 
-        for sentinel in xrange((config['general']['population'] - len(agent_set)) / 2):
+        for sentinel in xrange((config.global_config['ga']['general']['population'] - len(agent_set)) / 2):
 
             parent1 = random.choice(agent_set)
             parent2 = random.choice(agent_set)

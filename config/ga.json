@@ -1,4 +1,5 @@
 {
+    "name": "GA",
     "general": {
         "generations": 40,
         "population": 10
@@ -20,5 +21,6 @@
             "gaussian"
         ]
     },
-    "log": "log"
+    "log": "log",
+    "proxy": "StandardProxy"
 }

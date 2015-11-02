@@ -2,13 +2,11 @@ __author__ = 'Troy Squillaci'
 
 import abc
 import itertools
-import json
 import numpy as np
 import random
 import xmltodict
 
-
-config = None
+import config
 
 
 def init_agents(population):
@@ -51,11 +49,6 @@ def init_agents(population):
     return [foragers, obstacles]
 
 
-def pretty_config():
-
-    return json.dumps(config, sort_keys=True, indent=4)
-
-
 class Agent(object):
 
     __metaclass__ = abc.ABCMeta
@@ -66,11 +59,11 @@ class Agent(object):
 
         self.id = Agent.aid()
         self.fitness = -1
-        self.params_lower_bounds = config[self.__class__.__name__]['params_lower_bounds']
-        self.params_upper_bounds = config[self.__class__.__name__]['params_upper_bounds']
+        self.params_lower_bounds = config.global_config['agent'][self.__class__.__name__]['params_lower_bounds']
+        self.params_upper_bounds = config.global_config['agent'][self.__class__.__name__]['params_upper_bounds']
         self.params = [random.uniform(lower, upper) for lower, upper in zip(self.params_lower_bounds, self.params_upper_bounds)]
         self.params_len = len(self.params)
-        self.params_mutational_probability = config[self.__class__.__name__]['params_mutational_probability']
+        self.params_mutational_probability = config.global_config['agent'][self.__class__.__name__]['params_mutational_probability']
 
     def __lt__(self, other):
 

@@ -1,62 +1,48 @@
 __author__ = 'Troy Squillaci'
 
-import json
 import logging
 import multiprocessing
 import random
 import time
 
-
+import config
 from generation import Generation
 import agent
-import crossover
-import mutation
-import proxies
-import selection
-from simulation import argos
 import utils
-
-
-config = None
-
-
-def pretty_config():
-
-    return json.dumps(config, sort_keys=True, indent=4)
 
 
 class GeneticAlgorithm:
 
-    def __init__(self):
+    def __init__(self, proxy=None):
 
-        # Logging
+        # Initialize Logging
         now = time.strftime("%I:%M-D%dM%mY%Y")
-        logging.basicConfig(filename=config['log'] + '/' + now + '.log', level=logging.DEBUG)
+        logging.basicConfig(filename=config.global_config['ga']['log'] + '/' + now + '.log', level=logging.DEBUG)
         logging.info(' Log for py.evolve '.center(180, '='))
 
-        # Multi-processing
-        self.pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
+        # Log Configurations
+        for configuration in config.global_config:
 
-        logging.info(' Agent Configuration '.center(180, '-'))
-        logging.info('\n' + agent.pretty_config())
-        logging.info(' GA Configuration '.center(180, '-'))
-        logging.info('\n' + pretty_config())
+            logging.info((configuration['name'] + ' Configuration ').center(180, '-'))
+            logging.info('\n' + config.pretty_config(configuration))
 
-        self.generations = [Generation() for sentinel in xrange(config['general']['generations'])]
-        # TODO Consider Dynamic Injection
-        self.all_agents = agent.init_agents(config['general']['population'])
+        # Initialize Generations
+        self.generations = [Generation() for sentinel in xrange(config.global_config['ga']['general']['generations'])]
+
+        # Initialize Agents
+        self.all_agents = agent.init_agents(config.global_config['ga']['general']['population'])
         self.active_agents = None
-        self.proxies = proxies.generate_ga_proxies(config['proxies']['population'])
-
-        for proxy in self.proxies:
-
-            print proxy.__name__
-            print dir(proxy)
 
         logging.info(' Agent Initialization '.center(180, '='))
 
         for agent_set in self.all_agents:
             logging.info('\n' + '\n'.join(map(str, agent_set)))
+
+        # Proxy defines functions that drive the evolutionary process.
+        self.proxy = proxy
+
+        # Multi-processing
+        self.pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
 
     def evolve(self):
 
@@ -83,7 +69,7 @@ class GeneticAlgorithm:
 
                 self.active_agents = agent_set
                 random.choice(self.proxies).selection(self)
-                random.choice(self.proxies).crossover(self, config)
+                random.choice(self.proxies).crossover(self)
                 random.choice(self.proxies).mutation(self)
 
         logging.info("Evolution finished in %s seconds " % (time.time() - start_time))
@@ -91,14 +77,4 @@ class GeneticAlgorithm:
 
         utils.generate_csv(self.generations)
 
-    def fitness(self):
 
-        results = [self.pool.apply_async(
-            argos.argos,
-            args=(agent.config['argos_xml'][:-4] + '_' + str(number) + agent.config['argos_xml'][-4:], forager, obstacle))
-                   for number, forager, obstacle in zip(list(xrange(config['general']['population'])), self.all_agents[0], self.all_agents[1])]
-
-        output = [p.get() for p in results]
-
-        self.all_agents[0] = [agent_out[0] for agent_out in output]
-        self.all_agents[1] = [obs_agent_out[1] for obs_agent_out in output]

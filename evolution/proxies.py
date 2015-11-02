@@ -1,5 +1,8 @@
 __author__ = 'Troy Squillaci'
 
+import logging
+
+import config
 import crossover
 import ga
 import mutation
@@ -9,9 +12,9 @@ import random
 
 def generate_ga_proxies(population_size=0):
 
-    selection_funcs = [getattr(selection, func) for func in ga.config['proxies']['selection']]
-    crossover_funcs = [getattr(crossover, func) for func in ga.config['proxies']['crossover']]
-    mutation_funcs = [getattr(mutation, func) for func in ga.config['proxies']['mutation']]
+    selection_funcs = [getattr(selection, func) for func in config.global_config['ga']['proxies']['selection']]
+    crossover_funcs = [getattr(crossover, func) for func in config.global_config['ga']['proxies']['crossover']]
+    mutation_funcs = [getattr(mutation, func) for func in config.global_config['ga']['proxies']['mutation']]
 
     proxies = []
 
@@ -28,3 +31,27 @@ def generate_ga_proxies(population_size=0):
         }))
 
     return proxies
+
+
+class StandardProxy:
+
+    def __init__(self, fitness=None, selection=None, crossover=None, mutate=None):
+
+        self.fitness = fitness
+        self.selection = selection
+        self.crossover = crossover
+        self.mutate = mutate
+
+
+class ReflectionProxy:
+
+    def __init__(self):
+
+        self.proxies = generate_ga_proxies(config.global_config['ga']['proxies']['population'])
+
+        logging.info(' Proxy Initialization '.center(180, '='))
+
+        for proxy in self.proxies:
+
+            logging.info(proxy.__name__)
+            logging.info(dir(proxy))
