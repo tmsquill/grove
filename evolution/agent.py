@@ -65,14 +65,6 @@ class Agent(object):
         self.params_len = len(self.params)
         self.params_mutational_probability = config.global_config['agent'][self.__class__.__name__]['params_mutational_probability']
 
-    def __lt__(self, other):
-
-        return self.fitness < other.fitness
-
-    def __gt__(self, other):
-
-        return self.fitness > other.fitness
-
     def __str__(self):
 
         result = ''

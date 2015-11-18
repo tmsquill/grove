@@ -7,25 +7,9 @@ import subprocess
 
 import evolution.config as config
 import evolution.ga as ga
-
-
-if __name__ == "__main__":
-
-    # Change the current directory to ARGoS (required by the simulator).
-    os.chdir(os.path.expanduser('~') + '/ARGoS/iAnt-ARGoS-master')
-
-    # Parser for command line arguments.
-    parser = argparse.ArgumentParser(description='py.evolve')
-    parser.add_argument('-agent_config', action="store", type=str, default='./experiments/agent.json')
-    parser.add_argument('-ga_config', action="store", type=str, default='./experiments/ga.json')
-    args = parser.parse_args()
-
-    # Load the configurations into memory (as dictionaries) by filename.
-    config.load_configs([args.agent_config, args.ga_config])
-
-    # Run the genetic algorithm.
-    genetic_algorithm = ga.GeneticAlgorithm()
-    genetic_algorithm.evolve()
+import evolution.selection as selection
+import evolution.crossover as crossover
+import evolution.mutation as mutation
 
 
 # Domain-specific fitness function.
@@ -51,3 +35,25 @@ def argos(argos_xml=None, iant_agent=None, obs_agent=None):
     obs_agent.fitness = 1 - iant_agent.fitness
 
     return iant_agent, obs_agent
+
+
+if __name__ == "__main__":
+
+    # Change the current directory to ARGoS (required by the simulator).
+    os.chdir(os.path.expanduser('~') + '/ARGoS/iAnt-ARGoS-master')
+
+    # Parser for command line arguments.
+    parser = argparse.ArgumentParser(description='py.evolve')
+    parser.add_argument('-agent_config', action="store", type=str, default='./experiments/agent.json')
+    parser.add_argument('-ga_config', action="store", type=str, default='./experiments/ga.json')
+    args = parser.parse_args()
+
+    # Load the configurations into memory (as dictionaries) by filename.
+    config.load_configs([args.agent_config, args.ga_config])
+
+    # Define the evolutionary sequence.
+    evolution_sequence = [fitness, ]
+
+    # Run the genetic algorithm.
+    genetic_algorithm = ga.GeneticAlgorithm()
+    genetic_algorithm.evolve()

@@ -1,5 +1,6 @@
 __author__ = 'Troy Squillaci'
 
+import abc
 import logging
 
 import config
@@ -10,37 +11,37 @@ import selection
 import random
 
 
-def generate_ga_proxies(population_size=0):
+class Proxy(object):
 
-    selection_funcs = [getattr(selection, func) for func in config.global_config['ga']['proxies']['selection']]
-    crossover_funcs = [getattr(crossover, func) for func in config.global_config['ga']['proxies']['crossover']]
-    mutation_funcs = [getattr(mutation, func) for func in config.global_config['ga']['proxies']['mutation']]
+    __metaclass__ = abc.ABCMeta
 
-    proxies = []
+    def __init__(self):
 
-    for sentinel in xrange(population_size):
+        self.evolution_sequence = []
 
-        selection_func = random.choice(selection_funcs)
-        crossover_func = random.choice(crossover_funcs)
-        mutation_func = random.choice(mutation_funcs)
+    def __str__(self):
 
-        proxies.append(type(selection_func.__name__ + crossover_func.__name__ + mutation_func.__name__, (object,), {
-            'selection': selection_func,
-            'crossover': crossover_func,
-            'mutation': mutation_func
-        }))
+        result = ''
+        result += self.__class__.__name__ + ' ID: ' + "{:4}".format(self.id)
+        result += ' Fitness: ' + "{:8f}".format(self.fitness) + ' '
+        result += ' '.join([str(idx) + ': ' + "{:4f}".format(param) for idx, param in enumerate(self.params)])
 
-    return proxies
+        return result
+
+    @abc.abstractmethod
+    def next(self, argos_xml):
+        """Executes appropriate code needed to evaluate the fitness of the agent."""
 
 
 class StandardProxy:
 
     def __init__(self, fitness=None, selection=None, crossover=None, mutate=None):
 
-        self.fitness = fitness
-        self.selection = selection
-        self.crossover = crossover
-        self.mutate = mutate
+        self.evolution_sequence = []
+
+        self.evolution_sequence.append(fitness)
+
+        self.evolution_sequence.append()
 
 
 class ReflectionProxy:
@@ -55,3 +56,4 @@ class ReflectionProxy:
 
             logging.info(proxy.__name__)
             logging.info(dir(proxy))
+

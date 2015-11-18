@@ -13,7 +13,7 @@ import utils
 
 class GeneticAlgorithm:
 
-    def __init__(self, proxy=None):
+    def __init__(self, evolution_sequence=None):
 
         # Initialize Logging
         now = time.strftime("%I:%M-D%dM%mY%Y")
@@ -39,7 +39,7 @@ class GeneticAlgorithm:
             logging.info('\n' + '\n'.join(map(str, agent_set)))
 
         # Proxy defines functions that drive the evolutionary process.
-        self.proxy = proxy
+        self.evolution_sequence = evolution_sequence
 
         # Multi-processing
         self.pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
@@ -55,12 +55,9 @@ class GeneticAlgorithm:
             logging.info(" Generation %s ".center(180, '*') % str(generation.id))
             print 'Generation ' + str(generation.id)
 
-            self.fitness()
+            for function in self.evolution_sequence:
 
-            for idx, agent_set in enumerate(self.all_agents):
-
-                self.all_agents[idx].sort()
-                self.all_agents[idx].reverse()
+                function()
 
             generation.bind_agents(self.all_agents)
             logging.info('\n' + str(generation))

@@ -11,6 +11,8 @@ def truncation(self, ga=None, proportion=0.2):
     :return:
     """
 
+    ga.active_agents = sorted(ga.active_agents, key=lambda agent: agent.fitness, reverse=True)
+
     logging.info(' Truncation Selection '.center(180, '='))
 
     logging.info(" (Before) {0} Population Size {1} ".center(180, '-').format(ga.active_agents[0].__class__.__name__, len(ga.active_agents)))
