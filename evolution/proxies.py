@@ -1,14 +1,7 @@
-__author__ = 'Troy Squillaci'
-
 import abc
 import logging
 
 import config
-import crossover
-import ga
-import mutation
-import selection
-import random
 
 
 class Proxy(object):

@@ -1,5 +1,3 @@
-__author__ = 'Troy Squillaci'
-
 import json
 import os
 

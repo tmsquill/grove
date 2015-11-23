@@ -1,13 +1,8 @@
-__author__ = 'Troy Squillaci'
-
 import logging
 import random
 
-import config
 
-
-# TODO Alternative access to config.
-def one_point(self, ga=None):
+def one_point(agents=None, population=None):
     """
     One-point crossover involves generating a random index in the each of the parents' genome sequences.
     Then offspring are created by combining the first slice of the first parent with the second slice of the
@@ -17,44 +12,41 @@ def one_point(self, ga=None):
 
     logging.info(' One-Point Crossover '.center(180, '='))
 
-    for idx, agent_set in enumerate(ga.agents):
+    offspring = []
 
-        logging.info(" {0} ".center(180, '-').format(agent_set[0].__class__.__name__))
+    for sentinel in xrange((population - len(agents)) / 2):
 
-        offspring = []
+        parent1 = random.choice(agents)
+        parent2 = random.choice(agents)
 
-        for sentinel in xrange((config.global_config['ga']['general']['population'] - len(agent_set)) / 2):
+        logging.info('Parent 1: ' + str(parent1))
+        logging.info('Parent 2: ' + str(parent2))
 
-            parent1 = random.choice(agent_set)
-            parent2 = random.choice(agent_set)
+        child1 = parent1.__class__.factory()
+        child2 = parent2.__class__.factory()
 
-            logging.info('Parent 1: ' + str(parent1))
-            logging.info('Parent 2: ' + str(parent2))
+        split = random.randint(0, parent1.params_len - 1)
 
-            child1 = parent1.__class__.factory()
-            child2 = parent2.__class__.factory()
+        logging.info('Split: ' + str(split))
 
-            split = random.randint(0, parent1.params_len - 1)
+        child1.params[0:split] = parent1.params[0:split]
+        child1.params[split:parent1.params_len] = parent2.params[split:parent1.params_len]
 
-            logging.info('Split: ' + str(split))
+        child2.params[0:split] = parent2.params[0:split]
+        child2.params[split:parent1.params_len] = parent1.params[split:parent1.params_len]
 
-            child1.params[0:split] = parent1.params[0:split]
-            child1.params[split:parent1.params_len] = parent2.params[split:parent1.params_len]
+        logging.info('Child 1: ' + str(child1))
+        logging.info('Child 2: ' + str(child2) + '\n')
 
-            child2.params[0:split] = parent2.params[0:split]
-            child2.params[split:parent1.params_len] = parent1.params[split:parent1.params_len]
+        offspring.append(child1)
+        offspring.append(child2)
 
-            logging.info('Child 1: ' + str(child1))
-            logging.info('Child 2: ' + str(child2) + '\n')
+    agents.extend(offspring)
 
-            offspring.append(child1)
-            offspring.append(child2)
-
-        ga.agents[idx].extend(offspring)
+    return agents
 
 
-# TODO Alternative access to config.
-def two_point(self, ga=None):
+def two_point(agents=None, population=None):
     """
     Two-point crossover is essentially the same as one-point crossover, but with two slices of the parent
     genome sequences.
@@ -63,87 +55,82 @@ def two_point(self, ga=None):
 
     logging.info(' Two-Point Crossover '.center(180, '='))
 
-    for idx, agent_set in enumerate(ga.agents):
+    offspring = []
 
-        logging.info(" {0} ".center(180, '-').format(agent_set[0].__class__.__name__))
+    for sentinel in xrange((population - len(agents)) / 2):
 
-        offspring = []
+        parent1 = random.choice(agents)
+        parent2 = random.choice(agents)
 
-        for sentinel in xrange((config.global_config['ga']['general']['population'] - len(agent_set)) / 2):
+        logging.info('Parent 1: ' + str(parent1))
+        logging.info('Parent 2: ' + str(parent2))
 
-            parent1 = random.choice(agent_set)
-            parent2 = random.choice(agent_set)
+        child1 = parent1.__class__.factory()
+        child2 = parent2.__class__.factory()
 
-            logging.info('Parent 1: ' + str(parent1))
-            logging.info('Parent 2: ' + str(parent2))
+        split1 = random.randint(0, parent1.params_len - 1)
+        split2 = random.randint(0, parent1.params_len - 1)
 
-            child1 = parent1.__class__.factory()
-            child2 = parent2.__class__.factory()
+        logging.info('(1) Split: ' + str(split1))
+        logging.info('(2) Split: ' + str(split2))
 
-            split1 = random.randint(0, parent1.params_len - 1)
-            split2 = random.randint(0, parent1.params_len - 1)
+        child1.params[1:split1] = parent1.params[1:split1]
+        child1.params[split1:split2] = parent2.params[split1:split2]
+        child1.params[split2:len(agents[0].params)] = parent1.params[split2:parent1.params_len - 1]
 
-            logging.info('(1) Split: ' + str(split1))
-            logging.info('(2) Split: ' + str(split2))
+        child2.params[1:split1] = parent2.params[1:split1]
+        child2.params[split1:split2] = parent1.params[split1:split2]
+        child2.params[split2:len(agents[0].params)] = parent2.params[split2:parent1.params_len - 1]
 
-            child1.params[1:split1] = parent1.params[1:split1]
-            child1.params[split1:split2] = parent2.params[split1:split2]
-            child1.params[split2:len(ga.agents[0].params)] = parent1.params[split2:parent1.params_len - 1]
+        logging.info('Child 1: ' + str(child1))
+        logging.info('Child 2: ' + str(child2) + '\n')
 
-            child2.params[1:split1] = parent2.params[1:split1]
-            child2.params[split1:split2] = parent1.params[split1:split2]
-            child2.params[split2:len(ga.agents[0].params)] = parent2.params[split2:parent1.params_len - 1]
+        offspring.append(child1)
+        offspring.append(child2)
 
-            logging.info('Child 1: ' + str(child1))
-            logging.info('Child 2: ' + str(child2) + '\n')
+    agents.extend(offspring)
 
-            offspring.append(child1)
-            offspring.append(child2)
-
-        ga.agents[idx].extend(offspring)
+    return agents
 
 
-# TODO Alternative access to config.
-def uniform(self, ga=None):
+def uniform(agents=None, population=None):
     """
     Uniform crossover uses a fixed mixing ratio between two parents to form offspring.
     """
 
     logging.info(' Uniform Crossover '.center(180, '='))
 
-    for idx, agent_set in enumerate(ga.agents):
+    offspring = []
 
-        logging.info(" {0} ".center(180, '-').format(agent_set[0].__class__.__name__))
+    for sentinel in xrange((population - len(agents)) / 2):
 
-        offspring = []
+        parent1 = random.choice(agents)
+        parent2 = random.choice(agents)
 
-        for sentinel in xrange((config.global_config['ga']['general']['population'] - len(agent_set)) / 2):
+        logging.info('Parent 1: ' + str(parent1))
+        logging.info('Parent 2: ' + str(parent2))
 
-            parent1 = random.choice(agent_set)
-            parent2 = random.choice(agent_set)
+        child1 = parent1.__class__.factory()
+        child2 = parent1.__class__.factory()
 
-            logging.info('Parent 1: ' + str(parent1))
-            logging.info('Parent 2: ' + str(parent2))
+        for i in xrange(parent1.params_len):
 
-            child1 = parent1.__class__.factory()
-            child2 = parent1.__class__.factory()
+            if bool(random.getrandbits(1)):
 
-            for i in xrange(parent1.params_len):
+                child1.params[i] = parent1.params[i]
+                child2.params[i] = parent2.params[i]
 
-                if bool(random.getrandbits(1)):
+            else:
 
-                    child1.params[i] = parent1.params[i]
-                    child2.params[i] = parent2.params[i]
+                child1.params[i] = parent2.params[i]
+                child2.params[i] = parent1.params[i]
 
-                else:
+        logging.info('Child 1: ' + str(child1))
+        logging.info('Child 2: ' + str(child2) + '\n')
 
-                    child1.params[i] = parent2.params[i]
-                    child2.params[i] = parent1.params[i]
+        offspring.append(child1)
+        offspring.append(child2)
 
-            logging.info('Child 1: ' + str(child1))
-            logging.info('Child 2: ' + str(child2) + '\n')
+    agents.extend(offspring)
 
-            offspring.append(child1)
-            offspring.append(child2)
-
-        ga.agents[idx].extend(offspring)
+    return population

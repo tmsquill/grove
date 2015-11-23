@@ -1,11 +1,9 @@
-__author__ = 'Troy Squillaci'
-
 import logging
 import numpy as np
 import random
 
 
-def boundary(self, ga=None):
+def boundary(agents):
     """
     Boundary mutation replaces chosen genes within the genome with either lower or upper bounds for each respective
     gene.
@@ -13,7 +11,7 @@ def boundary(self, ga=None):
 
     logging.info(' Boundary Mutation '.center(180, '='))
 
-    for agent in ga.active_agents:
+    for agent in agents:
 
         logging.info('(Before) ' + str(agent))
 
@@ -25,8 +23,10 @@ def boundary(self, ga=None):
 
         logging.info('(After) ' + str(agent))
 
+    return agents
 
-def uniform(self, ga=None):
+
+def uniform(agents):
     """
     Uniform mutation replaces the value of the chosen gene with a uniform random value within the specified
     bounds of the gene.
@@ -34,7 +34,7 @@ def uniform(self, ga=None):
 
     logging.info(' Uniform Mutation '.center(180, '='))
 
-    for agent in ga.active_agents:
+    for agent in agents:
 
         logging.info('(Before) ' + str(agent))
 
@@ -46,8 +46,10 @@ def uniform(self, ga=None):
 
         logging.info('(After) ' + str(agent))
 
+    return agents
 
-def gaussian(self, ga=None):
+
+def gaussian(agents):
     """
     Gaussian mutation adds a unit gaussian distributed value to the chosen gene. Bounds checking ensures
     the mutation does not violate legal ranges for the gene.
@@ -55,7 +57,7 @@ def gaussian(self, ga=None):
 
     logging.info(' Gaussian Mutation '.center(180, '='))
 
-    for agent in ga.active_agents:
+    for agent in agents:
 
         logging.info('(Before) ' + str(agent))
 
@@ -80,3 +82,5 @@ def gaussian(self, ga=None):
                 agent.params[idx] = val
 
         logging.info('(After) ' + str(agent))
+
+    return agents

@@ -1,5 +1,3 @@
-__author__ = 'Troy Squillaci'
-
 import abc
 import itertools
 import numpy as np
@@ -9,44 +7,29 @@ import xmltodict
 import config
 
 
-def init_agents(population):
+def init_agents(agent_type, population):
 
-    foragers = []
-    obstacles = []
+    agents = []
 
     for i in xrange(population):
 
-        forager = ForagerAgent.factory()
-        obstacle = ObstacleAgent.factory()
+        agent = agent_type.factory()
         mean = float(i) / population
 
-        for idx, param in enumerate(forager.params):
+        for idx, param in enumerate(agent.params):
 
-            param = forager.params_upper_bounds[idx] * np.random.normal(loc=mean, scale=0.05)
+            param = agent.params_upper_bounds[idx] * np.random.normal(loc=mean, scale=0.05)
 
-            if param < forager.params_lower_bounds[idx]:
-                param = forager.params_lower_bounds[idx]
-            elif param > forager.params_upper_bounds[idx]:
-                param = forager.params_upper_bounds[idx]
+            if param < agent.params_lower_bounds[idx]:
+                param = agent.params_lower_bounds[idx]
+            elif param > agent.params_upper_bounds[idx]:
+                param = agent.params_upper_bounds[idx]
 
-            forager.params[idx] = param
+            agent.params[idx] = param
 
-        foragers.append(forager)
+        agents.append(agent)
 
-        for idx, param in enumerate(obstacle.params):
-
-            param = obstacle.params_upper_bounds[idx] * np.random.normal(loc=mean, scale=0.05)
-
-            if param < obstacle.params_lower_bounds[idx]:
-                param = obstacle.params_lower_bounds[idx]
-            elif param > obstacle.params_upper_bounds[idx]:
-                param = obstacle.params_upper_bounds[idx]
-
-            obstacle.params[idx] = param
-
-        obstacles.append(obstacle)
-
-    return [foragers, obstacles]
+    return agents
 
 
 class Agent(object):
