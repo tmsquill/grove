@@ -6,7 +6,7 @@ Genetic algorithm framework for Python by Troy Squillaci (zivia@unm.edu).
 
 * Generic template for evolving agent based models.
 * Includes popular built-in evolutionary function (selection, crossover, mutation, etc...).
-* Grammatical Evolution with BNF.
+* [Grammatical Evolution](https://en.wikipedia.org/wiki/Grammatical_evolution) with BNF.
 * Extensive logging and output files for data analysis.
 
 ### Installation ###
