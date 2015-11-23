@@ -1,3 +1,5 @@
+[![License](http://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org)
+
 # py.evolve #
 
 Genetic algorithm framework for Python by Troy Squillaci (zivia@unm.edu).
