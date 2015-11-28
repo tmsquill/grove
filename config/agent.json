@@ -5,6 +5,26 @@
         "ObstacleAgent",
         "GEAgent"
     ],
+    "GEAgent": {
+        "genotype_lb": [
+            0
+        ],
+        "genotype_ub": [
+            127
+        ],
+        "genotype_mutational_probability": [
+            0.1
+        ],
+        "genotype_names": [
+            "Codon"
+        ],
+        "genotype_abbr_names": [
+            "CODON"
+        ],
+        "genotype_plot": [
+            1
+        ]
+    },
     "ForagerAgent": {
         "genotype_lb": [
             0.0,
@@ -138,62 +158,6 @@
             1,
             1,
             1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1
-        ]
-    },
-    "GEAgent": {
-        "genotype_lb": [
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0
-        ],
-        "genotype_ub": [
-            1.0,
-            1.0,
-            180.0,
-            1.0,
-            20.0,
-            20.0,
-            1.0
-        ],
-        "genotype_mutational_probability": [
-            0.1,
-            0.1,
-            0.1,
-            0.1,
-            0.1,
-            0.1,
-            0.1
-        ],
-        "genotype_names": [
-            "Probability Of Switching To Searching",
-            "Probability Of Returning To Nest",
-            "Uninformed Search Variation",
-            "Rate Of Informed Search Decay",
-            "Rate Of Site Fidelity",
-            "Rate Of Laying Pheromone",
-            "Rate Of Pheromone Decay"
-        ],
-        "genotype_abbr_names": [
-            "PSS",
-            "PRN",
-            "USV",
-            "RISD",
-            "RSF",
-            "RLP",
-            "RPD"
-        ],
-        "genotype_plot": [
             1,
             1,
             1,

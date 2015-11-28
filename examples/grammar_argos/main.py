@@ -28,8 +28,6 @@ def fitness(argos_xml=None, bnf_grammar=None, agent=None):
     # TODO: Configure grammar-based ARGoS XML or directly execute ARGoS with grammar-based parameters.
     agent.phenotype, agent.used_codons = bnf_grammar.generate(agent.genotype)
 
-    print agent.phenotype
-
     output = subprocess.check_output(['argos3 -n -c ' + argos_xml], shell=True, stderr=subprocess.STDOUT)
     result = re.search(r'\s(\d+),\s(\d+),\s(\d+)', output)
     agent.fitness = float(float(result.group(1)) / 256)

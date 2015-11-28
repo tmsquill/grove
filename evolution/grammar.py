@@ -110,12 +110,12 @@ class Grammar:
 
         while wraps < max_wraps and len(unexpanded_symbols) > 0:
 
-            # Wrap
+            # Wrap around the input.
             if used_input % len(_input) == 0 and used_input > 0 and len(production_choices) > 1:
 
                 wraps += 1
 
-            # Expand a production
+            # Expand a production.
             current_symbol = unexpanded_symbols.pop(0)
 
             # If the current symbol maps to a terminal, append the symbol.
@@ -123,6 +123,7 @@ class Grammar:
 
                 output.append(current_symbol[0])
 
+            # Otherwise the current symbol maps to a non-terminal.
             else:
 
                 production_choices = self.rules[current_symbol[0]]
@@ -135,46 +136,14 @@ class Grammar:
 
                     used_input += 1
 
-                # Derviation order is left to right(depth-first)
+                # Derivation order is left to right (depth-first).
                 unexpanded_symbols = production_choices[current_production] + unexpanded_symbols
 
-        # Not completly expanded
+        # Not completely expanded.
         if len(unexpanded_symbols) > 0:
 
             return None, used_input
 
         output = "".join(output)
 
-        if self.python_mode:
-
-            output = python_filter(output)
-
         return output, used_input
-
-
-def python_filter(txt):
-    """
-    Create correct python syntax.
-
-    We use {: and :} as special open and close brackets, because
-    it's not possible to specify indentation correctly in a BNF
-    grammar without this type of scheme.
-    """
-
-    indent_level = 0
-    tmp = txt[:]
-    i = 0
-    while i < len(tmp):
-        tok = tmp[i:i+2]
-        if tok == "{:":
-            indent_level += 1
-        elif tok == ":}":
-            indent_level -= 1
-        tabstr = "\n" + "  " * indent_level
-        if tok == "{:" or tok == ":}":
-            tmp = tmp.replace(tok, tabstr, 1)
-        i += 1
-    # Strip superfluous blank lines.
-    txt = "\n".join([line for line in tmp.split("\n")
-                     if line.strip() != ""])
-    return txt

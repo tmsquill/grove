@@ -5,3 +5,6 @@
 # Vowels and consonats
 <vowel> ::= a|e|o|i|u|y
 <consonant> ::= g|v|w|b|c|d|l|n
+
+<rules_expansion> ::= <rules><rules_expansion>|<rules>
+<rules> ::= <preconditions>|

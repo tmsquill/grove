@@ -52,8 +52,6 @@ class Agent(object):
         self.fitness = -1
         self.genotype_lb = config.global_config['agent'][self.__class__.__name__]['genotype_lb']
         self.genotype_ub = config.global_config['agent'][self.__class__.__name__]['genotype_ub']
-        self.genotype = [random.uniform(lower, upper) for lower, upper in zip(self.genotype_lb, self.genotype_ub)]
-        self.genotype_len = len(self.genotype)
         self.genotype_mutational_probability = config.global_config['agent'][self.__class__.__name__]['genotype_mutational_probability']
 
     def __str__(self):
@@ -86,6 +84,11 @@ class GEAgent(Agent):
         
         super(GEAgent, self).__init__()
 
+        self.genotype_lb = [self.genotype_lb[0]] * 100
+        self.genotype_ub = [self.genotype_ub[0]] * 100
+        self.genotype = [random.randint(lower, upper) for lower, upper in zip(self.genotype_lb, self.genotype_ub)]
+        self.genotype_len = len(self.genotype)
+
         self.phenotype = None
         self.used_codons = 0
 
@@ -100,3 +103,6 @@ class ARGoSAgent(Agent):
     def __init__(self):
 
         super(ARGoSAgent, self).__init__()
+
+        self.genotype = [random.uniform(lower, upper) for lower, upper in zip(self.genotype_lb, self.genotype_ub)]
+        self.genotype_len = len(self.genotype)
