@@ -108,7 +108,7 @@ class Grammar:
 
         unexpanded_symbols = [self.start_rule]
 
-        while (wraps < max_wraps) and (len(unexpanded_symbols) > 0):
+        while wraps < max_wraps and len(unexpanded_symbols) > 0:
 
             # Wrap
             if used_input % len(_input) == 0 and used_input > 0 and len(production_choices) > 1:
@@ -118,7 +118,7 @@ class Grammar:
             # Expand a production
             current_symbol = unexpanded_symbols.pop(0)
 
-            # Set output if it is a terminal
+            # If the current symbol maps to a terminal, append the symbol.
             if current_symbol[1] != self.NT:
 
                 output.append(current_symbol[0])
