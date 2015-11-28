@@ -2,10 +2,11 @@
     "name": "Agent",
     "agent_types": [
         "ForagerAgent",
-        "ObstacleAgent"
+        "ObstacleAgent",
+        "GEAgent"
     ],
     "ForagerAgent": {
-        "params_lower_bounds": [
+        "genotype_lb": [
             0.0,
             0.0,
             0.0,
@@ -14,7 +15,7 @@
             0.0,
             0.0
         ],
-        "params_upper_bounds": [
+        "genotype_ub": [
             1.0,
             1.0,
             180.0,
@@ -23,7 +24,7 @@
             20.0,
             1.0
         ],
-        "params_mutational_probability": [
+        "genotype_mutational_probability": [
             0.1,
             0.1,
             0.1,
@@ -32,7 +33,7 @@
             0.1,
             0.1
         ],
-        "params_names": [
+        "genotype_names": [
             "Probability Of Switching To Searching",
             "Probability Of Returning To Nest",
             "Uninformed Search Variation",
@@ -41,7 +42,7 @@
             "Rate Of Laying Pheromone",
             "Rate Of Pheromone Decay"
         ],
-        "params_abbr_names": [
+        "genotype_abbr_names": [
             "PSS",
             "PRN",
             "USV",
@@ -50,7 +51,7 @@
             "RLP",
             "RPD"
         ],
-        "params_plot": [
+        "genotype_plot": [
             1,
             1,
             1,
@@ -61,7 +62,7 @@
         ]
     },
     "ObstacleAgent": {
-        "params_lower_bounds": [
+        "genotype_lb": [
             0.0,
             1.5,
             1.5,
@@ -75,7 +76,7 @@
             1.5,
             1.5
         ],
-        "params_upper_bounds": [
+        "genotype_ub": [
             90.0,
             5.0,
             5.0,
@@ -89,7 +90,7 @@
             5.0,
             5.0
         ],
-        "params_mutational_probability": [
+        "genotype_mutational_probability": [
             0.1,
             0.1,
             0.1,
@@ -103,7 +104,7 @@
             0.1,
             0.1
         ],
-        "params_names": [
+        "genotype_names": [
             "(Obstacle 1) Orientation",
             "(Obstacle 1) Position X",
             "(Obstacle 1) Position Y",
@@ -117,7 +118,7 @@
             "(Obstacle 4) Position X",
             "(Obstacle 4) Position Y"
         ],
-        "params_abbr_names": [
+        "genotype_abbr_names": [
             "O1_ORIX",
             "O1_POSX",
             "O1_POSY",
@@ -131,12 +132,68 @@
             "O4_POSX",
             "O4_POSY"
         ],
-        "params_plot": [
+        "genotype_plot": [
             1,
             1,
             1,
             1,
             1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+        ]
+    },
+    "GEAgent": {
+        "genotype_lb": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+        ],
+        "genotype_ub": [
+            1.0,
+            1.0,
+            180.0,
+            1.0,
+            20.0,
+            20.0,
+            1.0
+        ],
+        "genotype_mutational_probability": [
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1,
+            0.1
+        ],
+        "genotype_names": [
+            "Probability Of Switching To Searching",
+            "Probability Of Returning To Nest",
+            "Uninformed Search Variation",
+            "Rate Of Informed Search Decay",
+            "Rate Of Site Fidelity",
+            "Rate Of Laying Pheromone",
+            "Rate Of Pheromone Decay"
+        ],
+        "genotype_abbr_names": [
+            "PSS",
+            "PRN",
+            "USV",
+            "RISD",
+            "RSF",
+            "RLP",
+            "RPD"
+        ],
+        "genotype_plot": [
             1,
             1,
             1,

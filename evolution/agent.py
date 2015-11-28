@@ -9,27 +9,35 @@ import config
 
 def init_agents(agent_type, population):
 
-    agents = []
+    if issubclass(agent_type, GEAgent):
 
-    for i in xrange(population):
+        return [agent_type.factory() for _ in xrange(population)]
 
-        agent = agent_type.factory()
-        mean = float(i) / population
+    if issubclass(agent_type, ARGoSAgent):
 
-        for idx, param in enumerate(agent.params):
+        agents = []
 
-            param = agent.params_upper_bounds[idx] * np.random.normal(loc=mean, scale=0.05)
+        for i in xrange(population):
 
-            if param < agent.params_lower_bounds[idx]:
-                param = agent.params_lower_bounds[idx]
-            elif param > agent.params_upper_bounds[idx]:
-                param = agent.params_upper_bounds[idx]
+            agent = agent_type.factory()
+            mean = float(i) / population
 
-            agent.params[idx] = param
+            for idx, param in enumerate(agent.genotype):
 
-        agents.append(agent)
+                param = agent.genotype_ub[idx] * np.random.normal(loc=mean, scale=0.05)
 
-    return agents
+                if param < agent.genotype_lb[idx]:
+                    param = agent.genotype_lb[idx]
+                elif param > agent.genotype_ub[idx]:
+                    param = agent.genotype_ub[idx]
+
+                agent.genotype[idx] = param
+
+            agents.append(agent)
+
+        return agents
+
+    raise TypeError("invalid agent type:", agent_type)
 
 
 class Agent(object):
@@ -42,18 +50,18 @@ class Agent(object):
 
         self.id = Agent.aid()
         self.fitness = -1
-        self.params_lower_bounds = config.global_config['agent'][self.__class__.__name__]['params_lower_bounds']
-        self.params_upper_bounds = config.global_config['agent'][self.__class__.__name__]['params_upper_bounds']
-        self.params = [random.uniform(lower, upper) for lower, upper in zip(self.params_lower_bounds, self.params_upper_bounds)]
-        self.params_len = len(self.params)
-        self.params_mutational_probability = config.global_config['agent'][self.__class__.__name__]['params_mutational_probability']
+        self.genotype_lb = config.global_config['agent'][self.__class__.__name__]['genotype_lb']
+        self.genotype_ub = config.global_config['agent'][self.__class__.__name__]['genotype_ub']
+        self.genotype = [random.uniform(lower, upper) for lower, upper in zip(self.genotype_lb, self.genotype_ub)]
+        self.genotype_len = len(self.genotype)
+        self.genotype_mutational_probability = config.global_config['agent'][self.__class__.__name__]['genotype_mutational_probability']
 
     def __str__(self):
 
         result = ''
         result += self.__class__.__name__ + ' ID: ' + "{:4}".format(self.id)
         result += ' Fitness: ' + "{:8f}".format(self.fitness) + ' '
-        result += ' '.join([str(idx) + ': ' + "{:4f}".format(param) for idx, param in enumerate(self.params)])
+        result += ' '.join([str(idx) + ': ' + "{:4f}".format(param) for idx, param in enumerate(self.genotype)])
 
         return result
 
@@ -61,97 +69,34 @@ class Agent(object):
     def factory(self):
         """Factory method to instantiate a new Agent object."""
 
-    @abc.abstractmethod
-    def execute_fitness(self, argos_xml):
-        """Executes appropriate code needed to evaluate the fitness of the agent."""
+    @staticmethod
+    def evaluate(fitness_function, *args):
+
+        result = fitness_function(*args)
+
+        return result
 
 
-class ForagerAgent(Agent):
+CODON_SIZE = 127
+
+
+class GEAgent(Agent):
 
     def __init__(self):
+        
+        super(GEAgent, self).__init__()
 
-        super(ForagerAgent, self).__init__()
+        self.phenotype = None
+        self.used_codons = 0
 
     @staticmethod
     def factory():
 
-        return ForagerAgent()
-
-    def execute_fitness(self, argos_xml):
-
-        forager_config = None
-
-        with open(argos_xml, 'r') as xml:
-
-            forager_config = xmltodict.parse(xml)
-
-        # General
-        forager_config['argos-configuration']['framework']['experiment']['@random_seed'] = str(random.randint(1, 1000000))
-
-        # iAnt Robots
-        forager_config['argos-configuration']['loop_functions']['CPFA']['@ProbabilityOfSwitchingToSearching'] = str(round(self.params[0], 5))
-        forager_config['argos-configuration']['loop_functions']['CPFA']['@ProbabilityOfReturningToNest'] = str(round(self.params[1], 5))
-        forager_config['argos-configuration']['loop_functions']['CPFA']['@UninformedSearchVariation'] = str(round(self.params[2], 5))
-        forager_config['argos-configuration']['loop_functions']['CPFA']['@RateOfInformedSearchDecay'] = str(round(self.params[3], 5))
-        forager_config['argos-configuration']['loop_functions']['CPFA']['@RateOfSiteFidelity'] = str(round(self.params[4], 5))
-        forager_config['argos-configuration']['loop_functions']['CPFA']['@RateOfLayingPheromone'] = str(round(self.params[5], 5))
-        forager_config['argos-configuration']['loop_functions']['CPFA']['@RateOfPheromoneDecay'] = str(round(self.params[6], 5))
-
-        with open(argos_xml, 'w') as xml:
-
-            xml.write(xmltodict.unparse(forager_config, pretty=True))
-            xml.truncate()
+        return GEAgent()
 
 
-class ObstacleAgent(Agent):
-
+class ARGoSAgent(Agent):
+    
     def __init__(self):
 
-        super(ObstacleAgent, self).__init__()
-
-        for i in xrange(self.params_len):
-
-            param = random.uniform(-self.params_upper_bounds[i], self.params_upper_bounds[i])
-
-            while abs(param) < self.params_lower_bounds[i]:
-
-                param = random.uniform(-self.params_upper_bounds[i], self.params_upper_bounds[i])
-
-            self.params[i] = param
-
-    @staticmethod
-    def factory():
-
-        return ObstacleAgent()
-
-    def execute_fitness(self, argos_xml):
-
-        with open(argos_xml, 'r') as xml:
-
-            obstacle_config = xmltodict.parse(xml)
-
-        # Obstacles
-        obstacle_config['argos-configuration']['arena']['box'][0]['body']['@orientation'] = \
-            str(round(self.params[0], 3)) + ',0,0'
-        obstacle_config['argos-configuration']['arena']['box'][0]['body']['@position'] = \
-            str(round(self.params[1], 3)) + ',' + str(round(self.params[2], 3)) + ',0'
-
-        obstacle_config['argos-configuration']['arena']['box'][1]['body']['@orientation'] = \
-            str(round(self.params[3], 3)) + ',0,0'
-        obstacle_config['argos-configuration']['arena']['box'][1]['body']['@position'] = \
-            str(round(self.params[4], 3)) + ',' + str(round(self.params[5], 3)) + ',0'
-
-        obstacle_config['argos-configuration']['arena']['box'][2]['body']['@orientation'] = \
-            str(round(self.params[6], 3)) + ',0,0'
-        obstacle_config['argos-configuration']['arena']['box'][2]['body']['@position'] = \
-            str(round(self.params[7], 3)) + ',' + str(round(self.params[8], 3)) + ',0'
-
-        obstacle_config['argos-configuration']['arena']['box'][3]['body']['@orientation'] = \
-            str(round(self.params[9], 3)) + ',0,0'
-        obstacle_config['argos-configuration']['arena']['box'][3]['body']['@position'] = \
-            str(round(self.params[10], 3)) + ',' + str(round(self.params[11], 3)) + ',0'
-
-        with open(argos_xml, 'w') as xml:
-
-            xml.write(xmltodict.unparse(obstacle_config, pretty=True))
-            xml.truncate()
+        super(ARGoSAgent, self).__init__()

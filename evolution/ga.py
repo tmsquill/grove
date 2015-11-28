@@ -28,7 +28,7 @@ def evolve(population, generations, agent_type, fitness_function, selection_func
         logging.info('\n' + config.pretty_config(name))
 
     # Initialize Generations
-    ga_generations = [Generation() for sentinel in xrange(generations)]
+    ga_generations = [Generation() for _ in xrange(generations)]
 
     # Initialize Agents
     ga_agents = agent.init_agents(agent_type, population)

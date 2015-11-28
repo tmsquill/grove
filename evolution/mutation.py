@@ -15,11 +15,11 @@ def boundary(agents):
 
         logging.info('(Before) ' + str(agent))
 
-        for idx, param in enumerate(agent.params):
+        for idx, param in enumerate(agent.genotype):
 
-            if random.uniform(0.0, 1.0) <= agent.params_mutational_probability[idx]:
+            if random.uniform(0.0, 1.0) <= agent.genotype_mutational_probability[idx]:
 
-                agent.params[idx] = random.choice([agent.params_lower_bounds[idx], agent.params_upper_bounds[idx]])
+                agent.genotype[idx] = random.choice([agent.genotype_lb[idx], agent.genotype_ub[idx]])
 
         logging.info('(After) ' + str(agent))
 
@@ -38,11 +38,11 @@ def uniform(agents):
 
         logging.info('(Before) ' + str(agent))
 
-        for idx, param in enumerate(agent.params):
+        for idx, param in enumerate(agent.genotype):
 
-            if random.uniform(0.0, 1.0) <= agent.params_mutational_probability[idx]:
+            if random.uniform(0.0, 1.0) <= agent.genotype_mutational_probability[idx]:
 
-                agent.params[idx] = random.uniform(agent.params_lower_bounds[idx], agent.params_upper_bounds[idx])
+                agent.genotype[idx] = random.uniform(agent.genotype_lb[idx], agent.genotype_ub[idx])
 
         logging.info('(After) ' + str(agent))
 
@@ -61,25 +61,25 @@ def gaussian(agents):
 
         logging.info('(Before) ' + str(agent))
 
-        for idx, param in enumerate(agent.params):
+        for idx, param in enumerate(agent.genotype):
 
-            if random.uniform(0.0, 1.0) <= agent.params_mutational_probability[idx]:
+            if random.uniform(0.0, 1.0) <= agent.genotype_mutational_probability[idx]:
 
                 val = np.random.normal(
                     loc=param,
-                    scale=(0.05 * agent.params_upper_bounds[idx])
+                    scale=(0.05 * agent.genotype_ub[idx])
                 )
 
-                while val < agent.params_lower_bounds[idx] or val > agent.params_upper_bounds[idx]:
+                while val < agent.genotype_lb[idx] or val > agent.genotype_ub[idx]:
 
                     val = np.random.normal(
                         loc=param,
-                        scale=(0.05 * agent.params_upper_bounds[idx])
+                        scale=(0.05 * agent.genotype_ub[idx])
                     )
 
                 logging.info('Mutating Parameter ' + str(idx) + ': ' + str(param) + ' -> ' + str(val))
 
-                agent.params[idx] = val
+                agent.genotype[idx] = val
 
         logging.info('(After) ' + str(agent))
 

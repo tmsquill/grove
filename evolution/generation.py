@@ -31,4 +31,4 @@ class Generation:
 
     def csv(self):
 
-        return [[[self.id] + [agent.id] + [agent.fitness] + agent.params].pop(0) for agent in self.agents]
+        return [[[self.id] + [agent.id] + [agent.fitness] + agent.genotype].pop(0) for agent in self.agents]

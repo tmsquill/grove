@@ -1,36 +1,21 @@
+from functools import partial
 import os
-import random
 import re
 import subprocess
-import xmltodict
 
-from evolution.agent import ARGoSAgent
+from evolution.agent import GEAgent
 import evolution.config as config
 import evolution.ga as ga
+import evolution.grammar as grammar
 import evolution.selection as selection
 import evolution.crossover as crossover
 import evolution.mutation as mutation
 
 
-class ForagerAgent(ARGoSAgent):
-
-    def __init__(self):
-
-        super(ForagerAgent, self).__init__()
-        self.xml_argos = None
-
-    @staticmethod
-    def factory():
-
-        return ForagerAgent()
-
-    # TODO: Maybe remove this.
-    def evaluate(self, argos_xml):
-
-        pass
+bnf_grammar = None
 
 
-def fitness(argos_xml=None, agent=None):
+def fitness(argos_xml=None, bnf_grammar=None, agent=None):
     """
     Helper function for iAnt forager fitness function.
     :param argos_xml: ARGoS XML Configuration.
@@ -40,28 +25,10 @@ def fitness(argos_xml=None, agent=None):
 
     os.chdir(os.path.expanduser('~') + '/ARGoS/iAnt-ARGoS-master')
 
-    forager_config = None
+    # TODO: Configure grammar-based ARGoS XML or directly execute ARGoS with grammar-based parameters.
+    agent.phenotype, agent.used_codons = bnf_grammar.generate(agent.genotype)
 
-    with open(argos_xml, 'r') as xml:
-
-        forager_config = xmltodict.parse(xml)
-
-    # General
-    forager_config['argos-configuration']['framework']['experiment']['@random_seed'] = str(random.randint(1, 1000000))
-
-    # iAnt Robots
-    forager_config['argos-configuration']['loop_functions']['CPFA']['@ProbabilityOfSwitchingToSearching'] = str(round(agent.genotype[0], 5))
-    forager_config['argos-configuration']['loop_functions']['CPFA']['@ProbabilityOfReturningToNest'] = str(round(agent.genotype[1], 5))
-    forager_config['argos-configuration']['loop_functions']['CPFA']['@UninformedSearchVariation'] = str(round(agent.genotype[2], 5))
-    forager_config['argos-configuration']['loop_functions']['CPFA']['@RateOfInformedSearchDecay'] = str(round(agent.genotype[3], 5))
-    forager_config['argos-configuration']['loop_functions']['CPFA']['@RateOfSiteFidelity'] = str(round(agent.genotype[4], 5))
-    forager_config['argos-configuration']['loop_functions']['CPFA']['@RateOfLayingPheromone'] = str(round(agent.genotype[5], 5))
-    forager_config['argos-configuration']['loop_functions']['CPFA']['@RateOfPheromoneDecay'] = str(round(agent.genotype[6], 5))
-
-    with open(argos_xml, 'w') as xml:
-
-        xml.write(xmltodict.unparse(forager_config, pretty=True))
-        xml.truncate()
+    print agent.phenotype
 
     output = subprocess.check_output(['argos3 -n -c ' + argos_xml], shell=True, stderr=subprocess.STDOUT)
     result = re.search(r'\s(\d+),\s(\d+),\s(\d+)', output)
@@ -70,7 +37,7 @@ def fitness(argos_xml=None, agent=None):
     return agent
 
 
-class ForagerFitness:
+class GEForagerFitness:
     """
     Fitness function for iAnt forager agents using grammatical evolution.
     """
@@ -80,7 +47,7 @@ class ForagerFitness:
 
     def __call__(self, agents):
 
-        results = [self.pool.apply_async(fitness, args=('./experiments/iAnt_Obstacles_' + str(number) + '.xml', agent)) for number, agent in zip(list(xrange(len(agents))), agents)]
+        results = [self.pool.apply_async(fitness, args=('./experiments/iAnt_Obstacles_' + str(number) + '.xml', bnf_grammar, agent)) for number, agent in zip(list(xrange(len(agents))), agents)]
         output = [result.get() for result in results]
         agents = [agent_out for agent_out in output]
 
@@ -100,7 +67,18 @@ if __name__ == "__main__":
     parser.add_argument('-c', '--crossover_function', action='store', type=str, default='truncation')
     parser.add_argument('-m', '--mutation_function', action='store', type=str, default='one_point')
     parser.add_argument('-s', '--selection_function', action='store', type=str, default='gaussian')
+    parser.add_argument('-b', '--bnf_grammar', action='store', type=str)
+    parser.add_argument('-v', '--verbose', action='store_true', help='show BNF input file')
     args = parser.parse_args()
+
+    # Construct a grammar from a BNF file.
+    bnf_grammar = grammar.Grammar(args.bnf_grammar)
+
+    if args.verbose:
+
+        print bnf_grammar.non_terminals
+        print bnf_grammar.terminals
+        print bnf_grammar.rules
 
     # Change the current directory to ARGoS (required by the simulator).
     os.chdir(os.path.expanduser('~') + '/ARGoS/iAnt-ARGoS-master')
@@ -109,4 +87,4 @@ if __name__ == "__main__":
     config.load_configs([args.agent_config, args.ga_config])
 
     # Run the genetic algorithm.
-    ga.evolve(args.population, args.generations, ForagerAgent, ForagerFitness(), selection.truncation, crossover.one_point, mutation.gaussian, 'log')
+    ga.evolve(args.population, args.generations, GEAgent, GEForagerFitness(), selection.truncation, crossover.one_point, mutation.gaussian, 'log')
