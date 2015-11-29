@@ -1,10 +1,10 @@
-# Grammar for lower case letters
-<string> ::= <letter>|<letter><string>
-<letter> ::= <vowel>|<consonant>|<space>
-<space> ::= _
-# Vowels and consonats
-<vowel> ::= a|e|o|i|u|y
-<consonant> ::= g|v|w|b|c|d|l|n
-
 <rules_expansion> ::= <rules><rules_expansion>|<rules>
-<rules> ::= <preconditions>|
+<rules> ::= <preconditions><behaviors><actions>
+<preconditions_expansion> ::= <preconditions><preconditions_expansion>|e
+<behaviors_expansion> ::= <behaviors><behaviors_expansion>|e
+<actions_expansion> ::= <actions><actions_expansion>|<actions>
+<preconditions> ::= <precondition_name>|<precondition_name>
+<behaviors> ::= <behaviors_name>
+<actions> ::= <actions_behavioral>|<actions_internal_state>
+<actions_behavioral> ::= p,<behaviors_name>
+<actions_internal_state> ::= p,<internal_state_name>
