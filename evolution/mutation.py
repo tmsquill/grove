@@ -7,6 +7,8 @@ def boundary(agents):
     """
     Boundary mutation replaces chosen genes within the genome with either lower or upper bounds for each respective
     gene.
+    :param agents: The set of agents to perform mutation on.
+    :return: The updated set of agents with mutations.
     """
 
     logging.info(' Boundary Mutation '.center(180, '='))
@@ -30,6 +32,8 @@ def uniform(agents):
     """
     Uniform mutation replaces the value of the chosen gene with a uniform random value within the specified
     bounds of the gene.
+    :param agents: The set of agents to perform mutation on.
+    :return: The updated set of agents with mutations.
     """
 
     logging.info(' Uniform Mutation '.center(180, '='))
@@ -53,6 +57,8 @@ def gaussian(agents):
     """
     Gaussian mutation adds a unit gaussian distributed value to the chosen gene. Bounds checking ensures
     the mutation does not violate legal ranges for the gene.
+    :param agents: The set of agents to perform mutation on.
+    :return: The updated set of agents with mutations.
     """
 
     logging.info(' Gaussian Mutation '.center(180, '='))

@@ -1,10 +1,12 @@
 import abc
-import logging
-
-import config
 
 
 class Proxy(object):
+    """
+    A proxy is essentially a subset of a genetic algorithm that uses reflection and dynamic typing the alter its
+    behavior at runtime. This is currently a bare-bones shell, but takes ideas from genetic programming and the
+    middleware stack in Express (Node.js).
+    """
 
     __metaclass__ = abc.ABCMeta
 
@@ -12,41 +14,6 @@ class Proxy(object):
 
         self.evolution_sequence = []
 
-    def __str__(self):
-
-        result = ''
-        result += self.__class__.__name__ + ' ID: ' + "{:4}".format(self.id)
-        result += ' Fitness: ' + "{:8f}".format(self.fitness) + ' '
-        result += ' '.join([str(idx) + ': ' + "{:4f}".format(param) for idx, param in enumerate(self.params)])
-
-        return result
-
     @abc.abstractmethod
-    def next(self, argos_xml):
-        """Executes appropriate code needed to evaluate the fitness of the agent."""
-
-
-class StandardProxy:
-
-    def __init__(self, fitness=None, selection=None, crossover=None, mutate=None):
-
-        self.evolution_sequence = []
-
-        self.evolution_sequence.append(fitness)
-
-        self.evolution_sequence.append()
-
-
-class ReflectionProxy:
-
-    def __init__(self):
-
-        self.proxies = generate_ga_proxies(config.global_config['ga']['proxies']['population'])
-
-        logging.info(' Proxy Initialization '.center(180, '='))
-
-        for proxy in self.proxies:
-
-            logging.info(proxy.__name__)
-            logging.info(dir(proxy))
-
+    def next(self):
+        """Executes next segment in the middleware stack needed to advance the evolutionary process."""

@@ -6,6 +6,10 @@ global_config = {}
 
 
 def load_configs(config_files=None):
+    """
+    Loads a JSON configuration file into a dictionary.
+    :param config_files: The filename containing a JSON configuration.
+    """
 
     for config_file in config_files:
 
@@ -14,5 +18,10 @@ def load_configs(config_files=None):
 
 
 def pretty_config(name=None):
+    """
+    Pretty-print a configuration in the global dictionary determined by the base name.
+    :param name: The base name of the configuration.
+    :return: The pretty-printed string version of the configuration.
+    """
 
     return json.dumps(global_config[name], sort_keys=True, indent=4)

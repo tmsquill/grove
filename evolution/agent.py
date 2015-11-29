@@ -2,12 +2,17 @@ import abc
 import itertools
 import numpy as np
 import random
-import xmltodict
 
 import config
 
 
 def init_agents(agent_type, population):
+    """
+    Initializes a population of agents based on the derived type.
+    :param agent_type: A class derived from the base class Agent.
+    :param population: The number of agents to produce in the population.
+    :return: The population of initialized agents.
+    """
 
     if issubclass(agent_type, GEAgent):
 
@@ -41,6 +46,10 @@ def init_agents(agent_type, population):
 
 
 class Agent(object):
+    """
+    An abstract representation of an agent. All agents have a unique ID, a fitness value, and information regarding
+    their genotype. The factory and evaluation methods are abstract and must be implemented in a concrete class.
+    """
 
     __metaclass__ = abc.ABCMeta
 
@@ -52,7 +61,7 @@ class Agent(object):
         self.fitness = -1
         self.genotype_lb = config.global_config['agent'][self.__class__.__name__]['genotype_lb']
         self.genotype_ub = config.global_config['agent'][self.__class__.__name__]['genotype_ub']
-        self.genotype_mutational_probability = config.global_config['agent'][self.__class__.__name__]['genotype_mutational_probability']
+        self.genotype_mutational_probability = config.global_config['agent'][self.__class__.__name__]['genotype_mp']
 
     def __str__(self):
 
@@ -65,7 +74,7 @@ class Agent(object):
 
     @abc.abstractmethod
     def factory(self):
-        """Factory method to instantiate a new Agent object."""
+        """ Factory method to instantiate a new Agent object. """
 
     @staticmethod
     def evaluate(fitness_function, *args):
@@ -75,10 +84,8 @@ class Agent(object):
         return result
 
 
-CODON_SIZE = 127
-
-
 class GEAgent(Agent):
+    """ An agent suited for Grammatical Evolution. """
 
     def __init__(self):
         
@@ -99,6 +106,7 @@ class GEAgent(Agent):
 
 
 class ARGoSAgent(Agent):
+    """ A standard agent suited for CPFA optimization. """
     
     def __init__(self):
 
@@ -106,3 +114,8 @@ class ARGoSAgent(Agent):
 
         self.genotype = [random.uniform(lower, upper) for lower, upper in zip(self.genotype_lb, self.genotype_ub)]
         self.genotype_len = len(self.genotype)
+
+    @staticmethod
+    def factory():
+
+        return ARGoSAgent()

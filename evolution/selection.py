@@ -6,7 +6,9 @@ def truncation(agents, proportion=0.2):
     """
     Truncation selection orders agents of the population by fitness then chooses some proportion of the fittest
     agents for use in the reproduction phase.
-    :return:
+    :param agents: The set of agents to perform selection on.
+    :param proportion: The proportion of the elite.
+    :return: The updated set of agents after the selection process.
     """
 
     agents = sorted(agents, key=lambda agent: agent.fitness, reverse=True)
@@ -31,7 +33,9 @@ def tournament(agents, size=None):
     the population. Winners of the tournaments move on for use in the reproduction phase. Changing the
     tournament size effects selection pressure - that is the larger the tournament, the lesser a change weak
     agents will selected.
-    :return:
+    :param agents: The set of agents to perform selection on.
+    :param size: The size of the tournament.
+    :return: The updated set of agents after the selection process.
     """
 
     fittest = None

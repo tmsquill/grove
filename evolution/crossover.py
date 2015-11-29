@@ -7,7 +7,9 @@ def one_point(agents=None, population=None):
     One-point crossover involves generating a random index in the each of the parents' genome sequences.
     Then offspring are created by combining the first slice of the first parent with the second slice of the
     second parent (or vice versa).
-    :return:
+    :param agents: The set of agents to perform crossover on.
+    :param population: The population size.
+    :return: The updated set of agents with new offspring.
     """
 
     logging.info(' One-Point Crossover '.center(180, '='))
@@ -50,7 +52,9 @@ def two_point(agents=None, population=None):
     """
     Two-point crossover is essentially the same as one-point crossover, but with two slices of the parent
     genome sequences.
-    :return:
+    :param agents: The set of agents to perform crossover on.
+    :param population: The population size.
+    :return: The updated set of agents with new offspring.
     """
 
     logging.info(' Two-Point Crossover '.center(180, '='))
@@ -96,6 +100,9 @@ def two_point(agents=None, population=None):
 def uniform(agents=None, population=None):
     """
     Uniform crossover uses a fixed mixing ratio between two parents to form offspring.
+    :param agents: The set of agents to perform crossover on.
+    :param population: The population size.
+    :return: The updated set of agents with new offspring.
     """
 
     logging.info(' Uniform Crossover '.center(180, '='))
@@ -133,4 +140,4 @@ def uniform(agents=None, population=None):
 
     agents.extend(offspring)
 
-    return population
+    return agents
