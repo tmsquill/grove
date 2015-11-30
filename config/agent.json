@@ -12,7 +12,7 @@
         "genotype_ub": [
             127
         ],
-        "genotype_mutational_probability": [
+        "genotype_mp": [
             0.1
         ],
         "genotype_names": [

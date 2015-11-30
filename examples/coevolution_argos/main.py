@@ -41,7 +41,12 @@ class ForagerFitness:
 
     def __call__(self, agents):
 
-        results = [self.pool.apply_async(fitness, args=('./experiments/iAnt_Obstacles_' + str(number) + '.xml', agent)) for number, agent in zip(list(xrange(len(agents))), agents)]
+        results = [
+            self.pool.apply_async(
+                fitness,
+                args=('./experiments/iAnt_Obstacles_' + str(number) + '.xml', agent)
+            ) for number, agent in zip(list(xrange(len(agents))), agents)
+        ]
         output = [result.get() for result in results]
         agents = [agent_out for agent_out in output]
 
@@ -161,4 +166,13 @@ if __name__ == "__main__":
     config.load_configs([args.agent_config, args.ga_config])
 
     # Run the genetic algorithm.
-    ga.evolve(args.population, args.generations, ForagerAgent, ForagerFitness(), selection.truncation, crossover.one_point, mutation.gaussian, 'log')
+    ga.evolve(
+        args.population,
+        args.generations,
+        ForagerAgent,
+        ForagerFitness(),
+        selection.truncation,
+        crossover.one_point,
+        mutation.gaussian,
+        'log'
+    )

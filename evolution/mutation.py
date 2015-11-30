@@ -19,7 +19,7 @@ def boundary(agents):
 
         for idx, param in enumerate(agent.genotype):
 
-            if random.uniform(0.0, 1.0) <= agent.genotype_mutational_probability[idx]:
+            if random.uniform(0.0, 1.0) <= agent.genotype_mp[idx]:
 
                 agent.genotype[idx] = random.choice([agent.genotype_lb[idx], agent.genotype_ub[idx]])
 
@@ -44,7 +44,7 @@ def uniform(agents):
 
         for idx, param in enumerate(agent.genotype):
 
-            if random.uniform(0.0, 1.0) <= agent.genotype_mutational_probability[idx]:
+            if random.uniform(0.0, 1.0) <= agent.genotype_mp[idx]:
 
                 agent.genotype[idx] = random.uniform(agent.genotype_lb[idx], agent.genotype_ub[idx])
 
@@ -69,7 +69,7 @@ def gaussian(agents):
 
         for idx, param in enumerate(agent.genotype):
 
-            if random.uniform(0.0, 1.0) <= agent.genotype_mutational_probability[idx]:
+            if random.uniform(0.0, 1.0) <= agent.genotype_mp[idx]:
 
                 val = np.random.normal(
                     loc=param,
