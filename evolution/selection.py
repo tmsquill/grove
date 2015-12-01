@@ -1,4 +1,5 @@
 import logging
+from operator import attrgetter
 import random
 
 
@@ -6,7 +7,7 @@ def truncation(elite_proportion=None):
 
     if not elite_proportion or elite_proportion < 0 or elite_proportion > 1:
 
-        raise ValueError('invalid elite proportion specified for truncation selection closure')
+        raise ValueError('invalid elite proportion specified for truncation selection closure', elite_proportion)
 
     def _(agents):
         """
@@ -16,6 +17,7 @@ def truncation(elite_proportion=None):
         :return: The updated set of agents after the selection process.
         """
 
+        # Sort the agents from most to least fit.
         agents = sorted(agents, key=lambda agent: agent.fitness, reverse=True)
 
         logging.info(' Truncation Selection '.center(180, '='))
@@ -24,6 +26,7 @@ def truncation(elite_proportion=None):
             " (Before) {0} Population Size {1} ".center(180, '-').format(agents[0].__class__.__name__, len(agents)))
         logging.info('\n' + '\n'.join(map(str, agents)) + '\n')
 
+        # Use slicing to remove the non-elite.
         agents = agents[:int(elite_proportion * len(agents))]
 
         logging.info(
@@ -35,12 +38,15 @@ def truncation(elite_proportion=None):
     return _
 
 
-# TODO: Needs looked over, might have issues.
-def tournament(size=None):
+def tournament(agents_ret=None, tournament_size=None):
 
-    if not size or size < 1:
+    if not agents_ret or agents_ret < 1:
 
-        raise ValueError('invalid size specified for tournament selection closure')
+        raise ValueError('invalid agent return size specified for tournament selection closure', tournament_size)
+
+    if not tournament_size or tournament_size < 1:
+
+        raise ValueError('invalid tournament size specified for tournament selection closure', tournament_size)
 
     def _(agents):
         """
@@ -52,16 +58,24 @@ def tournament(size=None):
         :return: The updated set of agents after the selection process.
         """
 
-        fittest = None
+        logging.info(' Tournament Selection '.center(180, '='))
 
-        for x in xrange(size):
+        logging.info(
+            " (Before) {0} Population Size {1} ".center(180, '-').format(agents[0].__class__.__name__, len(agents)))
+        logging.info('\n' + '\n'.join(map(str, agents)) + '\n')
 
-            agent = agents[random.randint(0, len(agents)) - 1]
+        chosen = []
 
-            if fittest is None or agent.fitness > fittest.fitness:
-                fittest = agent
+        for __ in xrange(agents_ret):
 
-        return agents
+            participants = [random.choice(agents) for ___ in xrange(tournament_size)]
+            chosen.append(max(participants, key=attrgetter('fitness')))
+
+        logging.info(
+            " (After) {0} Population Size {1} ".center(180, '-').format(agents[0].__class__.__name__, len(agents)))
+        logging.info('\n' + '\n'.join(map(str, agents)) + '\n')
+
+        return chosen
 
     return _
 
@@ -71,11 +85,11 @@ def roulette(sample=None, size=None):
 
     if not sample or sample < 1:
 
-        raise ValueError('invalid sample specified for roulette selection closure')
+        raise ValueError('invalid sample specified for roulette selection closure', sample)
 
     if not size or size < 1:
 
-        raise ValueError('invalid size specified for roulette selection closure')
+        raise ValueError('invalid size specified for roulette selection closure', size)
 
     def _(agents):
         """
@@ -90,8 +104,7 @@ def roulette(sample=None, size=None):
         logging.info(' Roulette Selection '.center(180, '='))
 
         logging.info(
-            " (Before) {0} Population Size {1} ".center(180, '-').format(agents[0].__class__.__name__, len(agents))
-        )
+            " (Before) {0} Population Size {1} ".center(180, '-').format(agents[0].__class__.__name__, len(agents)))
         logging.info('\n' + '\n'.join(map(str, agents)) + '\n')
 
         agents_len = len(agents)
@@ -117,8 +130,7 @@ def roulette(sample=None, size=None):
         agents = [agent for (idx, agent) in sorted(zip(hits, agents))]
 
         logging.info(
-            " (After) {0} Population Size {1} ".center(180, '-').format(agents[0].__class__.__name__, len(agents))
-        )
+            " (After) {0} Population Size {1} ".center(180, '-').format(agents[0].__class__.__name__, len(agents)))
         logging.info('\n' + '\n'.join(map(str, agents)) + '\n')
 
         return agents

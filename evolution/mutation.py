@@ -3,90 +3,103 @@ import numpy as np
 import random
 
 
-def boundary(agents):
-    """
-    Boundary mutation replaces chosen genes within the genome with either lower or upper bounds for each respective
-    gene.
-    :param agents: The set of agents to perform mutation on.
-    :return: The updated set of agents with mutations.
-    """
+def boundary():
 
-    logging.info(' Boundary Mutation '.center(180, '='))
+    def _(agents):
+        """
+        Boundary mutation replaces chosen genes within the genome with either lower or upper bounds for each
+        respective gene.
+        :param agents: The set of agents to perform mutation on.
+        :return: The updated set of agents with mutations.
+        """
 
-    for agent in agents:
+        logging.info(' Boundary Mutation '.center(180, '='))
 
-        logging.info('(Before) ' + str(agent))
+        for agent in agents:
 
-        for idx, param in enumerate(agent.genotype):
+            logging.info('(Before) ' + str(agent))
 
-            if random.uniform(0.0, 1.0) <= agent.genotype_mp[idx]:
+            for idx, param in enumerate(agent.genotype):
 
-                agent.genotype[idx] = random.choice([agent.genotype_lb[idx], agent.genotype_ub[idx]])
+                if random.uniform(0.0, 1.0) <= agent.genotype_mp[idx]:
 
-        logging.info('(After) ' + str(agent))
+                    agent.genotype[idx] = random.choice([agent.genotype_lb[idx], agent.genotype_ub[idx]])
 
-    return agents
+            logging.info('(After) ' + str(agent))
 
+        return agents
 
-def uniform(agents):
-    """
-    Uniform mutation replaces the value of the chosen gene with a uniform random value within the specified
-    bounds of the gene.
-    :param agents: The set of agents to perform mutation on.
-    :return: The updated set of agents with mutations.
-    """
-
-    logging.info(' Uniform Mutation '.center(180, '='))
-
-    for agent in agents:
-
-        logging.info('(Before) ' + str(agent))
-
-        for idx, param in enumerate(agent.genotype):
-
-            if random.uniform(0.0, 1.0) <= agent.genotype_mp[idx]:
-
-                agent.genotype[idx] = random.uniform(agent.genotype_lb[idx], agent.genotype_ub[idx])
-
-        logging.info('(After) ' + str(agent))
-
-    return agents
+    return _
 
 
-def gaussian(agents):
-    """
-    Gaussian mutation adds a unit gaussian distributed value to the chosen gene. Bounds checking ensures
-    the mutation does not violate legal ranges for the gene.
-    :param agents: The set of agents to perform mutation on.
-    :return: The updated set of agents with mutations.
-    """
+def uniform():
 
-    logging.info(' Gaussian Mutation '.center(180, '='))
+    def _(agents):
 
-    for agent in agents:
+        """
+        Uniform mutation replaces the value of the chosen gene with a uniform random value within the specified
+        bounds of the gene.
+        :param agents: The set of agents to perform mutation on.
+        :return: The updated set of agents with mutations.
+        """
 
-        logging.info('(Before) ' + str(agent))
+        logging.info(' Uniform Mutation '.center(180, '='))
 
-        for idx, param in enumerate(agent.genotype):
+        for agent in agents:
 
-            if random.uniform(0.0, 1.0) <= agent.genotype_mp[idx]:
+            logging.info('(Before) ' + str(agent))
 
-                val = np.random.normal(
-                    loc=param,
-                    scale=(0.05 * agent.genotype_ub[idx])
-                )
+            for idx, param in enumerate(agent.genotype):
 
-                while val < agent.genotype_lb[idx] or val > agent.genotype_ub[idx]:
+                if random.uniform(0.0, 1.0) <= agent.genotype_mp[idx]:
+
+                    agent.genotype[idx] = random.uniform(agent.genotype_lb[idx], agent.genotype_ub[idx])
+
+            logging.info('(After) ' + str(agent))
+
+        return agents
+
+    return _
+
+
+def gaussian():
+
+    def _(agents):
+        """
+        Gaussian mutation adds a unit gaussian distributed value to the chosen gene. Bounds checking ensures
+        the mutation does not violate legal ranges for the gene.
+        :param agents: The set of agents to perform mutation on.
+        :return: The updated set of agents with mutations.
+        """
+
+        logging.info(' Gaussian Mutation '.center(180, '='))
+
+        for agent in agents:
+
+            logging.info('(Before) ' + str(agent))
+
+            for idx, param in enumerate(agent.genotype):
+
+                if random.uniform(0.0, 1.0) <= agent.genotype_mp[idx]:
 
                     val = np.random.normal(
                         loc=param,
                         scale=(0.05 * agent.genotype_ub[idx])
                     )
 
-                logging.info('Mutating Parameter ' + str(idx) + ': ' + str(param) + ' -> ' + str(val))
+                    while val < agent.genotype_lb[idx] or val > agent.genotype_ub[idx]:
 
-                agent.genotype[idx] = val
+                        val = np.random.normal(
+                            loc=param,
+                            scale=(0.05 * agent.genotype_ub[idx])
+                        )
 
-        logging.info('(After) ' + str(agent))
+                    logging.info('Mutating Parameter ' + str(idx) + ': ' + str(param) + ' -> ' + str(val))
 
-    return agents
+                    agent.genotype[idx] = val
+
+            logging.info('(After) ' + str(agent))
+
+        return agents
+
+    return _
