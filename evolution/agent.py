@@ -61,7 +61,7 @@ class Agent(object):
         self.fitness = -1
         self.genotype_lb = config.global_config['agent'][self.__class__.__name__]['genotype_lb']
         self.genotype_ub = config.global_config['agent'][self.__class__.__name__]['genotype_ub']
-        self.genotype_mutational_probability = config.global_config['agent'][self.__class__.__name__]['genotype_mp']
+        self.genotype_mp = config.global_config['agent'][self.__class__.__name__]['genotype_mp']
 
     def __str__(self):
 

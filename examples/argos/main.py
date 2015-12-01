@@ -119,7 +119,7 @@ if __name__ == "__main__":
         args.generations,
         ForagerAgent,
         ForagerFitness(),
-        selection.truncation,
+        selection.truncation_c(0.4),
         crossover.one_point,
         mutation.gaussian,
         'log'
