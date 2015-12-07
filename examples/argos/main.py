@@ -120,7 +120,7 @@ if __name__ == "__main__":
         ForagerAgent,
         ForagerFitness(),
         selection.tournament(4, 5),
-        crossover.one_point,
-        mutation.gaussian,
+        crossover.one_point(),
+        mutation.gaussian(),
         'log'
     )

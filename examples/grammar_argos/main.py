@@ -59,6 +59,7 @@ class GEForagerFitness:
 if __name__ == "__main__":
 
     import argparse
+    import json
 
     # Parser for command line arguments.
     parser = argparse.ArgumentParser(description='py.evolve')
@@ -80,7 +81,9 @@ if __name__ == "__main__":
 
         print bnf_grammar.non_terminals
         print bnf_grammar.terminals
-        print bnf_grammar.rules
+        print json.dumps(bnf_grammar.rules, sort_keys=True, indent=4)
+
+    exit()
 
     # Change the current directory to ARGoS (required by the simulator).
     os.chdir(os.path.expanduser('~') + '/ARGoS/iAnt-ARGoS-master')
