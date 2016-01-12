@@ -66,23 +66,29 @@ class ForagerAgent(ARGoSAgent):
 
     def evaluate(self, argos_xml):
 
-        forager_config = None
-
         with open(argos_xml, 'r') as xml:
 
             forager_config = xmltodict.parse(xml)
 
         # General
-        forager_config['argos-configuration']['framework']['experiment']['@random_seed'] = str(random.randint(1, 1000000))
+        forager_config['argos-configuration']['framework']['experiment']['@random_seed'] = \
+            str(random.randint(1, 1000000))
 
         # iAnt Robots
-        forager_config['argos-configuration']['loop_functions']['CPFA']['@ProbabilityOfSwitchingToSearching'] = str(round(self.genotype[0], 5))
-        forager_config['argos-configuration']['loop_functions']['CPFA']['@ProbabilityOfReturningToNest'] = str(round(self.genotype[1], 5))
-        forager_config['argos-configuration']['loop_functions']['CPFA']['@UninformedSearchVariation'] = str(round(self.genotype[2], 5))
-        forager_config['argos-configuration']['loop_functions']['CPFA']['@RateOfInformedSearchDecay'] = str(round(self.genotype[3], 5))
-        forager_config['argos-configuration']['loop_functions']['CPFA']['@RateOfSiteFidelity'] = str(round(self.genotype[4], 5))
-        forager_config['argos-configuration']['loop_functions']['CPFA']['@RateOfLayingPheromone'] = str(round(self.genotype[5], 5))
-        forager_config['argos-configuration']['loop_functions']['CPFA']['@RateOfPheromoneDecay'] = str(round(self.genotype[6], 5))
+        forager_config['argos-configuration']['loop_functions']['CPFA']['@ProbabilityOfSwitchingToSearching'] = \
+            str(round(self.genotype[0], 5))
+        forager_config['argos-configuration']['loop_functions']['CPFA']['@ProbabilityOfReturningToNest'] = \
+            str(round(self.genotype[1], 5))
+        forager_config['argos-configuration']['loop_functions']['CPFA']['@UninformedSearchVariation'] = \
+            str(round(self.genotype[2], 5))
+        forager_config['argos-configuration']['loop_functions']['CPFA']['@RateOfInformedSearchDecay'] = \
+            str(round(self.genotype[3], 5))
+        forager_config['argos-configuration']['loop_functions']['CPFA']['@RateOfSiteFidelity'] = \
+            str(round(self.genotype[4], 5))
+        forager_config['argos-configuration']['loop_functions']['CPFA']['@RateOfLayingPheromone'] = \
+            str(round(self.genotype[5], 5))
+        forager_config['argos-configuration']['loop_functions']['CPFA']['@RateOfPheromoneDecay'] = \
+            str(round(self.genotype[6], 5))
 
         with open(argos_xml, 'w') as xml:
 
@@ -144,6 +150,7 @@ class ObstacleAgent(ARGoSAgent):
             xml.truncate()
 
 
+# TODO: This file is not complete and will not successfully run.
 if __name__ == "__main__":
 
     import argparse

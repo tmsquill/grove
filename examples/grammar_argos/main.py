@@ -83,6 +83,8 @@ if __name__ == "__main__":
         print bnf_grammar.terminals
         print json.dumps(bnf_grammar.rules, sort_keys=True, indent=4)
 
+        bnf_grammar.generate()
+
     exit()
 
     # Change the current directory to ARGoS (required by the simulator).

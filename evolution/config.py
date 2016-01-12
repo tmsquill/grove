@@ -4,6 +4,7 @@ import os
 
 global_config = {}
 
+nodes = ['10.0.0.30', '10.0.0.31', '10.0.0.32', '10.0.0.33', '10.0.0.34', '10.0.0.35', '10.0.0.36']
 
 def load_configs(config_files=None):
     """
