@@ -3,14 +3,13 @@ import logging
 import time
 from tqdm import tqdm
 
-import agent
 import config
 from generation import Generation
 import utils
 import proto.agent_pb2 as pb
 
 
-def evolve(population, generations, agent_type, evaluation_func, selection_func, crossover_func, mutation_func, log):
+def evolve(population, generations, agent_type, evaluation_func, selection_func, crossover_func, mutation_func, nodes, log):
     """
     Performs evolution on a set of agents over a number of generations. The desired evolutionary functions must be
     specified by the caller. Logging is optional.
@@ -21,6 +20,7 @@ def evolve(population, generations, agent_type, evaluation_func, selection_func,
     :param selection_func: The selection function.
     :param crossover_func: The crossover function.
     :param mutation_func: The mutation function.
+    :param nodes: The nodes in the cluster used for computing the evaluation function.
     :param log: The path to output the log file, if not specified does not log.
     """
 
@@ -38,13 +38,13 @@ def evolve(population, generations, agent_type, evaluation_func, selection_func,
         logging.info('\n' + config.pretty_config(name))
 
     # Configure the cluster.
-    cluster = dispy.JobCluster(evaluation_func)
+    cluster = dispy.JobCluster(evaluation_func, nodes=nodes, depends=[pb], loglevel=logging.DEBUG)
 
     # Initialize Generations.
     ga_generations = [Generation() for _ in xrange(generations)]
 
     # Initialize Agents.
-    ga_agents = agent.init_agents(agent_type, population)
+    ga_agents = agent_type.init_agents(population)
 
     logging.info(' Agent Initialization '.center(180, '='))
     logging.info('\n' + '\n'.join(map(str, ga_agents)))
@@ -62,26 +62,26 @@ def evolve(population, generations, agent_type, evaluation_func, selection_func,
 
         jobs = []
 
-        for cur_agent in ga_agents:
+        for agent in ga_agents:
 
-            cur_pb = pb.Agent()
-            cur_pb.genotype.probabilityOfSwitchingToSearching = round(cur_agent.genotype[0], 5)
-            cur_pb.genotype.probabilityOfReturningToNest = round(cur_agent.genotype[1], 5)
-            cur_pb.genotype.uninformedSearchVariation = round(cur_agent.genotype[2], 5)
-            cur_pb.genotype.rateOfInformedSearchDecay = round(cur_agent.genotype[3], 5)
-            cur_pb.genotype.rateOfSiteFidelity = round(cur_agent.genotype[4], 5)
-            cur_pb.fitness = -1.0
+            pb_agent = pb.Agent()
+            pb_agent.genotype.probabilityOfSwitchingToSearching = agent.genotype[0]
+            pb_agent.genotype.probabilityOfReturningToNest = agent.genotype[1]
+            pb_agent.genotype.uninformedSearchVariation = agent.genotype[2]
+            pb_agent.genotype.rateOfInformedSearchDecay = agent.genotype[3]
+            pb_agent.genotype.rateOfSiteFidelity = agent.genotype[4]
+            pb_agent.fitness = -1.0
 
-            string = cur_pb.SerializeToString()
-
-            job = cluster.submit(string)
-            job.id = cur_agent.id
+            job = cluster.submit(str(pb_agent.SerializeToString()))
+            job.id = agent.id
             jobs.append(job)
 
-        for cur_agent, job in zip(ga_agents, jobs):
+        cluster.wait()
+
+        for job in jobs:
 
             job()
-            print("Result of program %s with job ID %s: %s / %s" % (evaluation_func, job.id, cur_agent.fitness, job.stdout))
+            print("Result of program %s with job ID %s starting at %s is %s with stdout %s" % (evaluation_func, job.id, job.start_time, job.result, job.stdout))
 
         cluster.stats()
 

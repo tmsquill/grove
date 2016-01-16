@@ -1,0 +1,24 @@
+{
+    "name": "Agent",
+    "agent_types": [
+        "GESAgent"
+    ],
+    "GESAgent": {
+        "genotype_lb": [
+            0
+        ],
+        "genotype_ub": [
+            127
+        ],
+        "genotype_mp": [
+            0.1
+        ],
+        "genotype_names": [
+            "Codon"
+        ],
+        "genotype_abbr_names": [
+            "CODON"
+        ]
+    },
+    "argos_xml": "./experiments/default.xml"
+}

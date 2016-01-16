@@ -39,4 +39,4 @@ class Generation:
         :return: CSV friendly format of the generation.
         """
 
-        return [[[self.id] + [agent.id] + [agent.fitness] + agent.genotype].pop(0) for agent in self.agents]
+        return [[[self.id] + [agent.id] + [agent.value] + agent.genotype].pop(0) for agent in self.agents]

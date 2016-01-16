@@ -11,14 +11,14 @@ def truncation(elite_proportion=None):
 
     def _(agents):
         """
-        Truncation selection orders agents of the population by fitness then chooses some proportion of the fittest
-        agents for use in the reproduction phase.
+        Truncation selection orders agents of the population by evaluation value then chooses some proportion of the
+        highest performing agents for use in the reproduction phase.
         :param agents: The set of agents to perform selection on.
         :return: The updated set of agents after the selection process.
         """
 
         # Sort the agents from most to least fit.
-        agents = sorted(agents, key=lambda agent: agent.fitness, reverse=True)
+        agents = sorted(agents, key=lambda agent: agent.value, reverse=True)
 
         logging.info(' Truncation Selection '.center(180, '='))
 
@@ -69,7 +69,7 @@ def tournament(agents_ret=None, tournament_size=None):
         for __ in xrange(agents_ret):
 
             participants = [random.choice(agents) for ___ in xrange(tournament_size)]
-            chosen.append(max(participants, key=attrgetter('fitness')))
+            chosen.append(max(participants, key=attrgetter('value')))
 
         logging.info(
             " (After) {0} Population Size {1} ".center(180, '-').format(agents[0].__class__.__name__, len(agents)))
@@ -93,13 +93,14 @@ def roulette(sample=None, size=None):
 
     def _(agents):
         """
-        Roulette selection (stochastic acceptance version) involves using the fitness value to associate a probability
-        with each agent. The higher the fitness value, the more likely it is to be selected for reproduction.
+        Roulette selection (stochastic acceptance version) involves using the evaluation value to associate a
+        probability with each agent. The higher the evaluation value, the more likely it is to be selected for
+        reproduction.
         :param agents: The set of agents to perform selection on.
         :return: The updated set of agents after the selection process.
         """
 
-        agents = sorted(agents, key=lambda agent: agent.fitness, reverse=True)
+        agents = sorted(agents, key=lambda agent: agent.value, reverse=True)
 
         logging.info(' Roulette Selection '.center(180, '='))
 
@@ -109,7 +110,7 @@ def roulette(sample=None, size=None):
 
         agents_len = len(agents)
         hits = {_: 0 for _ in xrange(agents_len)}
-        max = agents[0].fitness
+        max = agents[0].value
         index = -1
 
         for i in xrange(sample):

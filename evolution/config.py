@@ -4,17 +4,18 @@ import os
 
 global_config = {}
 
-nodes = ['10.0.0.30', '10.0.0.31', '10.0.0.32', '10.0.0.33', '10.0.0.34', '10.0.0.35', '10.0.0.36']
 
 def load_configs(config_files=None):
     """
-    Loads a JSON configuration file into a dictionary.
-    :param config_files: The filename containing a JSON configuration.
+    Loads JSON configuration file(s) into the global configuration dictionary.
+    :param config_files: The list of JSON configuration filenames.
     """
 
     for config_file in config_files:
 
         with open(config_file, 'r') as config:
+
+            # Keys of the top-level dictionary are configuration filenames.
             global_config[os.path.splitext(os.path.basename(config_file))[0]] = json.load(config)
 
 
