@@ -21,7 +21,7 @@ Genetic algorithm framework for Python by Troy Squillaci (zivia@unm.edu).
 
 `workon numerical-computing`
 
-================
+==============
 
 `pip install -r requirements.txt`
 
