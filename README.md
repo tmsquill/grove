@@ -11,8 +11,12 @@ Genetic algorithm framework for Python by Troy Squillaci (zivia@unm.edu).
 
 ### Getting Started ###
 
+``` 
+bash cd <directory of your choice>
+```
+
 ``` bash
-git clone git@bitbucket.org:Zivia/py.evolve.git <directory of your choice> && cd <directory of your choice>
+git clone git@bitbucket.org:Zivia/py.evolve.git
 ```
 
 ``` bash
