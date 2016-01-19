@@ -15,11 +15,13 @@ Genetic algorithm framework for Python by Troy Squillaci (zivia@unm.edu).
 
 `git clone git@bitbucket.org:Zivia/py.evolve.git`
 
-Optional:
+=== Optional ===
 
 `mkvirtualenv numerical-computing`
 
 `workon numerical-computing`
+
+================
 
 `pip install -r requirements.txt`
 
