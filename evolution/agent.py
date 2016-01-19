@@ -36,8 +36,14 @@ class Agent(object):
 
     @abc.abstractmethod
     def factory(self):
-        """ Factory method to instantiate a new Agent object. """
+        """
+        Factory method to instantiate a new Agent object.
+        :return: Returns a newly created Agent object.
+        """
 
     @abc.abstractmethod
     def init_agents(self, population):
-        """ Initializes a set of agents based on the population size. """
+        """
+        Initializes a set of agents based on the population size.
+        :return: Returns a set of newly created agents.
+        """

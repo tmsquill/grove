@@ -8,7 +8,7 @@ global_config = {}
 def load_configs(config_files=None):
     """
     Loads JSON configuration file(s) into the global configuration dictionary.
-    :param config_files: The list of JSON configuration filenames.
+    :param config_files: The list of JSON configuration file names.
     """
 
     for config_file in config_files:

@@ -1,12 +1,13 @@
-import dispy
 import logging
 import time
+
+import dispy
 from tqdm import tqdm
 
 import config
-from generation import Generation
+import examples.grammar_argos.proto.agent_pb2 as pb
 import utils
-import proto.agent_pb2 as pb
+from generation import Generation
 
 
 def evolve(population, generations, agent_type, evaluation_func, selection_func, crossover_func, mutation_func, nodes, log):
