@@ -11,19 +11,19 @@ Genetic algorithm framework for Python by Troy Squillaci (zivia@unm.edu).
 
 ### Getting Started ###
 
-```
-cd <directory of your choice>
-```
+`cd <directory of your choice>`
 
-``` bash
-git clone git@bitbucket.org:Zivia/py.evolve.git
-```
+`git clone git@bitbucket.org:Zivia/py.evolve.git`
 
-``` bash
-pip install -r requirements.txt
-```
+Optional:
 
-Check out the `examples` directory for getting started.
+`mkvirtualenv numerical-computing`
+
+`workon numerical-computing`
+
+`pip install -r requirements.txt`
+
+Check out the `examples` directory for some basic tutorials.
 
 ### Contribution ###
 
