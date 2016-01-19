@@ -9,13 +9,17 @@ Genetic algorithm framework for Python by Troy Squillaci (zivia@unm.edu).
 * [Grammatical Evolution](https://en.wikipedia.org/wiki/Grammatical_evolution) with BNF.
 * Extensive logging and output files for data analysis.
 
-### Installation ###
+### Getting Started ###
 
 ``` bash
 git clone git@bitbucket.org:Zivia/py.evolve.git <directory of your choice> && cd <directory of your choice>
 ```
 
-Check out the ```examples``` directory for getting started.
+``` bash
+pip install -r requirements.txt
+```
+
+Check out the `examples` directory for getting started.
 
 ### Contribution ###
 
