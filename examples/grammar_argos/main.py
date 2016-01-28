@@ -20,10 +20,7 @@ class GESAgent(Agent):
 
         super(GESAgent, self).__init__()
 
-        self.genotype_lb = [self.genotype_lb[0]] * 100
-        self.genotype_ub = [self.genotype_ub[0]] * 100
         self.genotype = [random.randint(lower, upper) for lower, upper in zip(self.genotype_lb, self.genotype_ub)]
-        self.genotype_len = len(self.genotype)
 
         self.phenotype = None
         self.used_codons = 0
@@ -43,6 +40,14 @@ class GESAgent(Agent):
         return [GESAgent.factory() for _ in xrange(population)]
 
 
+def pre_evaluation(agents=None):
+
+    for agent in agents:
+
+        agent.phenotype, agent.used_codons = bnf_grammar.generate(agent.genotype)
+
+    return agents
+
 
 def evaluation(agent=None):
     """
@@ -51,13 +56,14 @@ def evaluation(agent=None):
     :return: The agent with updated evaluation value.
     """
 
-    os.chdir(os.path.expanduser('~') + '/ARGoS/iAnt-GES-ARGoS')
-
     agent.phenotype, agent.used_codons = bnf_grammar.generate(agent.genotype)
 
-    # TODO: Execute ARGoS with the phenotype, update the value of agent, then return it.
-
     return agent
+
+
+def post_evaluation(agents=None):
+
+    return agents
 
 
 if __name__ == "__main__":
@@ -88,7 +94,6 @@ if __name__ == "__main__":
         print 'Terminal Symbols:' + str(bnf_grammar.terminals)
         print 'Grammar Tree:' + str(json.dumps(bnf_grammar.rules, sort_keys=True, indent=4))
 
-    # TODO: For grammar testing purposes, will be removed for actual runs.
     exit()
 
     # Load the configurations into memory (as dictionaries) by filename.
@@ -102,9 +107,13 @@ if __name__ == "__main__":
         args.population,
         args.generations,
         GESAgent,
+        pre_evaluation,
         evaluation,
-        selection.truncation,
-        crossover.one_point,
-        mutation.gaussian,
+        post_evaluation,
+        selection.tournament(4, 5),
+        crossover.one_point(),
+        mutation.gaussian(),
+        [],
+        #['10.0.0.30', '10.0.0.31', '10.0.0.32', '10.0.0.33', '10.0.0.34', '10.0.0.35', '10.0.0.36'],
         'log'
     )

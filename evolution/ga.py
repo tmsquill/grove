@@ -10,7 +10,7 @@ import utils
 from generation import Generation
 
 
-def evolve(population, generations, agent_type, evaluation_func, selection_func, crossover_func, mutation_func, nodes, log):
+def evolve(population, generations, agent_type, pre_evaluation_func, evaluation_func, post_evaluation_func, selection_func, crossover_func, mutation_func, nodes, log):
     """
     Performs evolution on a set of agents over a number of generations. The desired evolutionary functions must be
     specified by the caller. Logging is optional.
@@ -38,6 +38,15 @@ def evolve(population, generations, agent_type, evaluation_func, selection_func,
         logging.info((config.global_config[name]['name'] + ' Configuration ').center(180, '-'))
         logging.info('\n' + config.pretty_config(name))
 
+    # Validate pre and post evaluation functions.
+    if not hasattr(pre_evaluation_func, '__call__'):
+
+        raise ValueError('pre_evaluation_func is not callable', pre_evaluation_func)
+
+    if not hasattr(post_evaluation_func, '__call__'):
+
+        raise ValueError('post_evaluation_func is not callable', post_evaluation_func)
+
     # Configure the cluster.
     cluster = dispy.JobCluster(evaluation_func, nodes=nodes, depends=[pb], loglevel=logging.DEBUG)
 
@@ -61,19 +70,13 @@ def evolve(population, generations, agent_type, evaluation_func, selection_func,
 
         print 'Generation ' + str(generation.id)
 
+        ga_agents = pre_evaluation_func(ga_agents)
+
         jobs = []
 
         for agent in ga_agents:
 
-            pb_agent = pb.Agent()
-            pb_agent.genotype.probabilityOfSwitchingToSearching = agent.genotype[0]
-            pb_agent.genotype.probabilityOfReturningToNest = agent.genotype[1]
-            pb_agent.genotype.uninformedSearchVariation = agent.genotype[2]
-            pb_agent.genotype.rateOfInformedSearchDecay = agent.genotype[3]
-            pb_agent.genotype.rateOfSiteFidelity = agent.genotype[4]
-            pb_agent.fitness = -1.0
-
-            job = cluster.submit(str(pb_agent.SerializeToString()))
+            job = cluster.submit(agent)
             job.id = agent.id
             jobs.append(job)
 
@@ -84,7 +87,7 @@ def evolve(population, generations, agent_type, evaluation_func, selection_func,
             job()
             print("Result of program %s with job ID %s starting at %s is %s with stdout %s" % (evaluation_func, job.id, job.start_time, job.result, job.stdout))
 
-        cluster.stats()
+        ga_agents = post_evaluation_func(ga_agents)
 
         generation.bind_agents(ga_agents)
         logging.info('\n' + str(generation))
@@ -92,6 +95,8 @@ def evolve(population, generations, agent_type, evaluation_func, selection_func,
         ga_agents = selection_func(ga_agents)
         ga_agents = crossover_func(ga_agents, population)
         ga_agents = mutation_func(ga_agents)
+
+    cluster.stats()
 
     logging.info("Evolution finished in %s seconds " % (time.time() - start_time))
     print "Evolution finished in %s seconds " % (time.time() - start_time)

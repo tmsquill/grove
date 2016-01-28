@@ -20,9 +20,38 @@ class Agent(object):
         self.id = Agent.aid()
         self.value = -1
 
-        self.genotype_lb = config.global_config['agent'][self.__class__.__name__]['genotype_lb']
-        self.genotype_ub = config.global_config['agent'][self.__class__.__name__]['genotype_ub']
-        self.genotype_mp = config.global_config['agent'][self.__class__.__name__]['genotype_mp']
+        self.genotype_len = config.global_config['agent'][self.__class__.__name__]['genotype_len']
+
+        lb = config.global_config['agent'][self.__class__.__name__]['genotype_lb']
+
+        if isinstance(lb, float) or isinstance(lb, int):
+
+            self.genotype_lb = [lb] * self.genotype_len
+
+        else:
+
+            self.genotype_lb = lb
+
+        ub = config.global_config['agent'][self.__class__.__name__]['genotype_ub']
+
+        if isinstance(ub, float) or isinstance(ub, int):
+
+            self.genotype_ub = [ub] * self.genotype_len
+
+        else:
+
+            self.genotype_ub = ub
+
+        mp = config.global_config['agent'][self.__class__.__name__]['genotype_mp']
+
+        if isinstance(mp, float):
+
+            self.genotype_mp = [mp] * 200
+
+        else:
+
+            self.genotype_mp = mp
+
         self.genotype = []
 
     def __str__(self):
