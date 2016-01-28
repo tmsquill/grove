@@ -56,8 +56,6 @@ def evaluation(agent=None):
     :return: The agent with updated evaluation value.
     """
 
-    agent.phenotype, agent.used_codons = bnf_grammar.generate(agent.genotype)
-
     return agent
 
 
@@ -93,8 +91,6 @@ if __name__ == "__main__":
         print 'Non-Terminal Symbols: ' + str(bnf_grammar.non_terminals)
         print 'Terminal Symbols:' + str(bnf_grammar.terminals)
         print 'Grammar Tree:' + str(json.dumps(bnf_grammar.rules, sort_keys=True, indent=4))
-
-    exit()
 
     # Load the configurations into memory (as dictionaries) by filename.
     config.load_configs([args.agent_config, args.ga_config])
