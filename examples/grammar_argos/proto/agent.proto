@@ -1,0 +1,10 @@
+package messages;
+
+message Agent {
+    required float probabilityOfSwitchingToSearching = 1;
+	required float probabilityOfReturningToNest = 2;
+	required float uninformedSearchVariation = 3;
+	required float rateOfInformedSearchDecay = 4;
+	required float rateOfSiteFidelity = 5;
+	required float score = 6;
+}

@@ -45,6 +45,7 @@ def pre_evaluation(agents=None):
     for agent in agents:
 
         agent.phenotype, agent.used_codons = bnf_grammar.generate(agent.genotype)
+        print agent.phenotype
 
     return agents
 
