@@ -2,8 +2,8 @@
 
 <root> ::= <statoiniziale><ruleset>
 <statoiniziale> ::= <prob_init_state><prob_init_state><prob_init_state>
-<ruleset> ::= <regola><ruleset>|<regola>
-<regola> ::= <firstpart><secondpart><thirdpart>
+<ruleset> ::= <rule><ruleset>|<rule>
+<rule> ::= <firstpart><secondpart><thirdpart>
 <firstpart> ::= <ps_list>
 <secondpart> ::= <pc_list>
 <thirdpart> ::= <a_list>
@@ -17,10 +17,10 @@
 <pc> ::= <id_precondition><bool>
 
 # List of actions.
-<a_list> ::= <azione>|<azione><azione>|<azione><azione><azione>|<azione><azione><azione><azione>
-<azione> ::= <azione_cngstate>|<azione_cngvar>
-<azione_cngstate> ::= <probability><id_state>
-<azione_cngvar> ::= <probability><id_var><bool>
+<a_list> ::= <action>|<action><action>|<action><action><action>|<action><action><action><action>
+<action> ::= <action_cngstate>|<action_cngvar>
+<action_cngstate> ::= <probability><id_state>
+<action_cngvar> ::= <probability><id_var><bool>
 
 
 

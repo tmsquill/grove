@@ -128,10 +128,10 @@ class Grammar:
 
                 production_choices = self.rules[current_symbol[0]]
 
-                # Select a production
+                # Select a production.
                 current_production = int(_input[used_input % len(_input)] % len(production_choices))
 
-                # Use an input if there was more then 1 choice
+                # Use an input if there was more then 1 choice.
                 if len(production_choices) > 1:
 
                     used_input += 1

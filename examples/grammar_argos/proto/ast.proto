@@ -1,0 +1,83 @@
+package messages;
+
+// Terminal Expansions
+message IdState {
+	required int32 val = 1;
+}
+
+message IdPrecondition {
+	required int32 val = 1;
+}
+
+message IdVar {
+	required int32 val = 1;
+}
+
+message Probability {
+	required float val = 1;
+}
+
+
+
+// Non-terminal Expansions
+message ActionCngVar {
+	required Probability prob = 1;
+	required IdVar id_var = 2;
+	required bool b = 3;
+}
+
+message ActionCngState {
+	required Probability prob = 1;
+	required IdState id_state = 2;
+}
+
+message Action {
+	required ActionCngState cng_state = 1;
+	required ActionCngVar cng_var = 2;
+}
+
+message PreviousPrecondition {
+	required IdPrecondition id_precondition = 1;
+	required bool b = 2;
+}
+
+message PreviousState {
+	required IdState id_state = 1;
+}
+
+message Actions {
+	repeated Action a_list = 1;
+}
+
+message PreviousPreconditions {
+	repeated PreviousPrecondition pc_list = 1;
+}
+
+message PreviousStates {
+	repeated PreviousState ps_list = 1;
+}
+
+message Rule {
+	required PreviousStates pc_list = 1;
+	required PreviousPreconditions ps_list = 2;
+	required Actions a_list = 3;	
+}
+
+message RuleSet {
+	repeated Rule rules = 1;
+}
+
+message StateInitialize {
+	required float prob_init_1 = 1;
+	required float prob_init_2 = 2;
+	required float prob_init_3 = 3;
+}
+
+message Root {
+	required StateInitialize init = 1;
+	required RuleSet ruleset = 2;
+}
+
+message AST {
+    required Root ast_root = 1;
+}
