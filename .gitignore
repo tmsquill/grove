@@ -6,9 +6,14 @@
 
 # Unit Testing #
 *.coverage
+*.cache
 
 # IDE Generated Files #
 *.idea
+
+# Images #
+*.png
+*.jpg
 
 # OS Generated Files #
 *.DS_Store

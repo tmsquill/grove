@@ -1,4 +1,7 @@
+import random
 import re
+from types import ModuleType
+import google.protobuf.descriptor as des
 
 
 class Grammar:
@@ -7,21 +10,21 @@ class Grammar:
     NT = "NT"
     T = "T"
 
-    def __init__(self, bnf_file):
-
-        if bnf_file.endswith("pybnf"):
-
-            self.python_mode = True
-
-        else:
-
-            self.python_mode = False
+    def __init__(self, context_free_grammar):
 
         self.rules = {}
         self.non_terminals, self.terminals = set(), set()
         self.start_rule = None
 
-        self.read_bnf_file(bnf_file)
+        if isinstance(context_free_grammar, ModuleType):
+
+            self.pb = context_free_grammar
+            self.bnf = False
+
+        else:
+
+            self.read_bnf_file(context_free_grammar)
+            self.bnf = True
 
     def __str__(self):
 
@@ -98,7 +101,117 @@ class Grammar:
                 else:
                     raise ValueError("Each rule must be on one line")
 
-    def generate(self, _input, max_wraps=2):
+    def generate(self, in_seq, max_wraps=2):
+
+        if not self.bnf:
+
+            return self.generate_from_proto(in_seq, max_wraps)
+
+        else:
+
+            return self.generate_from_bnf(in_seq, max_wraps)
+
+    def generate_from_proto(self, in_seq, max_wraps=2):
+
+        """
+        Uses reflection to form an AST with a Google Protocol Buffer auto-generated class.
+        :param in_seq: The random sequence (list) of integers.
+        :param max_wraps: The number of times to wrap the input.
+        :return: An AST represented as an instance of a Google Protocol Buffer class.
+        """
+
+        used_input = 0
+        wraps = 0
+        ast = self.pb.Root()
+        production_choices = []
+
+        unexpanded_symbols = [(ast, f) for f in ast.DESCRIPTOR.fields]
+
+        iter = 1
+
+        while wraps < max_wraps and len(unexpanded_symbols) > 0:
+
+            # Debugging Print
+            print '\nIteration ' + str(iter)
+            iter = iter + 1
+            print '(Unexpanded Symbols): ' + str(unexpanded_symbols)
+
+            # Wrap around the input.
+            if used_input % len(in_seq) == 0 and used_input > 0 and len(production_choices) > 1:
+
+                wraps += 1
+
+            # Expand a production.
+            current_symbol = unexpanded_symbols.pop(0)
+
+            print '(Current Symbol) Parent: ' + str(current_symbol[0]) + \
+                ' Name: ' + str(current_symbol[1].name) + ' Type: ' + str(current_symbol[1].type)
+
+            # If the current symbol maps to a terminal, append the symbol.
+            if current_symbol[1].type == des.FieldDescriptor.TYPE_ENUM:
+
+                print '(Current Symbol) -> Terminal Symbol'
+                print 'Enum Values: ' + str(current_symbol[1].enum_type.values_by_name)
+                setattr(current_symbol[0], current_symbol[1].name, random.choice(current_symbol[1].enum_type.values).number)
+
+            # Otherwise the current symbol maps to a non-terminal.
+            else:
+
+                print '(Current Symbol) -> Non-Terminal Symbol'
+
+                # Required field (type message).
+                if current_symbol[1].label == des.FieldDescriptor.LABEL_REQUIRED:
+
+                    getattr(current_symbol[0], current_symbol[1].name).SetInParent()
+
+                # Repeated field (type message).
+                elif current_symbol[1].label == des.FieldDescriptor.LABEL_REPEATED:
+
+                    print 'Fields: ' + str([f for f in current_symbol[0].DESCRIPTOR.fields])
+
+                    getattr(current_symbol[0], current_symbol[1].name).add()
+
+                # Production choices are children of the current symbol.
+                production_choices = getattr(self.pb, current_symbol[1].message_type.name).DESCRIPTOR.fields
+
+                print 'Production Choices: ' + str(production_choices)
+
+                # Gather all required productions.
+                repeated = [(getattr(current_symbol[0], current_symbol[1].name), _) for _ in production_choices if _.label == des.FieldDescriptor.LABEL_REPEATED]
+                unexpanded_symbols = repeated + unexpanded_symbols
+                print 'Repeated Productions: ' + str(repeated)
+
+                # Gather all required productions.
+                required = [(getattr(current_symbol[0], current_symbol[1].name), _) for _ in production_choices if _.label == des.FieldDescriptor.LABEL_REQUIRED]
+                unexpanded_symbols = required + unexpanded_symbols
+                print 'Required Productions: ' + str(required)
+
+                # =====
+
+                # Select a production.
+                current_production = int(in_seq[used_input % len(in_seq)] % len(production_choices))
+
+                print 'Current Production: ' + str(current_production)
+
+                # Use an input if there was more then 1 choice.
+                if len(production_choices) > 1:
+
+                    used_input += 1
+
+                # Chosen production.
+                chosen = production_choices[current_production]
+
+                # Derivation order is left to right (depth-first).
+                #unexpanded_symbols.insert(0, (getattr(current_symbol[0], current_symbol[1].name), chosen))
+
+        # Not completely expanded.
+        if len(unexpanded_symbols) > 0:
+
+            return None, used_input
+
+        return ast, used_input
+
+    def generate_from_bnf(self, _input, max_wraps=2):
 
         """Map input via rules to output. Returns output and used_input"""
         used_input = 0

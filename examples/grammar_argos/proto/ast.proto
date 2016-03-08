@@ -1,20 +1,52 @@
 package messages;
 
 // Terminal Expansions
-message IdState {
-	required int32 val = 1;
+enum IdState {
+	STATE_0 = 0;
+	STATE_1 = 1;
+	STATE_2 = 2;
 }
 
-message IdPrecondition {
-	required int32 val = 1;
+enum IdPrecondition {
+	PRECONDITION_0 = 0;
+	PRECONDITION_1 = 1;
+	PRECONDITION_2 = 2;
+	PRECONDITION_3 = 3;
+	PRECONDITION_4 = 4;
+	PRECONDITION_5 = 5;
+	PRECONDITION_6 = 6;
+	PRECONDITION_7 = 7;
 }
 
-message IdVar {
-	required int32 val = 1;
+enum IdVar {
+	VAR_0 = 0;
+	VAR_1 = 1;
+	VAR_2 = 2;
+	VAR_3 = 3;
 }
 
-message Probability {
-	required float val = 1;
+enum Probability {
+	PROB_0 = 0;
+	PROB_1 = 1;
+	PROB_2 = 2;
+	PROB_3 = 3;
+	PROB_4 = 4;
+	PROB_5 = 5;
+	PROB_6 = 6;
+	PROB_7 = 7;
+}
+
+enum ProbInitState {
+	PROB_INIT_STATE_0 = 0;
+	PROB_INIT_STATE_1 = 1;
+	PROB_INIT_STATE_2 = 2;
+	PROB_INIT_STATE_3 = 3;
+	PROB_INIT_STATE_4 = 4;
+	PROB_INIT_STATE_5 = 5;
+	PROB_INIT_STATE_6 = 6;
+	PROB_INIT_STATE_7 = 7;
+	PROB_INIT_STATE_8 = 8;
+	PROB_INIT_STATE_9 = 9;
 }
 
 
@@ -45,39 +77,26 @@ message PreviousState {
 	required IdState id_state = 1;
 }
 
-message Actions {
-	repeated Action a_list = 1;
-}
-
-message PreviousPreconditions {
-	repeated PreviousPrecondition pc_list = 1;
-}
-
-message PreviousStates {
-	repeated PreviousState ps_list = 1;
-}
-
 message Rule {
-	required PreviousStates pc_list = 1;
-	required PreviousPreconditions ps_list = 2;
-	required Actions a_list = 3;	
+	repeated PreviousState ps_list = 1;
+	repeated PreviousPrecondition pc_list = 2;
+	repeated Action a_list = 3;
 }
 
 message RuleSet {
 	repeated Rule rules = 1;
 }
 
+// Initialization states for various simulation parameters.
 message StateInitialize {
-	required float prob_init_1 = 1;
-	required float prob_init_2 = 2;
-	required float prob_init_3 = 3;
+	required ProbInitState prob_init_1 = 1;
+	required ProbInitState prob_init_2 = 2;
+	required ProbInitState prob_init_3 = 3;
 }
 
+// The root of the grammar. Contains a set of initialization
+// states in addition to a set of rules.
 message Root {
 	required StateInitialize init = 1;
 	required RuleSet ruleset = 2;
-}
-
-message AST {
-    required Root ast_root = 1;
 }

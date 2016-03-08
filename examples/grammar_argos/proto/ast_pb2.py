@@ -3,6 +3,7 @@
 
 import sys
 _b=sys.version_info[0]<3 and (lambda x:x) or (lambda x:x.encode('latin1'))
+from google.protobuf.internal import enum_type_wrapper
 from google.protobuf import descriptor as _descriptor
 from google.protobuf import message as _message
 from google.protobuf import reflection as _reflection
@@ -18,131 +19,251 @@ _sym_db = _symbol_database.Default()
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='ast.proto',
   package='messages',
-  serialized_pb=_b('\n\tast.proto\x12\x08messages\"\x16\n\x07IdState\x12\x0b\n\x03val\x18\x01 \x02(\x05\"\x1d\n\x0eIdPrecondition\x12\x0b\n\x03val\x18\x01 \x02(\x05\"\x14\n\x05IdVar\x12\x0b\n\x03val\x18\x01 \x02(\x05\"\x1a\n\x0bProbability\x12\x0b\n\x03val\x18\x01 \x02(\x02\"_\n\x0c\x41\x63tionCngVar\x12#\n\x04prob\x18\x01 \x02(\x0b\x32\x15.messages.Probability\x12\x1f\n\x06id_var\x18\x02 \x02(\x0b\x32\x0f.messages.IdVar\x12\t\n\x01\x62\x18\x03 \x02(\x08\"Z\n\x0e\x41\x63tionCngState\x12#\n\x04prob\x18\x01 \x02(\x0b\x32\x15.messages.Probability\x12#\n\x08id_state\x18\x02 \x02(\x0b\x32\x11.messages.IdState\"^\n\x06\x41\x63tion\x12+\n\tcng_state\x18\x01 \x02(\x0b\x32\x18.messages.ActionCngState\x12\'\n\x07\x63ng_var\x18\x02 \x02(\x0b\x32\x16.messages.ActionCngVar\"T\n\x14PreviousPrecondition\x12\x31\n\x0fid_precondition\x18\x01 \x02(\x0b\x32\x18.messages.IdPrecondition\x12\t\n\x01\x62\x18\x02 \x02(\x08\"4\n\rPreviousState\x12#\n\x08id_state\x18\x01 \x02(\x0b\x32\x11.messages.IdState\"+\n\x07\x41\x63tions\x12 \n\x06\x61_list\x18\x01 \x03(\x0b\x32\x10.messages.Action\"H\n\x15PreviousPreconditions\x12/\n\x07pc_list\x18\x01 \x03(\x0b\x32\x1e.messages.PreviousPrecondition\":\n\x0ePreviousStates\x12(\n\x07ps_list\x18\x01 \x03(\x0b\x32\x17.messages.PreviousState\"\x86\x01\n\x04Rule\x12)\n\x07pc_list\x18\x01 \x02(\x0b\x32\x18.messages.PreviousStates\x12\x30\n\x07ps_list\x18\x02 \x02(\x0b\x32\x1f.messages.PreviousPreconditions\x12!\n\x06\x61_list\x18\x03 \x02(\x0b\x32\x11.messages.Actions\"(\n\x07RuleSet\x12\x1d\n\x05rules\x18\x01 \x03(\x0b\x32\x0e.messages.Rule\"P\n\x0fStateInitialize\x12\x13\n\x0bprob_init_1\x18\x01 \x02(\x02\x12\x13\n\x0bprob_init_2\x18\x02 \x02(\x02\x12\x13\n\x0bprob_init_3\x18\x03 \x02(\x02\"S\n\x04Root\x12\'\n\x04init\x18\x01 \x02(\x0b\x32\x19.messages.StateInitialize\x12\"\n\x07ruleset\x18\x02 \x02(\x0b\x32\x11.messages.RuleSet\"\'\n\x03\x41ST\x12 \n\x08\x61st_root\x18\x01 \x02(\x0b\x32\x0e.messages.Root')
+  serialized_pb=_b('\n\tast.proto\x12\x08messages\"_\n\x0c\x41\x63tionCngVar\x12#\n\x04prob\x18\x01 \x02(\x0e\x32\x15.messages.Probability\x12\x1f\n\x06id_var\x18\x02 \x02(\x0e\x32\x0f.messages.IdVar\x12\t\n\x01\x62\x18\x03 \x02(\x08\"Z\n\x0e\x41\x63tionCngState\x12#\n\x04prob\x18\x01 \x02(\x0e\x32\x15.messages.Probability\x12#\n\x08id_state\x18\x02 \x02(\x0e\x32\x11.messages.IdState\"^\n\x06\x41\x63tion\x12+\n\tcng_state\x18\x01 \x02(\x0b\x32\x18.messages.ActionCngState\x12\'\n\x07\x63ng_var\x18\x02 \x02(\x0b\x32\x16.messages.ActionCngVar\"T\n\x14PreviousPrecondition\x12\x31\n\x0fid_precondition\x18\x01 \x02(\x0e\x32\x18.messages.IdPrecondition\x12\t\n\x01\x62\x18\x02 \x02(\x08\"4\n\rPreviousState\x12#\n\x08id_state\x18\x01 \x02(\x0e\x32\x11.messages.IdState\"\x83\x01\n\x04Rule\x12(\n\x07ps_list\x18\x01 \x03(\x0b\x32\x17.messages.PreviousState\x12/\n\x07pc_list\x18\x02 \x03(\x0b\x32\x1e.messages.PreviousPrecondition\x12 \n\x06\x61_list\x18\x03 \x03(\x0b\x32\x10.messages.Action\"(\n\x07RuleSet\x12\x1d\n\x05rules\x18\x01 \x03(\x0b\x32\x0e.messages.Rule\"\x9b\x01\n\x0fStateInitialize\x12,\n\x0bprob_init_1\x18\x01 \x02(\x0e\x32\x17.messages.ProbInitState\x12,\n\x0bprob_init_2\x18\x02 \x02(\x0e\x32\x17.messages.ProbInitState\x12,\n\x0bprob_init_3\x18\x03 \x02(\x0e\x32\x17.messages.ProbInitState\"S\n\x04Root\x12\'\n\x04init\x18\x01 \x02(\x0b\x32\x19.messages.StateInitialize\x12\"\n\x07ruleset\x18\x02 \x02(\x0b\x32\x11.messages.RuleSet*0\n\x07IdState\x12\x0b\n\x07STATE_0\x10\x00\x12\x0b\n\x07STATE_1\x10\x01\x12\x0b\n\x07STATE_2\x10\x02*\xb0\x01\n\x0eIdPrecondition\x12\x12\n\x0ePRECONDITION_0\x10\x00\x12\x12\n\x0ePRECONDITION_1\x10\x01\x12\x12\n\x0ePRECONDITION_2\x10\x02\x12\x12\n\x0ePRECONDITION_3\x10\x03\x12\x12\n\x0ePRECONDITION_4\x10\x04\x12\x12\n\x0ePRECONDITION_5\x10\x05\x12\x12\n\x0ePRECONDITION_6\x10\x06\x12\x12\n\x0ePRECONDITION_7\x10\x07*3\n\x05IdVar\x12\t\n\x05VAR_0\x10\x00\x12\t\n\x05VAR_1\x10\x01\x12\t\n\x05VAR_2\x10\x02\x12\t\n\x05VAR_3\x10\x03*m\n\x0bProbability\x12\n\n\x06PROB_0\x10\x00\x12\n\n\x06PROB_1\x10\x01\x12\n\n\x06PROB_2\x10\x02\x12\n\n\x06PROB_3\x10\x03\x12\n\n\x06PROB_4\x10\x04\x12\n\n\x06PROB_5\x10\x05\x12\n\n\x06PROB_6\x10\x06\x12\n\n\x06PROB_7\x10\x07*\xf5\x01\n\rProbInitState\x12\x15\n\x11PROB_INIT_STATE_0\x10\x00\x12\x15\n\x11PROB_INIT_STATE_1\x10\x01\x12\x15\n\x11PROB_INIT_STATE_2\x10\x02\x12\x15\n\x11PROB_INIT_STATE_3\x10\x03\x12\x15\n\x11PROB_INIT_STATE_4\x10\x04\x12\x15\n\x11PROB_INIT_STATE_5\x10\x05\x12\x15\n\x11PROB_INIT_STATE_6\x10\x06\x12\x15\n\x11PROB_INIT_STATE_7\x10\x07\x12\x15\n\x11PROB_INIT_STATE_8\x10\x08\x12\x15\n\x11PROB_INIT_STATE_9\x10\t')
 )
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
-
-
-
-_IDSTATE = _descriptor.Descriptor(
+_IDSTATE = _descriptor.EnumDescriptor(
   name='IdState',
   full_name='messages.IdState',
   filename=None,
   file=DESCRIPTOR,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='STATE_0', index=0, number=0,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='STATE_1', index=1, number=1,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='STATE_2', index=2, number=2,
+      options=None,
+      type=None),
+  ],
   containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='val', full_name='messages.IdState.val', index=0,
-      number=1, type=5, cpp_type=1, label=2,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
   options=None,
-  is_extendable=False,
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=23,
-  serialized_end=45,
+  serialized_start=867,
+  serialized_end=915,
 )
+_sym_db.RegisterEnumDescriptor(_IDSTATE)
 
-
-_IDPRECONDITION = _descriptor.Descriptor(
+IdState = enum_type_wrapper.EnumTypeWrapper(_IDSTATE)
+_IDPRECONDITION = _descriptor.EnumDescriptor(
   name='IdPrecondition',
   full_name='messages.IdPrecondition',
   filename=None,
   file=DESCRIPTOR,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='PRECONDITION_0', index=0, number=0,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='PRECONDITION_1', index=1, number=1,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='PRECONDITION_2', index=2, number=2,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='PRECONDITION_3', index=3, number=3,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='PRECONDITION_4', index=4, number=4,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='PRECONDITION_5', index=5, number=5,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='PRECONDITION_6', index=6, number=6,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='PRECONDITION_7', index=7, number=7,
+      options=None,
+      type=None),
+  ],
   containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='val', full_name='messages.IdPrecondition.val', index=0,
-      number=1, type=5, cpp_type=1, label=2,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
   options=None,
-  is_extendable=False,
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=47,
-  serialized_end=76,
+  serialized_start=918,
+  serialized_end=1094,
 )
+_sym_db.RegisterEnumDescriptor(_IDPRECONDITION)
 
-
-_IDVAR = _descriptor.Descriptor(
+IdPrecondition = enum_type_wrapper.EnumTypeWrapper(_IDPRECONDITION)
+_IDVAR = _descriptor.EnumDescriptor(
   name='IdVar',
   full_name='messages.IdVar',
   filename=None,
   file=DESCRIPTOR,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='VAR_0', index=0, number=0,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='VAR_1', index=1, number=1,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='VAR_2', index=2, number=2,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='VAR_3', index=3, number=3,
+      options=None,
+      type=None),
+  ],
   containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='val', full_name='messages.IdVar.val', index=0,
-      number=1, type=5, cpp_type=1, label=2,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
   options=None,
-  is_extendable=False,
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=78,
-  serialized_end=98,
+  serialized_start=1096,
+  serialized_end=1147,
 )
+_sym_db.RegisterEnumDescriptor(_IDVAR)
 
-
-_PROBABILITY = _descriptor.Descriptor(
+IdVar = enum_type_wrapper.EnumTypeWrapper(_IDVAR)
+_PROBABILITY = _descriptor.EnumDescriptor(
   name='Probability',
   full_name='messages.Probability',
   filename=None,
   file=DESCRIPTOR,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='PROB_0', index=0, number=0,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='PROB_1', index=1, number=1,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='PROB_2', index=2, number=2,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='PROB_3', index=3, number=3,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='PROB_4', index=4, number=4,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='PROB_5', index=5, number=5,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='PROB_6', index=6, number=6,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='PROB_7', index=7, number=7,
+      options=None,
+      type=None),
+  ],
   containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='val', full_name='messages.Probability.val', index=0,
-      number=1, type=2, cpp_type=6, label=2,
-      has_default_value=False, default_value=0,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
   options=None,
-  is_extendable=False,
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=100,
-  serialized_end=126,
+  serialized_start=1149,
+  serialized_end=1258,
 )
+_sym_db.RegisterEnumDescriptor(_PROBABILITY)
+
+Probability = enum_type_wrapper.EnumTypeWrapper(_PROBABILITY)
+_PROBINITSTATE = _descriptor.EnumDescriptor(
+  name='ProbInitState',
+  full_name='messages.ProbInitState',
+  filename=None,
+  file=DESCRIPTOR,
+  values=[
+    _descriptor.EnumValueDescriptor(
+      name='PROB_INIT_STATE_0', index=0, number=0,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='PROB_INIT_STATE_1', index=1, number=1,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='PROB_INIT_STATE_2', index=2, number=2,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='PROB_INIT_STATE_3', index=3, number=3,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='PROB_INIT_STATE_4', index=4, number=4,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='PROB_INIT_STATE_5', index=5, number=5,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='PROB_INIT_STATE_6', index=6, number=6,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='PROB_INIT_STATE_7', index=7, number=7,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='PROB_INIT_STATE_8', index=8, number=8,
+      options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='PROB_INIT_STATE_9', index=9, number=9,
+      options=None,
+      type=None),
+  ],
+  containing_type=None,
+  options=None,
+  serialized_start=1261,
+  serialized_end=1506,
+)
+_sym_db.RegisterEnumDescriptor(_PROBINITSTATE)
+
+ProbInitState = enum_type_wrapper.EnumTypeWrapper(_PROBINITSTATE)
+STATE_0 = 0
+STATE_1 = 1
+STATE_2 = 2
+PRECONDITION_0 = 0
+PRECONDITION_1 = 1
+PRECONDITION_2 = 2
+PRECONDITION_3 = 3
+PRECONDITION_4 = 4
+PRECONDITION_5 = 5
+PRECONDITION_6 = 6
+PRECONDITION_7 = 7
+VAR_0 = 0
+VAR_1 = 1
+VAR_2 = 2
+VAR_3 = 3
+PROB_0 = 0
+PROB_1 = 1
+PROB_2 = 2
+PROB_3 = 3
+PROB_4 = 4
+PROB_5 = 5
+PROB_6 = 6
+PROB_7 = 7
+PROB_INIT_STATE_0 = 0
+PROB_INIT_STATE_1 = 1
+PROB_INIT_STATE_2 = 2
+PROB_INIT_STATE_3 = 3
+PROB_INIT_STATE_4 = 4
+PROB_INIT_STATE_5 = 5
+PROB_INIT_STATE_6 = 6
+PROB_INIT_STATE_7 = 7
+PROB_INIT_STATE_8 = 8
+PROB_INIT_STATE_9 = 9
+
 
 
 _ACTIONCNGVAR = _descriptor.Descriptor(
@@ -154,15 +275,15 @@ _ACTIONCNGVAR = _descriptor.Descriptor(
   fields=[
     _descriptor.FieldDescriptor(
       name='prob', full_name='messages.ActionCngVar.prob', index=0,
-      number=1, type=11, cpp_type=10, label=2,
-      has_default_value=False, default_value=None,
+      number=1, type=14, cpp_type=8, label=2,
+      has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
       name='id_var', full_name='messages.ActionCngVar.id_var', index=1,
-      number=2, type=11, cpp_type=10, label=2,
-      has_default_value=False, default_value=None,
+      number=2, type=14, cpp_type=8, label=2,
+      has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
@@ -184,8 +305,8 @@ _ACTIONCNGVAR = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=128,
-  serialized_end=223,
+  serialized_start=23,
+  serialized_end=118,
 )
 
 
@@ -198,15 +319,15 @@ _ACTIONCNGSTATE = _descriptor.Descriptor(
   fields=[
     _descriptor.FieldDescriptor(
       name='prob', full_name='messages.ActionCngState.prob', index=0,
-      number=1, type=11, cpp_type=10, label=2,
-      has_default_value=False, default_value=None,
+      number=1, type=14, cpp_type=8, label=2,
+      has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
       name='id_state', full_name='messages.ActionCngState.id_state', index=1,
-      number=2, type=11, cpp_type=10, label=2,
-      has_default_value=False, default_value=None,
+      number=2, type=14, cpp_type=8, label=2,
+      has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
@@ -221,8 +342,8 @@ _ACTIONCNGSTATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=225,
-  serialized_end=315,
+  serialized_start=120,
+  serialized_end=210,
 )
 
 
@@ -258,8 +379,8 @@ _ACTION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=317,
-  serialized_end=411,
+  serialized_start=212,
+  serialized_end=306,
 )
 
 
@@ -272,8 +393,8 @@ _PREVIOUSPRECONDITION = _descriptor.Descriptor(
   fields=[
     _descriptor.FieldDescriptor(
       name='id_precondition', full_name='messages.PreviousPrecondition.id_precondition', index=0,
-      number=1, type=11, cpp_type=10, label=2,
-      has_default_value=False, default_value=None,
+      number=1, type=14, cpp_type=8, label=2,
+      has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
@@ -295,8 +416,8 @@ _PREVIOUSPRECONDITION = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=413,
-  serialized_end=497,
+  serialized_start=308,
+  serialized_end=392,
 )
 
 
@@ -309,8 +430,8 @@ _PREVIOUSSTATE = _descriptor.Descriptor(
   fields=[
     _descriptor.FieldDescriptor(
       name='id_state', full_name='messages.PreviousState.id_state', index=0,
-      number=1, type=11, cpp_type=10, label=2,
-      has_default_value=False, default_value=None,
+      number=1, type=14, cpp_type=8, label=2,
+      has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
@@ -325,98 +446,8 @@ _PREVIOUSSTATE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=499,
-  serialized_end=551,
-)
-
-
-_ACTIONS = _descriptor.Descriptor(
-  name='Actions',
-  full_name='messages.Actions',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='a_list', full_name='messages.Actions.a_list', index=0,
-      number=1, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  options=None,
-  is_extendable=False,
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=553,
-  serialized_end=596,
-)
-
-
-_PREVIOUSPRECONDITIONS = _descriptor.Descriptor(
-  name='PreviousPreconditions',
-  full_name='messages.PreviousPreconditions',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='pc_list', full_name='messages.PreviousPreconditions.pc_list', index=0,
-      number=1, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  options=None,
-  is_extendable=False,
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=598,
-  serialized_end=670,
-)
-
-
-_PREVIOUSSTATES = _descriptor.Descriptor(
-  name='PreviousStates',
-  full_name='messages.PreviousStates',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='ps_list', full_name='messages.PreviousStates.ps_list', index=0,
-      number=1, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  options=None,
-  is_extendable=False,
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=672,
-  serialized_end=730,
+  serialized_start=394,
+  serialized_end=446,
 )
 
 
@@ -428,23 +459,23 @@ _RULE = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='pc_list', full_name='messages.Rule.pc_list', index=0,
-      number=1, type=11, cpp_type=10, label=2,
-      has_default_value=False, default_value=None,
+      name='ps_list', full_name='messages.Rule.ps_list', index=0,
+      number=1, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='ps_list', full_name='messages.Rule.ps_list', index=1,
-      number=2, type=11, cpp_type=10, label=2,
-      has_default_value=False, default_value=None,
+      name='pc_list', full_name='messages.Rule.pc_list', index=1,
+      number=2, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
       name='a_list', full_name='messages.Rule.a_list', index=2,
-      number=3, type=11, cpp_type=10, label=2,
-      has_default_value=False, default_value=None,
+      number=3, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
@@ -459,8 +490,8 @@ _RULE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=733,
-  serialized_end=867,
+  serialized_start=449,
+  serialized_end=580,
 )
 
 
@@ -489,8 +520,8 @@ _RULESET = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=869,
-  serialized_end=909,
+  serialized_start=582,
+  serialized_end=622,
 )
 
 
@@ -503,21 +534,21 @@ _STATEINITIALIZE = _descriptor.Descriptor(
   fields=[
     _descriptor.FieldDescriptor(
       name='prob_init_1', full_name='messages.StateInitialize.prob_init_1', index=0,
-      number=1, type=2, cpp_type=6, label=2,
+      number=1, type=14, cpp_type=8, label=2,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
       name='prob_init_2', full_name='messages.StateInitialize.prob_init_2', index=1,
-      number=2, type=2, cpp_type=6, label=2,
+      number=2, type=14, cpp_type=8, label=2,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
       name='prob_init_3', full_name='messages.StateInitialize.prob_init_3', index=2,
-      number=3, type=2, cpp_type=6, label=2,
+      number=3, type=14, cpp_type=8, label=2,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -533,8 +564,8 @@ _STATEINITIALIZE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=911,
-  serialized_end=991,
+  serialized_start=625,
+  serialized_end=780,
 )
 
 
@@ -570,103 +601,41 @@ _ROOT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=993,
-  serialized_end=1076,
+  serialized_start=782,
+  serialized_end=865,
 )
 
-
-_AST = _descriptor.Descriptor(
-  name='AST',
-  full_name='messages.AST',
-  filename=None,
-  file=DESCRIPTOR,
-  containing_type=None,
-  fields=[
-    _descriptor.FieldDescriptor(
-      name='ast_root', full_name='messages.AST.ast_root', index=0,
-      number=1, type=11, cpp_type=10, label=2,
-      has_default_value=False, default_value=None,
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-  ],
-  extensions=[
-  ],
-  nested_types=[],
-  enum_types=[
-  ],
-  options=None,
-  is_extendable=False,
-  extension_ranges=[],
-  oneofs=[
-  ],
-  serialized_start=1078,
-  serialized_end=1117,
-)
-
-_ACTIONCNGVAR.fields_by_name['prob'].message_type = _PROBABILITY
-_ACTIONCNGVAR.fields_by_name['id_var'].message_type = _IDVAR
-_ACTIONCNGSTATE.fields_by_name['prob'].message_type = _PROBABILITY
-_ACTIONCNGSTATE.fields_by_name['id_state'].message_type = _IDSTATE
+_ACTIONCNGVAR.fields_by_name['prob'].enum_type = _PROBABILITY
+_ACTIONCNGVAR.fields_by_name['id_var'].enum_type = _IDVAR
+_ACTIONCNGSTATE.fields_by_name['prob'].enum_type = _PROBABILITY
+_ACTIONCNGSTATE.fields_by_name['id_state'].enum_type = _IDSTATE
 _ACTION.fields_by_name['cng_state'].message_type = _ACTIONCNGSTATE
 _ACTION.fields_by_name['cng_var'].message_type = _ACTIONCNGVAR
-_PREVIOUSPRECONDITION.fields_by_name['id_precondition'].message_type = _IDPRECONDITION
-_PREVIOUSSTATE.fields_by_name['id_state'].message_type = _IDSTATE
-_ACTIONS.fields_by_name['a_list'].message_type = _ACTION
-_PREVIOUSPRECONDITIONS.fields_by_name['pc_list'].message_type = _PREVIOUSPRECONDITION
-_PREVIOUSSTATES.fields_by_name['ps_list'].message_type = _PREVIOUSSTATE
-_RULE.fields_by_name['pc_list'].message_type = _PREVIOUSSTATES
-_RULE.fields_by_name['ps_list'].message_type = _PREVIOUSPRECONDITIONS
-_RULE.fields_by_name['a_list'].message_type = _ACTIONS
+_PREVIOUSPRECONDITION.fields_by_name['id_precondition'].enum_type = _IDPRECONDITION
+_PREVIOUSSTATE.fields_by_name['id_state'].enum_type = _IDSTATE
+_RULE.fields_by_name['ps_list'].message_type = _PREVIOUSSTATE
+_RULE.fields_by_name['pc_list'].message_type = _PREVIOUSPRECONDITION
+_RULE.fields_by_name['a_list'].message_type = _ACTION
 _RULESET.fields_by_name['rules'].message_type = _RULE
+_STATEINITIALIZE.fields_by_name['prob_init_1'].enum_type = _PROBINITSTATE
+_STATEINITIALIZE.fields_by_name['prob_init_2'].enum_type = _PROBINITSTATE
+_STATEINITIALIZE.fields_by_name['prob_init_3'].enum_type = _PROBINITSTATE
 _ROOT.fields_by_name['init'].message_type = _STATEINITIALIZE
 _ROOT.fields_by_name['ruleset'].message_type = _RULESET
-_AST.fields_by_name['ast_root'].message_type = _ROOT
-DESCRIPTOR.message_types_by_name['IdState'] = _IDSTATE
-DESCRIPTOR.message_types_by_name['IdPrecondition'] = _IDPRECONDITION
-DESCRIPTOR.message_types_by_name['IdVar'] = _IDVAR
-DESCRIPTOR.message_types_by_name['Probability'] = _PROBABILITY
 DESCRIPTOR.message_types_by_name['ActionCngVar'] = _ACTIONCNGVAR
 DESCRIPTOR.message_types_by_name['ActionCngState'] = _ACTIONCNGSTATE
 DESCRIPTOR.message_types_by_name['Action'] = _ACTION
 DESCRIPTOR.message_types_by_name['PreviousPrecondition'] = _PREVIOUSPRECONDITION
 DESCRIPTOR.message_types_by_name['PreviousState'] = _PREVIOUSSTATE
-DESCRIPTOR.message_types_by_name['Actions'] = _ACTIONS
-DESCRIPTOR.message_types_by_name['PreviousPreconditions'] = _PREVIOUSPRECONDITIONS
-DESCRIPTOR.message_types_by_name['PreviousStates'] = _PREVIOUSSTATES
 DESCRIPTOR.message_types_by_name['Rule'] = _RULE
 DESCRIPTOR.message_types_by_name['RuleSet'] = _RULESET
 DESCRIPTOR.message_types_by_name['StateInitialize'] = _STATEINITIALIZE
 DESCRIPTOR.message_types_by_name['Root'] = _ROOT
-DESCRIPTOR.message_types_by_name['AST'] = _AST
-
-IdState = _reflection.GeneratedProtocolMessageType('IdState', (_message.Message,), dict(
-  DESCRIPTOR = _IDSTATE,
-  __module__ = 'ast_pb2'
-  # @@protoc_insertion_point(class_scope:messages.IdState)
-  ))
-_sym_db.RegisterMessage(IdState)
-
-IdPrecondition = _reflection.GeneratedProtocolMessageType('IdPrecondition', (_message.Message,), dict(
-  DESCRIPTOR = _IDPRECONDITION,
-  __module__ = 'ast_pb2'
-  # @@protoc_insertion_point(class_scope:messages.IdPrecondition)
-  ))
-_sym_db.RegisterMessage(IdPrecondition)
-
-IdVar = _reflection.GeneratedProtocolMessageType('IdVar', (_message.Message,), dict(
-  DESCRIPTOR = _IDVAR,
-  __module__ = 'ast_pb2'
-  # @@protoc_insertion_point(class_scope:messages.IdVar)
-  ))
-_sym_db.RegisterMessage(IdVar)
-
-Probability = _reflection.GeneratedProtocolMessageType('Probability', (_message.Message,), dict(
-  DESCRIPTOR = _PROBABILITY,
-  __module__ = 'ast_pb2'
-  # @@protoc_insertion_point(class_scope:messages.Probability)
-  ))
-_sym_db.RegisterMessage(Probability)
+DESCRIPTOR.enum_types_by_name['IdState'] = _IDSTATE
+DESCRIPTOR.enum_types_by_name['IdPrecondition'] = _IDPRECONDITION
+DESCRIPTOR.enum_types_by_name['IdVar'] = _IDVAR
+DESCRIPTOR.enum_types_by_name['Probability'] = _PROBABILITY
+DESCRIPTOR.enum_types_by_name['ProbInitState'] = _PROBINITSTATE
 
 ActionCngVar = _reflection.GeneratedProtocolMessageType('ActionCngVar', (_message.Message,), dict(
   DESCRIPTOR = _ACTIONCNGVAR,
@@ -703,27 +672,6 @@ PreviousState = _reflection.GeneratedProtocolMessageType('PreviousState', (_mess
   ))
 _sym_db.RegisterMessage(PreviousState)
 
-Actions = _reflection.GeneratedProtocolMessageType('Actions', (_message.Message,), dict(
-  DESCRIPTOR = _ACTIONS,
-  __module__ = 'ast_pb2'
-  # @@protoc_insertion_point(class_scope:messages.Actions)
-  ))
-_sym_db.RegisterMessage(Actions)
-
-PreviousPreconditions = _reflection.GeneratedProtocolMessageType('PreviousPreconditions', (_message.Message,), dict(
-  DESCRIPTOR = _PREVIOUSPRECONDITIONS,
-  __module__ = 'ast_pb2'
-  # @@protoc_insertion_point(class_scope:messages.PreviousPreconditions)
-  ))
-_sym_db.RegisterMessage(PreviousPreconditions)
-
-PreviousStates = _reflection.GeneratedProtocolMessageType('PreviousStates', (_message.Message,), dict(
-  DESCRIPTOR = _PREVIOUSSTATES,
-  __module__ = 'ast_pb2'
-  # @@protoc_insertion_point(class_scope:messages.PreviousStates)
-  ))
-_sym_db.RegisterMessage(PreviousStates)
-
 Rule = _reflection.GeneratedProtocolMessageType('Rule', (_message.Message,), dict(
   DESCRIPTOR = _RULE,
   __module__ = 'ast_pb2'
@@ -751,13 +699,6 @@ Root = _reflection.GeneratedProtocolMessageType('Root', (_message.Message,), dic
   # @@protoc_insertion_point(class_scope:messages.Root)
   ))
 _sym_db.RegisterMessage(Root)
-
-AST = _reflection.GeneratedProtocolMessageType('AST', (_message.Message,), dict(
-  DESCRIPTOR = _AST,
-  __module__ = 'ast_pb2'
-  # @@protoc_insertion_point(class_scope:messages.AST)
-  ))
-_sym_db.RegisterMessage(AST)
 
 
 # @@protoc_insertion_point(module_scope)
