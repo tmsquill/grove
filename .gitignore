@@ -1,6 +1,9 @@
 # Compiled Sources #
 *.pyc
 
+# Data #
+*.csv
+
 # Logs #
 *.log
 
