@@ -131,7 +131,7 @@ class Grammar:
 
             return self.generate_from_bnf(in_seq, max_wraps)
 
-    def generate_from_protosss(self, in_seq, wraps=2):
+    def generate_from_proto(self, in_seq, wraps=2):
 
         """
         Uses reflection to form an AST with a Google Protocol Buffer auto-generated class.
@@ -261,27 +261,27 @@ class Grammar:
                 wraps -= 1
 
             # Expand a production.
-            print '\nUnexpanded Symbols -> ' + str(unexpanded_symbols)
+            # TODO: print '\nUnexpanded Symbols -> ' + str(unexpanded_symbols)
             current_symbol = unexpanded_symbols.pop(0)
-            print 'Current Symbol     -> ' + str(current_symbol)
+            # TODO: print 'Current Symbol     -> ' + str(current_symbol)
 
             # If the current symbol maps to a terminal, append the symbol.
             if current_symbol[1] != self.NT:
 
-                print '<-- Terminal Symbol --->'
+                # TODO: print '<-- Terminal Symbol --->'
                 output.append(current_symbol[0])
 
             # Otherwise the current symbol maps to a non-terminal.
             else:
 
-                print '<-- Non-Terminal Symbol --->'
+                # TODO: print '<-- Non-Terminal Symbol --->'
 
                 production_choices = self.rules[current_symbol[0]]
-                print 'Production Choices -> ' + str(production_choices)
+                # TODO: print 'Production Choices -> ' + str(production_choices)
 
                 # Select a production.
                 current_production = int(in_seq[used_in_seq % len(in_seq)] % len(production_choices))
-                print 'Current Production -> ' + str(production_choices[current_production])
+                # TODO: print 'Current Production -> ' + str(production_choices[current_production])
 
                 # Use an input if there was more then 1 choice.
                 if len(production_choices) > 1:
@@ -291,11 +291,12 @@ class Grammar:
                 # Derivation order is left to right (depth-first).
                 unexpanded_symbols = production_choices[current_production] + unexpanded_symbols
 
-            print 'Output             -> ' + str(output)
+            # TODO: print 'Output             -> ' + str(output)
 
+        # TODO: Determine correct action here.
         # Not completely expanded.
-        if len(unexpanded_symbols) > 0:
-
-            raise ValueError('Unable to fully expand grammar.')
+        # if len(unexpanded_symbols) > 0:
+        #
+        #     raise ValueError('Unable to fully expand grammar.')
 
         return output, used_in_seq

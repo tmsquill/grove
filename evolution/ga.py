@@ -2,10 +2,9 @@ import logging
 import time
 
 import dispy
-from tqdm import tqdm
 
 import config
-import examples.grammar_argos.proto.agent_pb2 as pb
+import examples.grammar_argos.proto.foraging_pb2 as pb
 import utils
 from generation import Generation
 
@@ -64,7 +63,7 @@ def evolve(population, generations, agent_type, pre_evaluation_func, evaluation_
 
     start_time = time.time()
 
-    for generation in tqdm(ga_generations):
+    for generation in ga_generations:
 
         logging.info(" Generation %s ".center(180, '*') % str(generation.id))
 

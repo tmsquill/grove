@@ -9,7 +9,7 @@ import evolution.selection as selection
 import evolution.crossover as crossover
 import evolution.mutation as mutation
 
-import proto.ast_pb2
+import proto.foraging_pb2
 
 bnf_grammar = None
 
