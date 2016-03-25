@@ -36,6 +36,10 @@ class Simulation:
             self.step()
             self.post_step()
 
+    def pre_conditions(self, entity, funcs):
+
+        return [func(entity) for func in funcs]
+
     def pre_step(self):
 
         pass

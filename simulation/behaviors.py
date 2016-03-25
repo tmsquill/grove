@@ -47,6 +47,9 @@ def pickup_food(agent=None, environment=None):
 
         agent.holding_food = True
 
+"""
+Path find back to nest before dropping food.
+"""
 
 def drop_food(agent=None, environment=None):
 

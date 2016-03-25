@@ -8,6 +8,13 @@ def on_border(agent=None, environment=None):
 
 def on_nest(agent=None, environment=None):
 
-    agents
-
     return nest.body.contains(agent.body)
+
+"""
+On food?
+On nest?
+"""
+
+def holding_food():
+
+    pass
