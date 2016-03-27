@@ -143,9 +143,9 @@ class Grammar:
         print 'Input Sequence     -> ' + str(in_seq)
 
         used_in_seq = 0
-        output = self.pb.Root()
+        pb = self.pb.Root()
         production_choices = []
-        unexpanded_symbols = [output]
+        unexpanded_symbols = [(pb, field) for field in pb.DESCRIPTOR.fields]
 
         while 0 < wraps and len(unexpanded_symbols) > 0:
 
@@ -174,12 +174,12 @@ class Grammar:
 
                 print 'getattr(' + str(type(current_symbol[0])) + ', ' + current_symbol[1].name + ')'
 
-                # Required field (type message).
+                # Required field.
                 if current_symbol[1].label == des.FieldDescriptor.LABEL_REQUIRED:
 
                     getattr(current_symbol[0], current_symbol[1].name).SetInParent()
 
-                # Repeated field (type message).
+                # Repeated field.
                 elif current_symbol[1].label == des.FieldDescriptor.LABEL_REPEATED:
 
                     print type(current_symbol[0])
