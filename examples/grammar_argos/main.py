@@ -56,7 +56,7 @@ def evaluation(agent=None):
     :return: The agent with updated evaluation value.
     """
 
-    return agent
+    return agent.phenotype
 
 
 def post_evaluation(agents=None):
@@ -110,6 +110,7 @@ if __name__ == "__main__":
         crossover.one_point(),
         mutation.gaussian(),
         [],
+        [Agent, GESAgent],
         #['10.0.0.30', '10.0.0.31', '10.0.0.32', '10.0.0.33', '10.0.0.34', '10.0.0.35', '10.0.0.36'],
         'log'
     )

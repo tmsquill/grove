@@ -4,22 +4,21 @@ import time
 import dispy
 
 import config
-import examples.grammar_argos.proto.foraging_pb2 as pb
 import utils
 from generation import Generation
 
 
-def evolve(population, generations, agent_type, pre_evaluation_func, evaluation_func, post_evaluation_func, selection_func, crossover_func, mutation_func, nodes, log):
+def evolve(population, generations, agent_type, pre_evaluation, evaluation, post_evaluation, selection, crossover, mutation, nodes, depends, log):
     """
     Performs evolution on a set of agents over a number of generations. The desired evolutionary functions must be
     specified by the caller. Logging is optional.
     :param population: The desired population size.
     :param generations: The number of generation to evolve.
     :param agent_type: The type of agent used to initialize the population.
-    :param evaluation_func: The evaluation function.
-    :param selection_func: The selection function.
-    :param crossover_func: The crossover function.
-    :param mutation_func: The mutation function.
+    :param evaluation: The evaluation function.
+    :param selection: The selection function.
+    :param crossover: The crossover function.
+    :param mutation: The mutation function.
     :param nodes: The nodes in the cluster used for computing the evaluation function.
     :param log: The path to output the log file, if not specified does not log.
     """
@@ -38,16 +37,16 @@ def evolve(population, generations, agent_type, pre_evaluation_func, evaluation_
         logging.info('\n' + config.pretty_config(name))
 
     # Validate pre and post evaluation functions.
-    if not hasattr(pre_evaluation_func, '__call__'):
+    if not hasattr(pre_evaluation, '__call__'):
 
-        raise ValueError('pre_evaluation_func is not callable', pre_evaluation_func)
+        raise ValueError('pre_evaluation_func is not callable', pre_evaluation)
 
-    if not hasattr(post_evaluation_func, '__call__'):
+    if not hasattr(post_evaluation, '__call__'):
 
-        raise ValueError('post_evaluation_func is not callable', post_evaluation_func)
+        raise ValueError('post_evaluation_func is not callable', post_evaluation)
 
     # Configure the cluster.
-    cluster = dispy.JobCluster(evaluation_func, nodes=nodes, depends=[pb], loglevel=logging.DEBUG)
+    cluster = dispy.JobCluster(evaluation, nodes=nodes, depends=depends, loglevel=logging.DEBUG)
 
     # Initialize Generations.
     ga_generations = [Generation() for _ in xrange(generations)]
@@ -69,7 +68,7 @@ def evolve(population, generations, agent_type, pre_evaluation_func, evaluation_
 
         print 'Generation ' + str(generation.id)
 
-        ga_agents = pre_evaluation_func(ga_agents)
+        ga_agents = pre_evaluation(ga_agents)
 
         jobs = []
 
@@ -84,16 +83,16 @@ def evolve(population, generations, agent_type, pre_evaluation_func, evaluation_
         for job in jobs:
 
             job()
-            print("Result of program %s with job ID %s starting at %s is %s with stdout %s" % (evaluation_func, job.id, job.start_time, job.result, job.stdout))
+            print("Result of program %s with job ID %s starting at %s is %s with stdout %s" % (evaluation, job.id, job.start_time, job.result, job.stdout))
 
-        ga_agents = post_evaluation_func(ga_agents)
+        ga_agents = post_evaluation(ga_agents)
 
         generation.bind_agents(ga_agents)
         logging.info('\n' + str(generation))
 
-        ga_agents = selection_func(ga_agents)
-        ga_agents = crossover_func(ga_agents, population)
-        ga_agents = mutation_func(ga_agents)
+        ga_agents = selection(ga_agents)
+        ga_agents = crossover(ga_agents, population)
+        ga_agents = mutation(ga_agents)
 
     cluster.stats()
 

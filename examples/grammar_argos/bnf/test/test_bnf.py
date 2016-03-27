@@ -3,7 +3,7 @@ import random
 from evolution.grammar import Grammar
 
 # Backus-Naur Form
-bnf = '../foraging.bnf'
+bnf = '../foraging_xml.bnf'
 
 # Generate random sequence for AST creation.
 sequence = [random.randint(0, 128) for _ in xrange(128)]
