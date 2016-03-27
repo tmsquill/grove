@@ -1,8 +1,10 @@
 import random
 import re
 import json
+import os
 from types import ModuleType
 import google.protobuf.descriptor as des
+import thriftpy
 
 # TODO - Begin Debugging
 import google.protobuf.text_format as tf
@@ -32,13 +34,20 @@ class Grammar:
         if isinstance(context_free_grammar, ModuleType):
 
             self.pb = context_free_grammar
-            self.bnf = False
+            self.representation = 'proto'
+
+        # The context-free grammar is a Apache Thrift file.
+        elif context_free_grammar.endswith('.thrift'):
+
+            module_name = os.path.splitext(os.path.basename(context_free_grammar))[0] + '_thrift'
+            self.thrift = thriftpy.load(context_free_grammar, module_name=module_name)
+            self.representation = 'thrift'
 
         # The context-free grammar is a Backus-Naur Form file.
         else:
 
             self.read_bnf_file(context_free_grammar)
-            self.bnf = True
+            self.representation = 'bnf'
 
     def __str__(self):
 
@@ -123,9 +132,13 @@ class Grammar:
 
     def generate(self, in_seq, max_wraps=2):
 
-        if not self.bnf:
+        if self.representation == 'proto':
 
             return self.generate_from_proto(in_seq, max_wraps)
+
+        elif self.representation == 'thrift':
+
+            return self.generate_from_thrift(in_seq, max_wraps)
 
         else:
 
@@ -234,6 +247,69 @@ class Grammar:
         if len(unexpanded_symbols) > 0:
 
             return None, used_in_seq
+
+        return output, used_in_seq
+
+    def generate_from_thrift(self, in_seq, wraps=2):
+
+        """
+        Uses reflection to form an AST with a Apache Thrift auto-generated class.
+        :param in_seq: The random sequence (list) of integers.
+        :param wraps: The number of times to wrap the input.
+        :return: An AST represented as an instance of a Apache Thrift class.
+        """
+
+        print 'Input Sequence     -> ' + str(in_seq)
+
+        used_in_seq = 0
+        output = []
+        production_choices = []
+        unexpanded_symbols = [self.start_rule]
+
+        while 0 < wraps and len(unexpanded_symbols) > 0:
+
+            # Wrap around the input.
+            if used_in_seq % len(in_seq) == 0 and used_in_seq > 0 and len(production_choices) > 1:
+
+                wraps -= 1
+
+            # Expand a production.
+            # TODO: print '\nUnexpanded Symbols -> ' + str(unexpanded_symbols)
+            current_symbol = unexpanded_symbols.pop(0)
+            # TODO: print 'Current Symbol     -> ' + str(current_symbol)
+
+            # If the current symbol maps to a terminal, append the symbol.
+            if current_symbol[1] != self.NT:
+
+                # TODO: print '<-- Terminal Symbol --->'
+                output.append(current_symbol[0])
+
+            # Otherwise the current symbol maps to a non-terminal.
+            else:
+
+                # TODO: print '<-- Non-Terminal Symbol --->'
+
+                production_choices = self.rules[current_symbol[0]]
+                # TODO: print 'Production Choices -> ' + str(production_choices)
+
+                # Select a production.
+                current_production = int(in_seq[used_in_seq % len(in_seq)] % len(production_choices))
+                # TODO: print 'Current Production -> ' + str(production_choices[current_production])
+
+                # Use an input if there was more then 1 choice.
+                if len(production_choices) > 1:
+                    used_in_seq += 1
+
+                # Derivation order is left to right (depth-first).
+                unexpanded_symbols = production_choices[current_production] + unexpanded_symbols
+
+                # TODO: print 'Output             -> ' + str(output)
+
+        # TODO: Determine correct action here.
+        # Not completely expanded.
+        # if len(unexpanded_symbols) > 0:
+        #
+        #     raise ValueError('Unable to fully expand grammar.')
 
         return output, used_in_seq
 
