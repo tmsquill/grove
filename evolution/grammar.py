@@ -292,8 +292,9 @@ class Grammar:
             if not hasattr(current_symbol[2], 'thrift_spec'):
 
                 print '<-- Terminal Symbol --->'
-                setattr(current_symbol[4], current_symbol[1], 4)
-                # random.choice([attr for attr in dir(getattr(self.thrift, current_symbol[2])) if not callable(attr) and not attr.startswith("__") and not attr.startswith("_")])
+                attrs = [attr for attr in dir(current_symbol[2]) if not callable(attr) and not attr.startswith('_')]
+                print attrs
+                setattr(current_symbol[4], current_symbol[1], random.choice(attrs))
 
             # Otherwise the current symbol maps to a non-terminal.
             else:
@@ -311,9 +312,7 @@ class Grammar:
                     current_production = int(in_seq[used_in_seq % len(in_seq)] % len(repeatable))
                     print 'Current Production -> ' + str(repeatable[current_production])
 
-                    if len(repeatable) > 1:
-
-                        used_in_seq += 1
+                    used_in_seq += 1
 
                     print unexpanded_symbols
                     print production_choices[current_production]
