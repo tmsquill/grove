@@ -2,16 +2,12 @@
 import random
 from evolution.grammar import Grammar
 
-# Backus-Naur Form
-bnf = '../foraging.bnf'
-
 # Generate random sequence for AST creation.
 sequence = [random.randint(0, 128) for _ in xrange(128)]
 
 # Parse the Google Protocol Buffer into a Grammar object.
-grammar = Grammar(bnf)
-
+grammar = Grammar('../foraging.thrift')
 ast = grammar.generate(sequence)
 
 print '\nGenerated AST\n'
-print ast
+print ast[0]

@@ -1,6 +1,7 @@
 import random
 import re
 import json
+import inspect
 import os
 from types import ModuleType
 import google.protobuf.descriptor as des
@@ -262,9 +263,9 @@ class Grammar:
         print 'Input Sequence     -> ' + str(in_seq)
 
         used_in_seq = 0
-        output = []
+        output = self.thrift.Root()
         production_choices = []
-        unexpanded_symbols = [self.start_rule]
+        unexpanded_symbols = wrap_it(output).values()
 
         while 0 < wraps and len(unexpanded_symbols) > 0:
 
@@ -273,37 +274,68 @@ class Grammar:
 
                 wraps -= 1
 
+            print '\nUnexpanded Symbols -> ' + str(unexpanded_symbols)
+
             # Expand a production.
-            # TODO: print '\nUnexpanded Symbols -> ' + str(unexpanded_symbols)
             current_symbol = unexpanded_symbols.pop(0)
-            # TODO: print 'Current Symbol     -> ' + str(current_symbol)
+
+            # Instantiate current symbol, if able.
+            if inspect.isclass(current_symbol[2]):
+
+                instance = current_symbol[2]()
+                setattr(current_symbol[4], current_symbol[1], instance)
+                current_symbol = (current_symbol[0], current_symbol[1], instance, current_symbol[3], current_symbol[4])
+
+            print 'Current Symbol     -> ' + str(current_symbol)
 
             # If the current symbol maps to a terminal, append the symbol.
-            if current_symbol[1] != self.NT:
+            if not hasattr(current_symbol[2], 'thrift_spec'):
 
-                # TODO: print '<-- Terminal Symbol --->'
-                output.append(current_symbol[0])
+                print '<-- Terminal Symbol --->'
+                setattr(current_symbol[4], current_symbol[1], 4)
+                # random.choice([attr for attr in dir(getattr(self.thrift, current_symbol[2])) if not callable(attr) and not attr.startswith("__") and not attr.startswith("_")])
 
             # Otherwise the current symbol maps to a non-terminal.
             else:
 
-                # TODO: print '<-- Non-Terminal Symbol --->'
+                print '<-- Non-Terminal Symbol --->'
 
-                production_choices = self.rules[current_symbol[0]]
-                # TODO: print 'Production Choices -> ' + str(production_choices)
+                production_choices = wrap_it(current_symbol[2]).values()
+                print 'Production Choices -> ' + str(production_choices)
 
-                # Select a production.
-                current_production = int(in_seq[used_in_seq % len(in_seq)] % len(production_choices))
-                # TODO: print 'Current Production -> ' + str(production_choices[current_production])
+                # Repeatable fields.
+                repeatable = filter(lambda x: x[0] == 15, production_choices)
 
-                # Use an input if there was more then 1 choice.
-                if len(production_choices) > 1:
-                    used_in_seq += 1
+                if len(repeatable) != 0:
 
-                # Derivation order is left to right (depth-first).
-                unexpanded_symbols = production_choices[current_production] + unexpanded_symbols
+                    current_production = int(in_seq[used_in_seq % len(in_seq)] % len(repeatable))
+                    print 'Current Production -> ' + str(repeatable[current_production])
 
-                # TODO: print 'Output             -> ' + str(output)
+                    if len(repeatable) > 1:
+
+                        used_in_seq += 1
+
+                    print unexpanded_symbols
+                    print production_choices[current_production]
+
+                    unexpanded_symbols.insert(0, repeatable[current_production])
+
+                    # Select a production.
+                    #current_production = int(in_seq[used_in_seq % len(in_seq)] % len(production_choices))
+                    #print 'Current Production -> ' + str(production_choices[current_production])
+
+                    # Use an input if there was more then 1 choice.
+                    # if len(production_choices) > 1:
+                    #     used_in_seq += 1
+
+                    # Derivation order is left to right (depth-first).
+
+                    # unexpanded_symbols.insert(0, production_choices[current_production])
+
+                # Required fields.
+                unexpanded_symbols = filter(lambda x: x[0] != 15, production_choices) + unexpanded_symbols
+
+                print 'Output             -> ' + str(output)
 
         # TODO: Determine correct action here.
         # Not completely expanded.
@@ -337,27 +369,27 @@ class Grammar:
                 wraps -= 1
 
             # Expand a production.
-            # TODO: print '\nUnexpanded Symbols -> ' + str(unexpanded_symbols)
+            print '\nUnexpanded Symbols -> ' + str(unexpanded_symbols)
             current_symbol = unexpanded_symbols.pop(0)
-            # TODO: print 'Current Symbol     -> ' + str(current_symbol)
+            print 'Current Symbol     -> ' + str(current_symbol)
 
             # If the current symbol maps to a terminal, append the symbol.
             if current_symbol[1] != self.NT:
 
-                # TODO: print '<-- Terminal Symbol --->'
+                print '<-- Terminal Symbol --->'
                 output.append(current_symbol[0])
 
             # Otherwise the current symbol maps to a non-terminal.
             else:
 
-                # TODO: print '<-- Non-Terminal Symbol --->'
+                print '<-- Non-Terminal Symbol --->'
 
                 production_choices = self.rules[current_symbol[0]]
-                # TODO: print 'Production Choices -> ' + str(production_choices)
+                print 'Production Choices -> ' + str(production_choices)
 
                 # Select a production.
                 current_production = int(in_seq[used_in_seq % len(in_seq)] % len(production_choices))
-                # TODO: print 'Current Production -> ' + str(production_choices[current_production])
+                print 'Current Production -> ' + str(production_choices[current_production])
 
                 # Use an input if there was more then 1 choice.
                 if len(production_choices) > 1:
@@ -367,7 +399,7 @@ class Grammar:
                 # Derivation order is left to right (depth-first).
                 unexpanded_symbols = production_choices[current_production] + unexpanded_symbols
 
-            # TODO: print 'Output             -> ' + str(output)
+            print 'Output             -> ' + str(output)
 
         # TODO: Determine correct action here.
         # Not completely expanded.
@@ -376,3 +408,8 @@ class Grammar:
         #     raise ValueError('Unable to fully expand grammar.')
 
         return output, used_in_seq
+
+
+def wrap_it(object):
+
+    return dict((key, value + (object,)) for key, value in object.thrift_spec.iteritems())

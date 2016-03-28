@@ -1,5 +1,3 @@
-namespace cpp foraging
-
 // Terminal Expansions
 enum IdState {
   STATE_0 = 0,
@@ -52,6 +50,14 @@ enum ProbInitState {
 
 
 // Non-terminal Expansions
+struct Rule {
+  1: i32 rule
+}
+
+struct RuleSet {
+  1: list<i32> rules,
+}
+
 struct StateInitialize {
   1: ProbInitState init_1,
   2: ProbInitState init_2,
@@ -60,4 +66,5 @@ struct StateInitialize {
 
 struct Root {
   1: StateInitialize init,
+  2: RuleSet rules
 }
