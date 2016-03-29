@@ -53,7 +53,6 @@ enum ProbInitState {
 struct ActionCngVar {
 	1: Probability prob,
 	2: IdVar id_var,
-	3: bool boolean
 }
 
 struct ActionCngState {
@@ -68,7 +67,6 @@ struct Action {
 
 struct PreviousPrecondition {
   1: IdPrecondition id_precondition,
-  2: bool boolean
 }
 
 struct PreviousState {
@@ -82,7 +80,7 @@ struct Rule {
 }
 
 struct RuleSet {
-  1: list<Rule> rules,
+  1: list<Rule> rule_list
 }
 
 struct StateInitialize {

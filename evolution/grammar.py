@@ -283,13 +283,64 @@ class Grammar:
             if inspect.isclass(current_symbol[2]):
 
                 instance = current_symbol[2]()
-                setattr(current_symbol[4], current_symbol[1], instance)
+
+                if getattr(current_symbol[4], current_symbol[1]) is None:
+                    setattr(current_symbol[4], current_symbol[1], instance)
                 current_symbol = (current_symbol[0], current_symbol[1], instance, current_symbol[3], current_symbol[4])
 
             print 'Current Symbol     -> ' + str(current_symbol)
 
-            # If the current symbol maps to a terminal, append the symbol.
-            if not hasattr(current_symbol[2], 'thrift_spec'):
+            print type(getattr(current_symbol[4], current_symbol[1]))
+
+            # Non-terminal symbol list.
+            if isinstance(current_symbol[2], tuple):
+
+                print '<-- Non-Terminal Symbol (List) --->'
+
+                if getattr(current_symbol[4], current_symbol[1]) is None:
+
+                    setattr(current_symbol[4], current_symbol[1], list())
+
+                production_choices = list_it(current_symbol)
+                print 'Production Choices -> ' + str(production_choices)
+
+                amount = int(in_seq[used_in_seq % len(in_seq)] % 10)
+                print 'Amount             -> ' + str(amount)
+
+                used_in_seq += 1
+
+                for _ in xrange(amount):
+
+                    unexpanded_symbols.insert(0, production_choices)
+
+            # Non-terminal symbol (List Element)
+            elif isinstance(getattr(current_symbol[4], current_symbol[1]), list):
+
+                print '<-- Non-Terminal Symbol (List Element) --->'
+
+                print getattr(current_symbol[4], current_symbol[1])
+                setattr(current_symbol[4], current_symbol[1], getattr(current_symbol[4], current_symbol[1]) + [current_symbol[2]])
+                print getattr(current_symbol[4], current_symbol[1])
+
+                production_choices = wrap_it(current_symbol[2]).values()
+                print 'Production Choices -> ' + str(production_choices)
+
+                # Required fields.
+                unexpanded_symbols = production_choices + unexpanded_symbols
+
+            # Non-terminal.
+            elif hasattr(current_symbol[2], 'thrift_spec') and not isinstance(
+                    getattr(current_symbol[4], current_symbol[1]), list):
+                print '<-- Non-Terminal Symbol --->'
+
+                production_choices = wrap_it(current_symbol[2]).values()
+                print 'Production Choices -> ' + str(production_choices)
+
+                # Required fields.
+                unexpanded_symbols = production_choices + unexpanded_symbols
+
+            # Terminal symbol.
+            else:
 
                 print '<-- Terminal Symbol --->'
                 attrs = [attr for attr in dir(current_symbol[2]) if not callable(attr) and not attr.startswith('_')]
@@ -297,30 +348,7 @@ class Grammar:
                 setattr(current_symbol[4], current_symbol[1], attrs[int(in_seq[used_in_seq % len(in_seq)] % len(attrs))])
                 used_in_seq += 1
 
-            # Otherwise the current symbol maps to a non-terminal.
-            else:
-
-                print '<-- Non-Terminal Symbol --->'
-
-                production_choices = wrap_it(current_symbol[2]).values()
-                print 'Production Choices -> ' + str(production_choices)
-
-                # Repeatable fields.
-                repeatable = filter(lambda x: x[0] == 15, production_choices)
-
-                if len(repeatable) != 0:
-
-                    current_production = int(in_seq[used_in_seq % len(in_seq)] % len(repeatable))
-                    print 'Current Production -> ' + str(repeatable[current_production])
-
-                    used_in_seq += 1
-
-                    unexpanded_symbols.insert(0, repeatable[current_production])
-
-                # Required fields.
-                unexpanded_symbols = filter(lambda x: x[0] != 15, production_choices) + unexpanded_symbols
-
-                print 'Output             -> ' + str(output)
+            print 'Output             -> ' + str(output)
 
         # TODO: Determine correct action here.
         # Not completely expanded.
@@ -398,3 +426,8 @@ class Grammar:
 def wrap_it(object):
 
     return dict((key, value + (object,)) for key, value in object.thrift_spec.iteritems())
+
+
+def list_it(object):
+
+    return object[2][0], object[1], object[2][1], object[3], object[4]
