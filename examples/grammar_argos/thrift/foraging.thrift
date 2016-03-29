@@ -50,12 +50,39 @@ enum ProbInitState {
 
 
 // Non-terminal Expansions
+struct ActionCngVar {
+	1: Probability prob,
+	2: IdVar id_var,
+	3: bool boolean
+}
+
+struct ActionCngState {
+	1: Probability prob,
+	2: IdState id_state
+}
+
+struct Action {
+  1: ActionCngState cng_state,
+  2: ActionCngVar cng_var
+}
+
+struct PreviousPrecondition {
+  1: IdPrecondition id_precondition,
+  2: bool boolean
+}
+
+struct PreviousState {
+  1: IdState id_state
+}
+
 struct Rule {
-  1: i32 rule
+  1: PreviousState ps_list,
+  2: PreviousPrecondition pc_list,
+  3: Action a_list
 }
 
 struct RuleSet {
-  1: list<i32> rules,
+  1: list<Rule> rules,
 }
 
 struct StateInitialize {

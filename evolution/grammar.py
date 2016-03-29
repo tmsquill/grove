@@ -249,7 +249,7 @@ class Grammar:
 
             return None, used_in_seq
 
-        return output, used_in_seq
+        # return output, used_in_seq
 
     def generate_from_thrift(self, in_seq, wraps=2):
 
@@ -293,8 +293,9 @@ class Grammar:
 
                 print '<-- Terminal Symbol --->'
                 attrs = [attr for attr in dir(current_symbol[2]) if not callable(attr) and not attr.startswith('_')]
-                print attrs
-                setattr(current_symbol[4], current_symbol[1], random.choice(attrs))
+                print 'Choices            -> ' + str(attrs)
+                setattr(current_symbol[4], current_symbol[1], attrs[int(in_seq[used_in_seq % len(in_seq)] % len(attrs))])
+                used_in_seq += 1
 
             # Otherwise the current symbol maps to a non-terminal.
             else:
@@ -314,22 +315,7 @@ class Grammar:
 
                     used_in_seq += 1
 
-                    print unexpanded_symbols
-                    print production_choices[current_production]
-
                     unexpanded_symbols.insert(0, repeatable[current_production])
-
-                    # Select a production.
-                    #current_production = int(in_seq[used_in_seq % len(in_seq)] % len(production_choices))
-                    #print 'Current Production -> ' + str(production_choices[current_production])
-
-                    # Use an input if there was more then 1 choice.
-                    # if len(production_choices) > 1:
-                    #     used_in_seq += 1
-
-                    # Derivation order is left to right (depth-first).
-
-                    # unexpanded_symbols.insert(0, production_choices[current_production])
 
                 # Required fields.
                 unexpanded_symbols = filter(lambda x: x[0] != 15, production_choices) + unexpanded_symbols
