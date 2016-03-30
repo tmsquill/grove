@@ -345,7 +345,7 @@ class Grammar:
                 print '<-- Terminal Symbol --->'
                 attrs = [attr for attr in dir(current_symbol[2]) if not callable(attr) and not attr.startswith('_')]
                 print 'Choices            -> ' + str(attrs)
-                setattr(current_symbol[4], current_symbol[1], attrs[int(in_seq[used_in_seq % len(in_seq)] % len(attrs))])
+                setattr(current_symbol[4], current_symbol[1], getattr(current_symbol[2], attrs[int(in_seq[used_in_seq % len(in_seq)] % len(attrs))]))
                 used_in_seq += 1
 
             print 'Output             -> ' + str(output)

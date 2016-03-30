@@ -80,7 +80,7 @@ struct Rule {
 }
 
 struct RuleSet {
-  1: list<Rule> rule_list
+  1: list<Rule> rule_lit = []
 }
 
 struct StateInitialize {

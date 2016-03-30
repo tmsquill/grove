@@ -9,7 +9,13 @@ import evolution.selection as selection
 import evolution.crossover as crossover
 import evolution.mutation as mutation
 
+import thriftpy.transport as tran
+import thriftpy.protocol as prot
+
 bnf_grammar = None
+
+transOut = tran.TMemoryBuffer()
+protocolOut = prot.TBinaryProtocol(transOut)
 
 
 class GESAgent(Agent):
@@ -22,7 +28,7 @@ class GESAgent(Agent):
         self.genotype = [random.randint(lower, upper) for lower, upper in zip(self.genotype_lb, self.genotype_ub)]
 
         self.phenotype = None
-        self.used_codons = 0
+        self.used_in_seq = 0
 
     @staticmethod
     def factory():
@@ -43,8 +49,10 @@ def pre_evaluation(agents=None):
 
     for agent in agents:
 
-        agent.phenotype, agent.used_codons = bnf_grammar.generate(agent.genotype)
-        print agent.phenotype
+        phenotype, used_in_seq = bnf_grammar.generate(agent.genotype)
+
+        phenotype.write(protocolOut)
+        agent.phenotype = transOut.getvalue()
 
     return agents
 

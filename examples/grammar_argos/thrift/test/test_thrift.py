@@ -10,7 +10,7 @@ print 'ProbInitState   -> ' + str(dir(foraging_thrift.ProbInitState))
 
 root = foraging_thrift.Root()
 root.init = foraging_thrift.StateInitialize()
-root.rules = foraging_thrift.RuleSet()
+root.init.init_1 = foraging_thrift.ProbInitState.PROB_INIT_STATE_0
 
 print dir(foraging_thrift.StateInitialize)
 print dir(root.init)
@@ -18,17 +18,11 @@ print foraging_thrift.StateInitialize.thrift_spec
 print root.init.thrift_spec
 
 print '\n'
-print dir(root)
-print dir(root.init)
-print dir(root.rules)
+print root
+print root.init
+print root.init.init_1
 print '\n'
 
-print 'root            -> ' + str(root.thrift_spec)
-print 'root            -> ' + str(root.default_spec)
-print 'root.init       -> ' + str(root.init.thrift_spec)
-print 'root.init       -> ' + str(root.init.default_spec)
-print 'root.rules      -> ' + str(root.rules.thrift_spec)
-print 'root.rules      -> ' + str(root.rules.default_spec)
 
 import thriftpy.transport as tran
 import thriftpy.protocol as prot
