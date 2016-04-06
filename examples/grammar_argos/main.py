@@ -64,15 +64,16 @@ def evaluation(agent=None):
     :return: The agent with updated evaluation value.
     """
 
+
     import thriftpy.transport as tp
     import thriftpy.protocol as pc
 
     import thriftpy
 
-    module_name = os.path.splitext(os.path.basename('~/PyCharmProjects/py.evolve/examples/grammar_argos/thrift/foraging.thrift'))[0] + '_thrift'
-    thrift = thriftpy.load('~/PyCharmProjects/py.evolve/examples/grammar_argos/thrift/foraging.thrift', module_name=module_name)
+    module_name = os.path.splitext(os.path.basename('/home/zivia/College/py.evolve/examples/grammar_argos/thrift/foraging.thrift'))[0] + '_thrift'
+    thrift = thriftpy.load('/home/zivia/College/py.evolve/examples/grammar_argos/thrift/foraging.thrift', module_name=module_name)
 
-    transportIn = tp.TMemoryBuffer(agent)
+    transportIn = tp.TMemoryBuffer(agent.phenotype)
     protocolIn = pc.TBinaryProtocol(transportIn)
     root = thrift.Root()
     root.read(protocolIn)
@@ -104,14 +105,14 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Construct a grammar from a BNF file.
-    bnf_grammar = grammar.Grammar(args.bnf_grammar)
+    grammar_o = grammar.Grammar(args.bnf_grammar)
 
     # Toggle verbosity.
     if args.verbose:
 
-        print 'Non-Terminal Symbols: ' + str(bnf_grammar.non_terminals)
-        print 'Terminal Symbols:' + str(bnf_grammar.terminals)
-        print 'Grammar Tree:' + str(json.dumps(bnf_grammar.rules, sort_keys=True, indent=4))
+        print 'Non-Terminal Symbols: ' + str(grammar_o.non_terminals)
+        print 'Terminal Symbols:' + str(grammar_o.terminals)
+        print 'Grammar Tree:' + str(json.dumps(grammar_o.rules, sort_keys=True, indent=4))
 
     # Load the configurations into memory (as dictionaries) by filename.
     config.load_configs([args.agent_config, args.ga_config])
