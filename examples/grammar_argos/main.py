@@ -9,13 +9,13 @@ import evolution.selection as selection
 import evolution.crossover as crossover
 import evolution.mutation as mutation
 
-import thriftpy.transport as tran
-import thriftpy.protocol as prot
+import thriftpy.transport as tp
+import thriftpy.protocol as pc
 
 bnf_grammar = None
 
-transOut = tran.TMemoryBuffer()
-protocolOut = prot.TBinaryProtocol(transOut)
+transOut = tp.TMemoryBuffer()
+protocolOut = pc.TBinaryProtocol(transOut)
 
 
 class GESAgent(Agent):
@@ -64,7 +64,20 @@ def evaluation(agent=None):
     :return: The agent with updated evaluation value.
     """
 
-    return agent.phenotype
+    import thriftpy.transport as tp
+    import thriftpy.protocol as pc
+
+    import thriftpy
+
+    module_name = os.path.splitext(os.path.basename('~/PyCharmProjects/py.evolve/examples/grammar_argos/thrift/foraging.thrift'))[0] + '_thrift'
+    thrift = thriftpy.load('~/PyCharmProjects/py.evolve/examples/grammar_argos/thrift/foraging.thrift', module_name=module_name)
+
+    transportIn = tp.TMemoryBuffer(agent)
+    protocolIn = pc.TBinaryProtocol(transportIn)
+    root = thrift.Root()
+    root.read(protocolIn)
+
+    return str(root)
 
 
 def post_evaluation(agents=None):
@@ -117,8 +130,7 @@ if __name__ == "__main__":
         selection.tournament(4, 5),
         crossover.one_point(),
         mutation.gaussian(),
-        [],
+        [], #['10.0.0.30', '10.0.0.31', '10.0.0.32', '10.0.0.33', '10.0.0.34', '10.0.0.35', '10.0.0.36'],
         [Agent, GESAgent],
-        #['10.0.0.30', '10.0.0.31', '10.0.0.32', '10.0.0.33', '10.0.0.34', '10.0.0.35', '10.0.0.36'],
         'log'
     )
