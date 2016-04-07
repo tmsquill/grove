@@ -1,5 +1,6 @@
 import inspect
 import json
+import logging
 import random
 import re
 import thriftpy
@@ -266,7 +267,7 @@ class Grammar:
         :return: An AST represented as an instance of a Apache Thrift class.
         """
 
-        print 'Input Sequence     -> ' + str(in_seq)
+        logging.debug('Input Sequence     -> ' + str(in_seq))
 
         used_in_seq = 0
         output = self.thrift.Root()
@@ -280,7 +281,7 @@ class Grammar:
 
                 wraps -= 1
 
-            print '\nUnexpanded Symbols -> ' + str(unexpanded_symbols)
+            logging.debug('\nUnexpanded Symbols -> ' + str(unexpanded_symbols))
 
             # Expand a production.
             current_symbol = unexpanded_symbols.pop(0)
@@ -294,24 +295,24 @@ class Grammar:
                     setattr(current_symbol[4], current_symbol[1], instance)
                 current_symbol = (current_symbol[0], current_symbol[1], instance, current_symbol[3], current_symbol[4])
 
-            print 'Current Symbol     -> ' + str(current_symbol)
+            logging.debug('Current Symbol     -> ' + str(current_symbol))
 
-            print type(getattr(current_symbol[4], current_symbol[1]))
+            logging.debug(type(getattr(current_symbol[4], current_symbol[1])))
 
             # Non-terminal symbol (List).
             if isinstance(current_symbol[2], tuple):
 
-                print '<-- Non-Terminal Symbol (List) --->'
+                logging.debug('<-- Non-Terminal Symbol (List) --->')
 
                 if getattr(current_symbol[4], current_symbol[1]) is None:
 
                     setattr(current_symbol[4], current_symbol[1], list())
 
                 production_choices = extract_list_productions(current_symbol)
-                print 'Production Choices -> ' + str(production_choices)
+                logging.debug('Production Choices -> ' + str(production_choices))
 
                 amount = int(in_seq[used_in_seq % len(in_seq)] % 10)
-                print 'Amount             -> ' + str(amount)
+                logging.debug('Amount             -> ' + str(amount))
 
                 used_in_seq += 1
 
@@ -322,14 +323,14 @@ class Grammar:
             # Non-terminal symbol (List Element)
             elif isinstance(getattr(current_symbol[4], current_symbol[1]), list):
 
-                print '<-- Non-Terminal Symbol (List Element) --->'
+                logging.debug('<-- Non-Terminal Symbol (List Element) --->')
 
-                print getattr(current_symbol[4], current_symbol[1])
+                logging.debug(getattr(current_symbol[4], current_symbol[1]))
                 setattr(current_symbol[4], current_symbol[1], getattr(current_symbol[4], current_symbol[1]) + [current_symbol[2]])
-                print getattr(current_symbol[4], current_symbol[1])
+                logging.debug(getattr(current_symbol[4], current_symbol[1]))
 
                 production_choices = wrap_thrift_spec(current_symbol[2]).values()
-                print 'Production Choices -> ' + str(production_choices)
+                logging.debug('Production Choices -> ' + str(production_choices))
 
                 # Required fields.
                 unexpanded_symbols = production_choices + unexpanded_symbols
@@ -337,10 +338,10 @@ class Grammar:
             # Non-terminal symbol.
             elif hasattr(current_symbol[2], 'thrift_spec') and not isinstance(
                     getattr(current_symbol[4], current_symbol[1]), list):
-                print '<-- Non-Terminal Symbol --->'
+                logging.debug('<-- Non-Terminal Symbol --->')
 
                 production_choices = wrap_thrift_spec(current_symbol[2]).values()
-                print 'Production Choices -> ' + str(production_choices)
+                logging.debug('Production Choices -> ' + str(production_choices))
 
                 # Required fields.
                 unexpanded_symbols = production_choices + unexpanded_symbols
@@ -348,13 +349,13 @@ class Grammar:
             # Terminal symbol.
             else:
 
-                print '<-- Terminal Symbol --->'
+                logging.debug('<-- Terminal Symbol --->')
                 attrs = [attr for attr in dir(current_symbol[2]) if not callable(attr) and not attr.startswith('_')]
-                print 'Choices            -> ' + str(attrs)
+                logging.debug('Choices            -> ' + str(attrs))
                 setattr(current_symbol[4], current_symbol[1], getattr(current_symbol[2], attrs[int(in_seq[used_in_seq % len(in_seq)] % len(attrs))]))
                 used_in_seq += 1
 
-            print 'Output             -> ' + str(output)
+            logging.debug('Output             -> ' + str(output))
 
         # TODO: Determine correct action here.
         # Not completely expanded.
