@@ -16,6 +16,7 @@ grammar_o = None
 
 
 class GESAgent(Agent):
+
     """ An agent targeted towards GES. """
 
     def __init__(self):
@@ -34,6 +35,7 @@ class GESAgent(Agent):
 
     @staticmethod
     def init_agents(population):
+
         """
         Initialized a set of agents based on a population size.
         :param population: The population (number of agents) to initialize.
@@ -57,12 +59,12 @@ def pre_evaluation(agents=None):
 
 
 def evaluation(agent=None):
+
     """
     Evaluation function that executes ARGoS with the specified agent.
     :param agent: The agent to evaluate in the ARGoS simulation.
     :return: The agent with updated evaluation value.
     """
-
 
     import thriftpy.transport as tp
     import thriftpy.protocol as pc
@@ -77,7 +79,7 @@ def evaluation(agent=None):
     root = thrift.Root()
     root.read(protocolIn)
 
-    return 'Agent AID: ' + str(root)
+    return str(root)
 
 
 def post_evaluation(agents=None):
@@ -88,7 +90,6 @@ def post_evaluation(agents=None):
 if __name__ == "__main__":
 
     import argparse
-    import json
 
     # Parser for command line arguments.
     parser = argparse.ArgumentParser(description='py.evolve')
@@ -106,14 +107,15 @@ if __name__ == "__main__":
     # Compile the Thrift file into a python module.
     thrift = grammar.compile_thrift(args.grammar)
 
-    # from types import ModuleType
-    # print dir(thrift)
-    # print thrift.__thrift_meta__
-    #
-    # thrift_classes = [getattr(thrift, class_name) for class_name in dir(thrift) if not class_name.startswith('_')]
-    # print thrift_classes
-    #
-    # exit()
+    # TODO - Debug
+    print dir(thrift)
+    print thrift.__thrift_meta__
+
+    thrift_classes = [getattr(thrift, class_name) for class_name in dir(thrift) if not class_name.startswith('_')]
+    print thrift_classes
+
+    exit()
+    # TODO - Debug
 
     # Construct a grammar from a BNF file.
     grammar_o = grammar.Grammar(thrift)
@@ -121,9 +123,7 @@ if __name__ == "__main__":
     # Toggle verbosity.
     if args.verbose:
 
-        print 'Non-Terminal Symbols: ' + str(grammar_o.non_terminals)
-        print 'Terminal Symbols:' + str(grammar_o.terminals)
-        print 'Grammar Tree:' + str(json.dumps(grammar_o.rules, sort_keys=True, indent=4))
+        print grammar_o
 
     # Load the configurations into memory (as dictionaries) by filename.
     config.load_configs([args.agent_config, args.ga_config])
