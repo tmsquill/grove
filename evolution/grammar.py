@@ -357,12 +357,6 @@ class Grammar:
 
             logging.debug('Output             -> ' + str(output))
 
-        # TODO: Determine correct action here.
-        # Not completely expanded.
-        # if len(unexpanded_symbols) > 0:
-        #
-        #     raise ValueError('Unable to fully expand grammar.')
-
         return output, used_in_seq
 
     def generate_from_bnf(self, in_seq, wraps=2):
