@@ -1,11 +1,9 @@
+import config
+import dispy
+from generation import Generation
 import logging
 import time
-
-import dispy
-
-import config
 import utils
-from generation import Generation
 
 
 def evolve(population, generations, agent_type, pre_evaluation, evaluation, post_evaluation, selection, crossover, mutation, nodes, depends, log):
@@ -15,11 +13,14 @@ def evolve(population, generations, agent_type, pre_evaluation, evaluation, post
     :param population: The desired population size.
     :param generations: The number of generation to evolve.
     :param agent_type: The type of agent used to initialize the population.
+    :param pre_evaluation: The pre-evaluation function. Intended to prepare agents for evaluation.
     :param evaluation: The evaluation function.
+    :param post_evaluation: The post-evaluation function. Intended to gather data or alter agents after evaluation.
     :param selection: The selection function.
     :param crossover: The crossover function.
     :param mutation: The mutation function.
     :param nodes: The nodes in the cluster used for computing the evaluation function.
+    :param depends: The list of dependencies needed by dispynodes to perform computation of the evaluation function.
     :param log: The path to output the log file, if not specified does not log.
     """
 
