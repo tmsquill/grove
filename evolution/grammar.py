@@ -1,10 +1,10 @@
+import inspect
+import json
 import random
 import re
-import json
-import inspect
+import thriftpy
 from types import ModuleType
 import google.protobuf.descriptor as des
-import thriftpy
 
 # TODO - Begin Debugging
 import google.protobuf.text_format as tf
@@ -131,6 +131,14 @@ class Grammar:
 
     def generate(self, in_seq, max_wraps=2):
 
+        """
+        Generates an AST with the input sequence of integers. The generation type depends on
+        the representation of the grammar object (BNF, Proto, Thrift).
+        :param in_seq: The random sequence (list) of integers.
+        :param max_wraps: The number of times to wrap the input.
+        :return: The generated AST built with the input sequence.
+        """
+
         if self.representation == 'proto':
 
             return self.generate_from_proto(in_seq, max_wraps)
@@ -249,10 +257,10 @@ class Grammar:
 
         # return output, used_in_seq
 
-    def generate_from_thrift(self, in_seq, wraps=2):
+    def generate_from_thrift(self, in_seq=None, wraps=2):
 
         """
-        Uses reflection to form an AST with a Apache Thrift auto-generated class.
+        Uses reflection to form an AST with an Apache Thrift auto-generated class.
         :param in_seq: The random sequence (list) of integers.
         :param wraps: The number of times to wrap the input.
         :return: An AST represented as an instance of a Apache Thrift class.
@@ -263,7 +271,7 @@ class Grammar:
         used_in_seq = 0
         output = self.thrift.Root()
         production_choices = []
-        unexpanded_symbols = wrap_it(output).values()
+        unexpanded_symbols = wrap_thrift_spec(output).values()
 
         while 0 < wraps and len(unexpanded_symbols) > 0:
 
@@ -290,7 +298,7 @@ class Grammar:
 
             print type(getattr(current_symbol[4], current_symbol[1]))
 
-            # Non-terminal symbol list.
+            # Non-terminal symbol (List).
             if isinstance(current_symbol[2], tuple):
 
                 print '<-- Non-Terminal Symbol (List) --->'
@@ -299,7 +307,7 @@ class Grammar:
 
                     setattr(current_symbol[4], current_symbol[1], list())
 
-                production_choices = list_it(current_symbol)
+                production_choices = extract_list_productions(current_symbol)
                 print 'Production Choices -> ' + str(production_choices)
 
                 amount = int(in_seq[used_in_seq % len(in_seq)] % 10)
@@ -320,18 +328,18 @@ class Grammar:
                 setattr(current_symbol[4], current_symbol[1], getattr(current_symbol[4], current_symbol[1]) + [current_symbol[2]])
                 print getattr(current_symbol[4], current_symbol[1])
 
-                production_choices = wrap_it(current_symbol[2]).values()
+                production_choices = wrap_thrift_spec(current_symbol[2]).values()
                 print 'Production Choices -> ' + str(production_choices)
 
                 # Required fields.
                 unexpanded_symbols = production_choices + unexpanded_symbols
 
-            # Non-terminal.
+            # Non-terminal symbol.
             elif hasattr(current_symbol[2], 'thrift_spec') and not isinstance(
                     getattr(current_symbol[4], current_symbol[1]), list):
                 print '<-- Non-Terminal Symbol --->'
 
-                production_choices = wrap_it(current_symbol[2]).values()
+                production_choices = wrap_thrift_spec(current_symbol[2]).values()
                 print 'Production Choices -> ' + str(production_choices)
 
                 # Required fields.
@@ -412,26 +420,38 @@ class Grammar:
 
             print 'Output             -> ' + str(output)
 
-        # TODO: Determine correct action here.
-        # Not completely expanded.
-        # if len(unexpanded_symbols) > 0:
-        #
-        #     raise ValueError('Unable to fully expand grammar.')
-
         return output, used_in_seq
 
 
-def wrap_it(object):
+def wrap_thrift_spec(object):
+
+    """
+    Wraps the class of an instance of a thrift auto-generated class into its thrift spec.
+    :param object: An instance of a thrift auto-generated class.
+    :return: The thrift spec of that class with the object included in each tuple.
+    """
 
     return dict((key, value + (object,)) for key, value in object.thrift_spec.iteritems())
 
 
-def list_it(object):
+def extract_list_productions(object):
+
+    """
+    Extracts production choices from a list.
+    :param object: The list to extract from.
+    :return: Possible production choices from the list.
+    """
 
     return object[2][0], object[1], object[2][1], object[3], object[4]
 
 
 def compile_thrift(file_path=None):
+
+    """
+    Compiles a thrift file into a Python module.
+    :param file_path: The file path to the thrift file.
+    :return: The compiled Python module.
+    """
 
     import os
 
