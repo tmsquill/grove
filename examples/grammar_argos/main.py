@@ -12,10 +12,7 @@ import evolution.mutation as mutation
 import thriftpy.transport as tp
 import thriftpy.protocol as pc
 
-bnf_grammar = None
-
-transOut = tp.TMemoryBuffer()
-protocolOut = pc.TBinaryProtocol(transOut)
+grammar_o = None
 
 
 class GESAgent(Agent):
@@ -49,8 +46,10 @@ def pre_evaluation(agents=None):
 
     for agent in agents:
 
-        phenotype, used_in_seq = bnf_grammar.generate(agent.genotype)
+        phenotype, used_in_seq = grammar_o.generate(agent.genotype)
 
+        transOut = tp.TMemoryBuffer()
+        protocolOut = pc.TBinaryProtocol(transOut)
         phenotype.write(protocolOut)
         agent.phenotype = transOut.getvalue()
 
@@ -70,15 +69,15 @@ def evaluation(agent=None):
 
     import thriftpy
 
-    module_name = os.path.splitext(os.path.basename('/home/zivia/College/py.evolve/examples/grammar_argos/thrift/foraging.thrift'))[0] + '_thrift'
-    thrift = thriftpy.load('/home/zivia/College/py.evolve/examples/grammar_argos/thrift/foraging.thrift', module_name=module_name)
+    module_name = os.path.splitext(os.path.basename('/Users/Zivia/PycharmProjects/py.evolve/examples/grammar_argos/thrift/foraging.thrift'))[0] + '_thrift'
+    thrift = thriftpy.load('/Users/Zivia/PycharmProjects/py.evolve/examples/grammar_argos/thrift/foraging.thrift', module_name=module_name)
 
     transportIn = tp.TMemoryBuffer(agent.phenotype)
     protocolIn = pc.TBinaryProtocol(transportIn)
     root = thrift.Root()
     root.read(protocolIn)
 
-    return str(root)
+    return 'Agent AID: ' + str(root)
 
 
 def post_evaluation(agents=None):
@@ -100,12 +99,22 @@ if __name__ == "__main__":
     parser.add_argument('-c', '--crossover_function', action='store', type=str, default='truncation')
     parser.add_argument('-m', '--mutation_function', action='store', type=str, default='one_point')
     parser.add_argument('-s', '--selection_function', action='store', type=str, default='gaussian')
-    parser.add_argument('-b', '--bnf_grammar', action='store', type=str)
+    parser.add_argument('-b', '--grammar', action='store', type=str)
     parser.add_argument('-v', '--verbose', action='store_true', help='show BNF input file')
     args = parser.parse_args()
 
+    # Compile the Thrift file into a python module.
+    thrift = grammar.compile_thrift(args.grammar)
+
+    from types import ModuleType
+    print dir(thrift)
+    print thrift.__thrift_meta__
+
+    thrift_classes = [getattr(thrift, class_name) for class_name in dir(thrift) if not class_name.startswith('_')]
+    print thrift_classes
+
     # Construct a grammar from a BNF file.
-    grammar_o = grammar.Grammar(args.bnf_grammar)
+    grammar_o = grammar.Grammar(thrift)
 
     # Toggle verbosity.
     if args.verbose:

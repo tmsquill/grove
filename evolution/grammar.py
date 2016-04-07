@@ -2,7 +2,6 @@ import random
 import re
 import json
 import inspect
-import os
 from types import ModuleType
 import google.protobuf.descriptor as des
 import thriftpy
@@ -32,16 +31,15 @@ class Grammar:
         self.start_rule = None
 
         # The context-free grammar is a Google Protocol Buffer module.
-        if isinstance(context_free_grammar, ModuleType):
+        if isinstance(context_free_grammar, ModuleType) and context_free_grammar.__name__.endswith('_proto'):
 
             self.pb = context_free_grammar
             self.representation = 'proto'
 
         # The context-free grammar is a Apache Thrift file.
-        elif context_free_grammar.endswith('.thrift'):
+        elif isinstance(context_free_grammar, ModuleType) and context_free_grammar.__name__ .endswith('_thrift'):
 
-            module_name = os.path.splitext(os.path.basename(context_free_grammar))[0] + '_thrift'
-            self.thrift = thriftpy.load(context_free_grammar, module_name=module_name)
+            self.thrift = context_free_grammar
             self.representation = 'thrift'
 
         # The context-free grammar is a Backus-Naur Form file.
@@ -431,3 +429,10 @@ def wrap_it(object):
 def list_it(object):
 
     return object[2][0], object[1], object[2][1], object[3], object[4]
+
+
+def compile_thrift(file_path=None):
+
+    import os
+
+    return thriftpy.load(file_path, module_name=os.path.splitext(os.path.basename(file_path))[0] + '_thrift')
