@@ -65,31 +65,31 @@ struct Action {
   2: ActionCngVar cng_var
 }
 
-struct PreviousPrecondition {
+struct Precondition {
   1: IdPrecondition id_precondition,
 }
 
-struct PreviousState {
+struct Behavior {
   1: IdState id_state
 }
 
 struct Rule {
-  1: PreviousState ps_list,
-  2: PreviousPrecondition pc_list,
-  3: Action a_list
+  1: list<Precondition> preconditions,
+  2: list<Behavior> behaviors,
+  3: list<Actions> actions
 }
 
 struct RuleSet {
-  1: list<Rule> rule_lit = []
+  1: list<Rule> rule_list = []
 }
 
-struct StateInitialize {
+struct Initialization {
   1: ProbInitState init_1,
   2: ProbInitState init_2,
   3: ProbInitState init_3
 }
 
 struct Root {
-  1: StateInitialize init,
+  1: Initialization init,
   2: RuleSet rules
 }
