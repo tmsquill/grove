@@ -47,12 +47,19 @@ def pickup_food(agent=None, environment=None):
 
         agent.holding_food = True
 
-"""
-Path find back to nest before dropping food.
-"""
 
 def drop_food(agent=None, environment=None):
 
     if agent.holding_food:
 
         agent.holding_food = False
+
+
+def random_walk(agent=None, environment=None):
+
+    pass
+
+
+def return_home(agent=None, environment=None):
+
+    pass
