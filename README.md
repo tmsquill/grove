@@ -15,9 +15,9 @@ Genetic algorithm and grammatical evolution framework for Python by Troy Squilla
 
 `git clone git@bitbucket.org:Zivia/py.evolve.git`
 
-`mkvirtualenv numerical-computing`
+`mkvirtualenv py.evolve`
 
-`workon numerical-computing`
+`workon py.evolve`
 
 `pip install -r requirements.txt`
 
