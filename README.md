@@ -1,12 +1,12 @@
 # py.evolve #
 
-Genetic algorithm framework for Python by Troy Squillaci (zivia@unm.edu).
+Genetic algorithm and grammatical evolution framework for Python by Troy Squillaci <zivia@unm.edu>.
 
 ### Features ###
 
 * Generic template for evolving agent based models.
 * Includes popular built-in evolutionary function (selection, crossover, mutation, etc...).
-* [Grammatical Evolution](https://en.wikipedia.org/wiki/Grammatical_evolution) with BNF.
+* [Grammatical Evolution](https://en.wikipedia.org/wiki/Grammatical_evolution) with BNF, Google Protocol Buffers, and Apache Thrift formal grammars.
 * Extensive logging and output files for data analysis.
 
 ### Getting Started ###
