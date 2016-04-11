@@ -107,16 +107,6 @@ if __name__ == "__main__":
     # Compile the Thrift file into a python module.
     thrift = grammar.compile_thrift(args.grammar)
 
-    # TODO - Debug
-    print dir(thrift)
-    print thrift.__thrift_meta__
-
-    thrift_classes = [getattr(thrift, class_name) for class_name in dir(thrift) if not class_name.startswith('_')]
-    print thrift_classes
-
-    exit()
-    # TODO - Debug
-
     # Construct a grammar from a BNF file.
     grammar_o = grammar.Grammar(thrift)
 
