@@ -27,9 +27,9 @@ def on_nest(agent=None, entities=None, environment=None):
     :return: Boolean value indicating the result of the test.
     """
 
-    nest = filter(lambda x: isinstance(x, entity.Entity), entities)
+    nest = filter(lambda x: isinstance(x, entity.Nest), entities)
 
-    return nest[0].body.contains(agent.body)
+    return nest[0].body.contains(agent.body.top_left()) and nest[0].body.contains(agent.body.bottom_right())
 
 
 def on_food(agent=None, entities=None, environment=None):
@@ -44,7 +44,7 @@ def on_food(agent=None, entities=None, environment=None):
 
     foods = filter(lambda x: isinstance(x, entity.Food), entities)
 
-    return any([food.body.contains(agent.body) for food in foods])
+    return any([food.body.contains(agent.body.top_left()) and food.body.contains(agent.body.bottom_right()) for food in foods])
 
 
 def holding_food(agent=None, entities=None, environment=None):
