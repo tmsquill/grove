@@ -19,6 +19,7 @@ class Entity:
         self.id = Agent.eid()
         self.body = Rectangle(Point(position[0], position[1]), Point(position[0] + size[0], position[1] + size[1]))
         self.direction = direction
+        self.behavior = (None, 0)
 
     def __str__(self):
 
@@ -29,6 +30,7 @@ class Entity:
         return [self.__class__.__name__] + \
                [self.id] + \
                [self.direction] + \
+               [self.behavior] + \
                [self.body.left] + \
                [self.body.top] + \
                [self.body.right] + \
