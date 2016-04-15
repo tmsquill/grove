@@ -71,8 +71,8 @@ def evaluation(agent=None):
 
     import thriftpy
 
-    module_name = os.path.splitext(os.path.basename('/Users/Zivia/PycharmProjects/py.evolve/examples/grammar_argos/thrift/foraging.thrift'))[0] + '_thrift'
-    thrift = thriftpy.load('/Users/Zivia/PycharmProjects/py.evolve/examples/grammar_argos/thrift/foraging.thrift', module_name=module_name)
+    module_name = os.path.splitext(os.path.basename('/home/zivia/College/py.evolve/examples/grammar_argos/thrift/foraging.thrift'))[0] + '_thrift'
+    thrift = thriftpy.load('/home/zivia/College/py.evolve/examples/grammar_argos/thrift/foraging.thrift', module_name=module_name)
 
     transportIn = tp.TMemoryBuffer(agent.phenotype)
     protocolIn = pc.TBinaryProtocol(transportIn)

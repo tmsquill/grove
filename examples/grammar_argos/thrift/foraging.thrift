@@ -76,7 +76,7 @@ struct Behavior {
 struct Rule {
   1: list<Precondition> preconditions,
   2: list<Behavior> behaviors,
-  3: list<Actions> actions
+  3: list<Action> actions
 }
 
 struct RuleSet {
