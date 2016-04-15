@@ -33,6 +33,8 @@ class Simulation:
 
                 entity.behavior[1] -= 1
 
+            self.save_state(timestamp)
+
             # # ---
             # import entity
             # import random
