@@ -19,37 +19,62 @@ class Simulation:
 
         for timestamp in xrange(self.duration):
 
-            # ---
-            import entity
-            import random
+            for entity in self.entities:
 
-            agents = [entity.Agent(position=(random.randint(0, 20), random.randint(0, 20))) for _ in xrange(5)]
-            nest = entity.Nest(position=(8, 8), size=(4, 4))
-            food = [entity.Food(position=(random.randint(0, 20), random.randint(0, 20))) for _ in xrange(10)]
+                # New behavior needs selected.
+                if entity.behavior[1] == 0:
 
-            self.entities = agents + [nest] + food
-            # ---
+                    self.process_rules(entity)
 
-            self.save_state(timestamp)
+                # Continue with current behavior.
+                else:
 
-            self.pre_step()
-            self.step()
-            self.post_step()
+                    entity = entity.behavior[0](entity, self.entities, self.environment)
 
-    def pre_conditions(self, entity, funcs):
+                entity.behavior[1] -= 1
 
-        return [func(entity) for func in funcs]
+            # # ---
+            # import entity
+            # import random
+            #
+            # agents = [entity.Agent(position=(random.randint(0, 20), random.randint(0, 20))) for _ in xrange(5)]
+            # nest = entity.Nest(position=(8, 8), size=(4, 4))
+            # food = [entity.Food(position=(random.randint(0, 20), random.randint(0, 20))) for _ in xrange(10)]
+            #
+            # self.entities = agents + [nest] + food
+            # # ---
+            #
+            # self.save_state(timestamp)
+            #
+            # self.pre_step()
+            # self.step()
+            # self.post_step()
 
-    def pre_step(self):
+    def process_rules(self, entity):
 
-        pass
+        """
+        Processes the ruleset on a given entity.
+        :param entity: The entity to evaluate with the ruleset.
+        :return: The entity, with possible updates.
+        """
 
-    def step(self):
+        for rule in self.ast.rules:
 
-        for entity in self.entities:
+            # Gather all preconditions functions contained in the current rule.
+            # TODO - Consider using thrift services to avoid lookup tables.
+            preconditions = [lu_precondition[precondition] for precondition in rule.preconditions]
 
-            pass
+            # Evaluate the current entity.
+            if all([precondition(entity, self.entities, self.environment) for precondition in preconditions]):
 
-    def post_step(self):
+                pass
 
-        pass
+
+# TODO - Replace this with thrift services.
+import preconditions as pc
+
+lu_precondition = {
+    0: pc.holding_food,
+    1: pc.on_border,
+    2: pc.on_nest
+}
