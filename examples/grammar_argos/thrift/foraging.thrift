@@ -1,26 +1,25 @@
 // Terminal Expansions
-enum IdState {
-  STATE_0 = 0,
-  STATE_1 = 1,
-  STATE_2 = 2
-}
-
 enum IdPrecondition {
 	PRECONDITION_0 = 0,
 	PRECONDITION_1 = 1,
 	PRECONDITION_2 = 2,
-	PRECONDITION_3 = 3,
-	PRECONDITION_4 = 4,
-	PRECONDITION_5 = 5,
-	PRECONDITION_6 = 6,
-	PRECONDITION_7 = 7
+	PRECONDITION_3 = 3
 }
 
-enum IdVar {
-	VAR_0 = 0,
-	VAR_1 = 1,
-	VAR_2 = 2,
-	VAR_3 = 3
+enum IdBehavior {
+  BEHAVIOR_0 = 0,
+  BEHAVIOR_1 = 1,
+  BEHAVIOR_2 = 2,
+  BEHAVIOR_3 = 3,
+  BEHAVIOR_4 = 4,
+  BEHAVIOR_5 = 5,
+  BEHAVIOR_6 = 6,
+  BEHAVIOR_7 = 7,
+}
+
+enum IdAction {
+  ACTION_0 = 0,
+  ACTION_1 = 1
 }
 
 enum Probability {
@@ -50,27 +49,17 @@ enum ProbInitState {
 
 
 // Non-terminal Expansions
-struct ActionCngVar {
-	1: Probability prob,
-	2: IdVar id_var
-}
-
-struct ActionCngState {
-	1: Probability prob,
-	2: IdState id_state
-}
-
-struct Action {
-  1: ActionCngState cng_state,
-  2: ActionCngVar cng_var
-}
-
 struct Precondition {
   1: IdPrecondition id_precondition
 }
 
 struct Behavior {
-  1: IdState id_state
+  1: IdBehavior id_behavior
+}
+
+struct Action {
+  1: IdAction id_action,
+  2: Probability prob
 }
 
 struct Rule {
