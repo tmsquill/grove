@@ -1,3 +1,5 @@
+import lookup
+
 class Simulation:
 
     def __init__(self, duration=10, environment=None, entities=None, ast=None, produce_output=True):
@@ -64,19 +66,12 @@ class Simulation:
 
             # Gather all preconditions functions contained in the current rule.
             # TODO - Consider using thrift services to avoid lookup tables.
-            preconditions = [lu_precondition[precondition] for precondition in rule.preconditions]
+            preconditions = [lookup.pc[precondition] for precondition in rule.preconditions]
 
             # Evaluate the current entity.
-            if all([precondition(entity, self.entities, self.environment) for precondition in preconditions]):
+            pc_check = all([precondition(entity, self.entities, self.environment) for precondition in preconditions])
+            b_check = entity.behavior[0] in [lookup.b[behavior] for behavior in rule.behaviors]
+
+            if pc_check and b_check:
 
                 pass
-
-
-# TODO - Replace this with thrift services.
-import preconditions as pc
-
-lu_precondition = {
-    0: pc.holding_food,
-    1: pc.on_border,
-    2: pc.on_nest
-}
