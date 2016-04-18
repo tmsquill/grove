@@ -2,7 +2,7 @@
 enum IdState {
   STATE_0 = 0,
   STATE_1 = 1,
-  STATE_2 = 2;
+  STATE_2 = 2
 }
 
 enum IdPrecondition {
@@ -52,7 +52,7 @@ enum ProbInitState {
 // Non-terminal Expansions
 struct ActionCngVar {
 	1: Probability prob,
-	2: IdVar id_var,
+	2: IdVar id_var
 }
 
 struct ActionCngState {
@@ -66,7 +66,7 @@ struct Action {
 }
 
 struct Precondition {
-  1: IdPrecondition id_precondition,
+  1: IdPrecondition id_precondition
 }
 
 struct Behavior {
