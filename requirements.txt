@@ -3,7 +3,6 @@ cycler==0.10.0
 dispy==4.6.3
 enum34==1.1.2
 numpy==1.9.2
-objgraph==3.0.0
 ply==3.8
 protobuf==2.6.1
 py==1.4.30
