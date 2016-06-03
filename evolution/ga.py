@@ -24,9 +24,9 @@ def evolve(population, generations, agent_type, pre_evaluation, evaluation, post
     :param log: The path to output the log file, if not specified does not log.
     """
 
-    # TODO: If logging not specified, must disable.
     # Initialize Logging
     if log:
+
         now = time.strftime("%I:%M-D%dM%mY%Y")
         logging.basicConfig(filename=log + '/' + now + '.log', level=logging.DEBUG)
         logging.info(' Log for py.evolve '.center(180, '='))
@@ -46,9 +46,6 @@ def evolve(population, generations, agent_type, pre_evaluation, evaluation, post
 
         raise ValueError('post_evaluation_func is not callable', post_evaluation)
 
-    # Configure the cluster.
-    cluster = dispy.JobCluster(evaluation, nodes=nodes, depends=depends, loglevel=logging.DEBUG)
-
     # Initialize Generations.
     ga_generations = [Generation() for _ in xrange(generations)]
 
@@ -58,22 +55,68 @@ def evolve(population, generations, agent_type, pre_evaluation, evaluation, post
     logging.info(' Agent Initialization '.center(180, '='))
     logging.info('\n' + '\n'.join(map(str, ga_agents)))
 
-    # Perform Evolution.
-    logging.info(' Evolution '.center(180, '=') + '\n')
+    if not nodes and not depends:
+
+        local(population, ga_generations, ga_agents, pre_evaluation, evaluation, post_evaluation, selection, crossover, mutation)
+
+    else:
+
+        distributed(population, ga_generations, ga_agents, pre_evaluation, evaluation, post_evaluation, selection, crossover, mutation, nodes, depends)
+
+
+def local(population, generations, agents, pre_evaluation, evaluation, post_evaluation, selection, crossover, mutation):
+
+    logging.info(' Evolution (Local) '.center(180, '=') + '\n')
+    print ' Evolution (Local) '.center(180, '=') + '\n'
 
     start_time = time.time()
 
-    for generation in ga_generations:
+    for generation in generations:
 
         logging.info(" Generation %s ".center(180, '*') % str(generation.id))
-
         print 'Generation ' + str(generation.id)
 
-        ga_agents = pre_evaluation(ga_agents)
+        agents = pre_evaluation(agents)
+
+        for agent in agents:
+
+            agent = evaluation(agent)
+
+        agents = post_evaluation(agents)
+
+        generation.bind_agents(agents)
+        logging.info('\n' + str(generation))
+
+        agents = selection(agents)
+        agents = crossover(agents, population)
+        agents = mutation(agents)
+
+    logging.info("Evolution finished in %s seconds " % (time.time() - start_time))
+    print "Evolution finished in %s seconds " % (time.time() - start_time)
+
+    utils.generate_csv(generations)
+
+
+def distributed(population, generations, agents, pre_evaluation, evaluation, post_evaluation, selection, crossover, mutation, nodes, depends):
+
+    logging.info(' Evolution (Distributed) '.center(180, '=') + '\n')
+    print ' Evolution (Distributed) '.center(180, '=') + '\n'
+
+    # Configure the cluster.
+    cluster = dispy.JobCluster(evaluation, nodes=nodes, depends=depends, loglevel=logging.DEBUG)
+
+    start_time = time.time()
+
+    for generation in generations:
+
+        logging.info(" Generation %s ".center(180, '*') % str(generation.id))
+        print 'Generation ' + str(generation.id)
+
+        agents = pre_evaluation(agents)
 
         jobs = []
 
-        for agent in ga_agents:
+        for agent in agents:
 
             job = cluster.submit(agent)
             job.id = agent.id
@@ -84,20 +127,21 @@ def evolve(population, generations, agent_type, pre_evaluation, evaluation, post
         for job in jobs:
 
             job()
-            print("Result of program %s with job ID %s starting at %s is %s with stdout %s" % (evaluation, job.id, job.start_time, job.result, job.stdout))
+            print("Result of program %s with job ID %s starting at %s is %s with stdout %s" % (
+            evaluation, job.id, job.start_time, job.result, job.stdout))
 
-        ga_agents = post_evaluation(ga_agents)
+        agents = post_evaluation(agents)
 
-        generation.bind_agents(ga_agents)
+        generation.bind_agents(agents)
         logging.info('\n' + str(generation))
 
-        ga_agents = selection(ga_agents)
-        ga_agents = crossover(ga_agents, population)
-        ga_agents = mutation(ga_agents)
+        agents = selection(agents)
+        agents = crossover(agents, population)
+        agents = mutation(agents)
 
     cluster.stats()
 
     logging.info("Evolution finished in %s seconds " % (time.time() - start_time))
     print "Evolution finished in %s seconds " % (time.time() - start_time)
 
-    utils.generate_csv(ga_generations)
+    utils.generate_csv(generations)
