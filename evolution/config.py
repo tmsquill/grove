@@ -1,29 +1,25 @@
 import json
-import os
 
 
-global_config = {}
+grove_config = {}
 
 
-def load_configs(config_files=None):
+def load_config(config_file_name=None):
     """
-    Loads JSON configuration file(s) into the global configuration dictionary.
-    :param config_files: The list of JSON configuration file names.
+    Loads the JSON configuration file into the configuration dictionary.
+    :param config_file_name: The JSON configuration file name.
     """
 
-    for config_file in config_files:
+    with open(config_file_name, 'r') as config:
 
-        with open(config_file, 'r') as config:
-
-            # Keys of the top-level dictionary are configuration filenames.
-            global_config[os.path.splitext(os.path.basename(config_file))[0]] = json.load(config)
+        global grove_config
+        grove_config = json.load(config)
 
 
-def pretty_config(name=None):
+def pretty_config():
     """
-    Pretty-print a configuration in the global dictionary determined by the base name.
-    :param name: The base name of the configuration.
+    Pretty-print the configuration.
     :return: The pretty-printed string version of the configuration.
     """
 
-    return json.dumps(global_config[name], sort_keys=True, indent=4)
+    return json.dumps(grove_config, sort_keys=True, indent=4)

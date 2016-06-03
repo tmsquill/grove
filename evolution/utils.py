@@ -13,7 +13,7 @@ def generate_csv(generations=None):
     """
 
     agent_type = str(type(generations[0].agents[0]).__name__)
-    header = ['GID'] + ['AID'] + ['Evaluation Value'] + config.global_config['agent'][agent_type]['genotype_abbr_names']
+    header = ['GID'] + ['AID'] + ['Evaluation Value'] + config.grove_config['agent'][agent_type]['genotype_abbr_names']
     data = itertools.chain.from_iterable([generation.csv() for generation in generations])
 
     with open(agent_type + ".csv", "w") as csv_file:

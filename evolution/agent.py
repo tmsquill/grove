@@ -20,9 +20,9 @@ class Agent(object):
         self.id = Agent.aid()
         self.value = -1
 
-        self.genotype_len = config.global_config['agent'][self.__class__.__name__]['genotype_len']
+        self.genotype_len = config.grove_config['agent'][self.__class__.__name__]['genotype_len']
 
-        lb = config.global_config['agent'][self.__class__.__name__]['genotype_lb']
+        lb = config.grove_config['agent'][self.__class__.__name__]['genotype_lb']
 
         if isinstance(lb, float) or isinstance(lb, int):
 
@@ -32,7 +32,7 @@ class Agent(object):
 
             self.genotype_lb = lb
 
-        ub = config.global_config['agent'][self.__class__.__name__]['genotype_ub']
+        ub = config.grove_config['agent'][self.__class__.__name__]['genotype_ub']
 
         if isinstance(ub, float) or isinstance(ub, int):
 
@@ -42,7 +42,7 @@ class Agent(object):
 
             self.genotype_ub = ub
 
-        mp = config.global_config['agent'][self.__class__.__name__]['genotype_mp']
+        mp = config.grove_config['agent'][self.__class__.__name__]['genotype_mp']
 
         if isinstance(mp, float):
 
