@@ -15,6 +15,7 @@ class CPFAAgent(Agent):
     def __init__(self):
 
         super(CPFAAgent, self).__init__()
+
         self.genotype = [random.uniform(lower, upper) for lower, upper in zip(self.genotype_lb, self.genotype_ub)]
         self.genotype_len = len(self.genotype)
 
@@ -35,7 +36,7 @@ class CPFAAgent(Agent):
 
             for idx, param in enumerate(agent.genotype):
 
-                param = agent.genotype_ub[idx] * 1 # np.random.normal(loc=mean, scale=0.05)
+                param = agent.genotype_ub[idx] * np.random.normal(loc=mean, scale=0.05)
 
                 if param < agent.genotype_lb[idx]:
                     param = agent.genotype_lb[idx]
@@ -56,9 +57,9 @@ def evaluation(agent=None):
     :return: The agent with updated evaluation value.
     """
 
-    import random
-    print agent
-    return random.randint(1, 100)
+    from xml.dom.minidom import parse, parseString
+
+    xml = parse('./')
 
 
 if __name__ == "__main__":
@@ -66,9 +67,8 @@ if __name__ == "__main__":
     import argparse
 
     # Parser for command line arguments.
-    parser = argparse.ArgumentParser(description='py.evolve')
-    parser.add_argument('-agent_config', action='store', type=str, default='agent.json')
-    parser.add_argument('-ga_config', action='store', type=str, default='ga.json')
+    parser = argparse.ArgumentParser(description='grove')
+    parser.add_argument('-config', action='store', type=str, default='grove-config.json')
     parser.add_argument('-p', '--population', action='store', type=int, default=28)
     parser.add_argument('-g', '--generations', action='store', type=int, default=1000)
     parser.add_argument('-c', '--crossover_function', action='store', type=str, default='truncation')
@@ -77,7 +77,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Load the configurations into memory (as dictionaries) by filename.
-    config.load_configs([args.agent_config, args.ga_config])
+    config.load_config(args.config)
 
     # Change the current directory to ARGoS (required by the simulator).
     os.chdir(os.path.expanduser('~') + '/ARGoS/iAnt-ARGoS-master')
@@ -91,6 +91,4 @@ if __name__ == "__main__":
         selection.tournament(4, 5),
         crossover.one_point(),
         mutation.gaussian(),
-        ['10.0.0.30', '10.0.0.31', '10.0.0.32', '10.0.0.33', '10.0.0.34', '10.0.0.35', '10.0.0.36'],
-        'log'
     )
