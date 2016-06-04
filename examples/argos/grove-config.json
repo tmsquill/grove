@@ -1,8 +1,6 @@
 {
+  "agent": {
     "name": "Agent",
-    "agent_types": [
-        "CPFAAgent"
-    ],
     "CPFAAgent": {
         "genotype_lb": [
             0.0,
@@ -49,6 +47,32 @@
             "RLP",
             "RPD"
         ]
-    },
-    "argos_xml": "./experiments/iAnt.xml"
+    }
+  },
+  "ga": {
+    "nodes": [
+      "10.0.0.30",
+      "10.0.0.31",
+      "10.0.0.32",
+      "10.0.0.33",
+      "10.0.0.34",
+      "10.0.0.35",
+      "10.0.0.36"
+    ],
+    "parameters": {
+      "population": 8,
+      "generations": 40,
+      "agent_types": "CPFAAgent",
+      "evaluation_func": "",
+      "selection_func": "",
+      "crossover_func": "",
+      "mutation_func": ""
+    }
+  },
+  "logging": {
+    "evolution": true,
+    "selection": true,
+    "crossover": true,
+    "mutation": true
+  }
 }
