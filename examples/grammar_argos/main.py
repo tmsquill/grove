@@ -66,20 +66,45 @@ def evaluation(agent=None):
     :return: The agent with updated evaluation value.
     """
 
+    from lyssa.entity import Food, Nest, SimAgent
+    from lyssa.environment import Environment
+    from lyssa.simulation import Simulation
+
     import thriftpy.transport as tp
     import thriftpy.protocol as pc
-
     import thriftpy
 
-    module_name = os.path.splitext(os.path.basename('/home/zivia/College/py.evolve/examples/grammar_argos/thrift/foraging.thrift'))[0] + '_thrift'
-    thrift = thriftpy.load('/home/zivia/College/py.evolve/examples/grammar_argos/thrift/foraging.thrift', module_name=module_name)
+    # Path to Thrift
+    thrift_path = '/Users/Zivia/PycharmProjects/py.evolve/examples/grammar_argos/thrift/foraging.thrift'
+
+    # Compile the Thrift and read the grammar.
+    module_name = os.path.splitext(os.path.basename(thrift_path))[0] + '_thrift'
+    thrift = thriftpy.load(thrift_path, module_name=module_name)
 
     transportIn = tp.TMemoryBuffer(agent.phenotype)
     protocolIn = pc.TBinaryProtocol(transportIn)
     root = thrift.Root()
     root.read(protocolIn)
 
+    # Create the entities for the simulation.
+    agents = [SimAgent(position=(random.randint(0, 20), random.randint(0, 20))) for _ in xrange(5)]
+    nest = Nest(position=(8, 8), size=(4, 4))
+    food = [Food(position=(random.randint(0, 20), random.randint(0, 20))) for _ in xrange(10)]
+
+    entities = agents + [nest] + food
+
+    # Create the environment for the simulation.
+    env = Environment()
+
+    # Create and execute the simulation.
+    sim = Simulation(environment=env, entities=entities, ast=root)
     return str(root)
+    sim.execute()
+
+    # Get the food tags collected, and return as the evaluation score.
+    nest = filter(lambda x: isinstance(x, Nest), sim.entities)
+
+    return nest.food_count
 
 
 def post_evaluation(agents=None):
@@ -92,39 +117,32 @@ if __name__ == "__main__":
     import argparse
 
     # Parser for command line arguments.
-    parser = argparse.ArgumentParser(description='py.evolve')
-    parser.add_argument('-agent_config', action='store', type=str, default='agent.json')
-    parser.add_argument('-ga_config', action='store', type=str, default='ga.json')
-    parser.add_argument('-p', '--population', action='store', type=int, default=20)
-    parser.add_argument('-g', '--generations', action='store', type=int, default=3)
+    parser = argparse.ArgumentParser(description='grove')
+    parser.add_argument('-config', action='store', type=str, default='grove-config.json')
+    parser.add_argument('-p', '--population', action='store', type=int)
+    parser.add_argument('-g', '--generations', action='store', type=int)
     parser.add_argument('-c', '--crossover_function', action='store', type=str, default='truncation')
     parser.add_argument('-m', '--mutation_function', action='store', type=str, default='one_point')
     parser.add_argument('-s', '--selection_function', action='store', type=str, default='gaussian')
     parser.add_argument('-b', '--grammar', action='store', type=str)
-    parser.add_argument('-v', '--verbose', action='store_true', help='show BNF input file')
     args = parser.parse_args()
 
     # Compile the Thrift file into a python module.
     thrift = grammar.compile_thrift(args.grammar)
 
-    # Construct a grammar from a BNF file.
+    # Construct the grammar object.
     grammar_o = grammar.Grammar(thrift)
 
-    # Toggle verbosity.
-    if args.verbose:
-
-        print grammar_o
-
-    # Load the configurations into memory (as dictionaries) by filename.
-    config.load_configs([args.agent_config, args.ga_config])
+    # Load the grove configuration.
+    config.load_config(args.config)
 
     # Change the current directory to ARGoS (required by the simulator).
     os.chdir(os.path.expanduser('~') + '/ARGoS/iAnt-GES-ARGoS')
 
     # Run the genetic algorithm.
     ga.evolve(
-        args.population,
-        args.generations,
+        args.population or config.grove_config['ga']['parameters']['population'],
+        args.generations or config.grove_config['ga']['parameters']['generations'],
         GESAgent,
         pre_evaluation,
         evaluation,
@@ -133,6 +151,5 @@ if __name__ == "__main__":
         crossover.one_point(),
         mutation.gaussian(),
         [], #['10.0.0.30', '10.0.0.31', '10.0.0.32', '10.0.0.33', '10.0.0.34', '10.0.0.35', '10.0.0.36'],
-        [Agent, GESAgent],
-        'log'
+        [] #[Agent, GESAgent],
     )

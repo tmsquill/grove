@@ -50,6 +50,30 @@ class CPFAAgent(Agent):
         return agents
 
 
+def pre_evaluation(agents=None):
+
+    from xml.dom.minidom import parse
+
+    for agent in agents:
+
+        argos_xml = './experiments/xml/CPFA-' + str(agent.id % 8) + '.xml'
+        xml = parse(argos_xml)
+        cpfa = xml.getElementsByTagName("CPFA")
+        attrs = cpfa[0]
+
+        attrs.setAttribute('ProbabilityOfSwitchingToSearching', str(round(agent.genotype[0], 5)))
+        attrs.setAttribute('ProbabilityOfReturningToNest', str(round(agent.genotype[1], 5)))
+        attrs.setAttribute('UninformedSearchVariation', str(round(agent.genotype[2], 5)))
+        attrs.setAttribute('RateOfInformedSearchDecay', str(round(agent.genotype[3], 5)))
+        attrs.setAttribute('RateOfSiteFidelity', str(round(agent.genotype[4], 5)))
+        attrs.setAttribute('RateOfLayingPheromone', str(round(agent.genotype[5], 5)))
+        attrs.setAttribute('RateOfPheromoneDecay', str(round(agent.genotype[6], 5)))
+
+        xml.writexml(open(argos_xml, 'w'))
+
+    return agents
+
+
 def evaluation(agent=None):
     """
     Evaluation function that executes ARGoS with the specified agent.
@@ -57,9 +81,25 @@ def evaluation(agent=None):
     :return: The agent with updated evaluation value.
     """
 
-    from xml.dom.minidom import parse, parseString
+    import re
+    import subprocess
+    from subprocess import CalledProcessError
 
-    xml = parse('./')
+    output = None
+
+    try:
+        output = subprocess.check_output(['/usr/local/bin/argos3 -c ./experiments/xml/CPFA-' + str(agent.id % 8) + '.xml'], shell=True, stderr=subprocess.STDOUT)
+    except CalledProcessError as e:
+        output = e.output
+
+    result = re.search(r'\s(\d+),\s(\d+),\s(\d+)', output)
+
+    return result
+
+
+def post_evaluation(agents=None):
+
+    return agents
 
 
 if __name__ == "__main__":
@@ -69,14 +109,14 @@ if __name__ == "__main__":
     # Parser for command line arguments.
     parser = argparse.ArgumentParser(description='grove')
     parser.add_argument('-config', action='store', type=str, default='grove-config.json')
-    parser.add_argument('-p', '--population', action='store', type=int, default=28)
-    parser.add_argument('-g', '--generations', action='store', type=int, default=1000)
+    parser.add_argument('-p', '--population', action='store', type=int)
+    parser.add_argument('-g', '--generations', action='store', type=int)
     parser.add_argument('-c', '--crossover_function', action='store', type=str, default='truncation')
     parser.add_argument('-m', '--mutation_function', action='store', type=str, default='one_point')
     parser.add_argument('-s', '--selection_function', action='store', type=str, default='gaussian')
     args = parser.parse_args()
 
-    # Load the configurations into memory (as dictionaries) by filename.
+    # Load the grove configuration.
     config.load_config(args.config)
 
     # Change the current directory to ARGoS (required by the simulator).
@@ -84,11 +124,15 @@ if __name__ == "__main__":
 
     # Run the genetic algorithm.
     ga.evolve(
-        args.population,
-        args.generations,
+        args.population or config.grove_config['ga']['parameters']['population'],
+        args.generations or config.grove_config['ga']['parameters']['generations'],
         CPFAAgent,
+        pre_evaluation,
         evaluation,
+        post_evaluation,
         selection.tournament(4, 5),
         crossover.one_point(),
         mutation.gaussian(),
+        [],
+        []
     )

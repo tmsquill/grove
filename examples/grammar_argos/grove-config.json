@@ -1,6 +1,6 @@
 {
   "agent": {
-    "name": "GESAgent",
+    "name": "Agent",
     "GESAgent": {
         "genotype_len": 100,
         "genotype_lb": 0,
