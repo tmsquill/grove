@@ -1,4 +1,5 @@
-import logging
+import config
+import ga
 import random
 
 
@@ -14,7 +15,11 @@ def one_point():
         :return: The updated set of agents with new offspring.
         """
 
-        logging.info(' One-Point Crossover '.center(180, '='))
+        log = config.grove_config['logging']['crossover']
+
+        if log:
+
+            ga.log.info(' One-Point Crossover '.center(180, '='))
 
         offspring = []
 
@@ -23,15 +28,19 @@ def one_point():
             parent1 = random.choice(agents)
             parent2 = random.choice(agents)
 
-            logging.info('Parent 1: ' + str(parent1))
-            logging.info('Parent 2: ' + str(parent2))
+            if log:
+
+                ga.log.info('Parent 1: ' + str(parent1))
+                ga.log.info('Parent 2: ' + str(parent2))
 
             child1 = parent1.__class__.factory()
             child2 = parent2.__class__.factory()
 
             split = random.randint(0, parent1.genotype_len - 1)
 
-            logging.info('Split: ' + str(split))
+            if log:
+
+                ga.log.info('Split: ' + str(split))
 
             child1.genotype[0:split] = parent1.genotype[0:split]
             child1.genotype[split:parent1.genotype_len] = parent2.genotype[split:parent1.genotype_len]
@@ -39,8 +48,10 @@ def one_point():
             child2.genotype[0:split] = parent2.genotype[0:split]
             child2.genotype[split:parent1.genotype_len] = parent1.genotype[split:parent1.genotype_len]
 
-            logging.info('Child 1: ' + str(child1))
-            logging.info('Child 2: ' + str(child2) + '\n')
+            if log:
+
+                ga.log.info('Child 1: ' + str(child1))
+                ga.log.info('Child 2: ' + str(child2) + '\n')
 
             offspring.append(child1)
             offspring.append(child2)
@@ -63,7 +74,11 @@ def two_point():
         :return: The updated set of agents with new offspring.
         """
 
-        logging.info(' Two-Point Crossover '.center(180, '='))
+        log = config.grove_config['logging']['crossover']
+
+        if log:
+
+            ga.log.info(' Two-Point Crossover '.center(180, '='))
 
         offspring = []
 
@@ -72,8 +87,10 @@ def two_point():
             parent1 = random.choice(agents)
             parent2 = random.choice(agents)
 
-            logging.info('Parent 1: ' + str(parent1))
-            logging.info('Parent 2: ' + str(parent2))
+            if log:
+
+                ga.log.info('Parent 1: ' + str(parent1))
+                ga.log.info('Parent 2: ' + str(parent2))
 
             child1 = parent1.__class__.factory()
             child2 = parent2.__class__.factory()
@@ -81,8 +98,10 @@ def two_point():
             split1 = random.randint(0, parent1.genotype_len - 1)
             split2 = random.randint(0, parent1.genotype_len - 1)
 
-            logging.info('(1) Split: ' + str(split1))
-            logging.info('(2) Split: ' + str(split2))
+            if log:
+
+                ga.log.info('(1) Split: ' + str(split1))
+                ga.log.info('(2) Split: ' + str(split2))
 
             child1.genotype[1:split1] = parent1.genotype[1:split1]
             child1.genotype[split1:split2] = parent2.genotype[split1:split2]
@@ -92,8 +111,10 @@ def two_point():
             child2.genotype[split1:split2] = parent1.genotype[split1:split2]
             child2.genotype[split2:len(agents[0].genotype)] = parent2.genotype[split2:parent1.genotype_len - 1]
 
-            logging.info('Child 1: ' + str(child1))
-            logging.info('Child 2: ' + str(child2) + '\n')
+            if log:
+
+                ga.log.info('Child 1: ' + str(child1))
+                ga.log.info('Child 2: ' + str(child2) + '\n')
 
             offspring.append(child1)
             offspring.append(child2)
@@ -115,7 +136,11 @@ def uniform():
         :return: The updated set of agents with new offspring.
         """
 
-        logging.info(' Uniform Crossover '.center(180, '='))
+        log = config.grove_config['logging']['crossover']
+
+        if log:
+
+            ga.log.info(' Uniform Crossover '.center(180, '='))
 
         offspring = []
 
@@ -124,8 +149,10 @@ def uniform():
             parent1 = random.choice(agents)
             parent2 = random.choice(agents)
 
-            logging.info('Parent 1: ' + str(parent1))
-            logging.info('Parent 2: ' + str(parent2))
+            if log:
+
+                ga.log.info('Parent 1: ' + str(parent1))
+                ga.log.info('Parent 2: ' + str(parent2))
 
             child1 = parent1.__class__.factory()
             child2 = parent1.__class__.factory()
@@ -142,8 +169,10 @@ def uniform():
                     child1.genotype[i] = parent2.genotype[i]
                     child2.genotype[i] = parent1.genotype[i]
 
-            logging.info('Child 1: ' + str(child1))
-            logging.info('Child 2: ' + str(child2) + '\n')
+            if log:
+
+                ga.log.info('Child 1: ' + str(child1))
+                ga.log.info('Child 2: ' + str(child2) + '\n')
 
             offspring.append(child1)
             offspring.append(child2)

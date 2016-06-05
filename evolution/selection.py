@@ -1,4 +1,5 @@
-import logging
+import config
+import ga
 from operator import attrgetter
 import random
 
@@ -17,21 +18,26 @@ def truncation(elite_proportion=None):
         :return: The updated set of agents after the selection process.
         """
 
+        log = config.grove_config['logging']['selection']
+
         # Sort the agents from most to least fit.
         agents = sorted(agents, key=lambda agent: agent.value, reverse=True)
 
-        logging.info(' Truncation Selection '.center(180, '='))
+        if log:
 
-        logging.info(
-            " (Before) {0} Population Size {1} ".center(180, '-').format(agents[0].__class__.__name__, len(agents)))
-        logging.info('\n' + '\n'.join(map(str, agents)) + '\n')
+            ga.log.info(' Truncation Selection '.center(180, '='))
+            ga.log.info(
+                " (Before) {0} Population Size {1} ".center(180, '-').format(agents[0].__class__.__name__, len(agents)))
+            ga.log.info('\n' + '\n'.join(map(str, agents)) + '\n')
 
         # Use slicing to remove the non-elite.
         agents = agents[:int(elite_proportion * len(agents))]
 
-        logging.info(
+        if log:
+
+            ga.log.info(
             " (After) {0} Population Size {1} ".center(180, '-').format(agents[0].__class__.__name__, len(agents)))
-        logging.info('\n' + '\n'.join(map(str, agents)) + '\n')
+            ga.log.info('\n' + '\n'.join(map(str, agents)) + '\n')
 
         return agents
 
@@ -58,11 +64,14 @@ def tournament(agents_ret=None, tournament_size=None):
         :return: The updated set of agents after the selection process.
         """
 
-        logging.info(' Tournament Selection '.center(180, '='))
+        log = config.grove_config['logging']['selection']
 
-        logging.info(
+        if log:
+
+            ga.log.info(' Tournament Selection '.center(180, '='))
+            ga.log.info(
             " (Before) {0} Population Size {1} ".center(180, '-').format(agents[0].__class__.__name__, len(agents)))
-        logging.info('\n' + '\n'.join(map(str, agents)) + '\n')
+            ga.log.info('\n' + '\n'.join(map(str, agents)) + '\n')
 
         chosen = []
 
@@ -71,9 +80,11 @@ def tournament(agents_ret=None, tournament_size=None):
             participants = [random.choice(agents) for ___ in xrange(tournament_size)]
             chosen.append(max(participants, key=attrgetter('value')))
 
-        logging.info(
+        if log:
+
+            ga.log.info(
             " (After) {0} Population Size {1} ".center(180, '-').format(agents[0].__class__.__name__, len(agents)))
-        logging.info('\n' + '\n'.join(map(str, agents)) + '\n')
+            ga.log.info('\n' + '\n'.join(map(str, agents)) + '\n')
 
         return chosen
 
@@ -100,13 +111,16 @@ def roulette(sample=None, size=None):
         :return: The updated set of agents after the selection process.
         """
 
+        log = config.grove_config['logging']['selection']
+
         agents = sorted(agents, key=lambda agent: agent.value, reverse=True)
 
-        logging.info(' Roulette Selection '.center(180, '='))
+        if log:
 
-        logging.info(
+            ga.log.info(' Roulette Selection '.center(180, '='))
+            ga.log.info(
             " (Before) {0} Population Size {1} ".center(180, '-').format(agents[0].__class__.__name__, len(agents)))
-        logging.info('\n' + '\n'.join(map(str, agents)) + '\n')
+            ga.log.info('\n' + '\n'.join(map(str, agents)) + '\n')
 
         agents_len = len(agents)
         hits = {_: 0 for _ in xrange(agents_len)}
@@ -130,9 +144,11 @@ def roulette(sample=None, size=None):
         hits = sorted(hits, key=lambda count: hits[idx], reverse=True)
         agents = [agent for (idx, agent) in sorted(zip(hits, agents))]
 
-        logging.info(
+        if log:
+
+            ga.log.info(
             " (After) {0} Population Size {1} ".center(180, '-').format(agents[0].__class__.__name__, len(agents)))
-        logging.info('\n' + '\n'.join(map(str, agents)) + '\n')
+            ga.log.info('\n' + '\n'.join(map(str, agents)) + '\n')
 
         return agents
 

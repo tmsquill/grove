@@ -1,4 +1,5 @@
-import logging
+import config
+import ga
 import numpy as np
 import random
 
@@ -13,11 +14,17 @@ def boundary():
         :return: The updated set of agents with mutations.
         """
 
-        logging.info(' Boundary Mutation '.center(180, '='))
+        log = config.grove_config['logging']['mutation']
+
+        if log:
+
+            ga.log.info(' Boundary Mutation '.center(180, '='))
 
         for agent in agents:
 
-            logging.info('(Before) ' + str(agent))
+            if log:
+
+                ga.log.info('(Before) ' + str(agent))
 
             for idx, param in enumerate(agent.genotype):
 
@@ -25,7 +32,9 @@ def boundary():
 
                     agent.genotype[idx] = random.choice([agent.genotype_lb[idx], agent.genotype_ub[idx]])
 
-            logging.info('(After) ' + str(agent))
+            if log:
+
+                ga.log.info('(After) ' + str(agent))
 
         return agents
 
@@ -43,11 +52,17 @@ def uniform():
         :return: The updated set of agents with mutations.
         """
 
-        logging.info(' Uniform Mutation '.center(180, '='))
+        log = config.grove_config['logging']['mutation']
+
+        if log:
+
+            ga.log.info(' Uniform Mutation '.center(180, '='))
 
         for agent in agents:
 
-            logging.info('(Before) ' + str(agent))
+            if log:
+
+                ga.log.info('(Before) ' + str(agent))
 
             for idx, param in enumerate(agent.genotype):
 
@@ -55,7 +70,9 @@ def uniform():
 
                     agent.genotype[idx] = random.uniform(agent.genotype_lb[idx], agent.genotype_ub[idx])
 
-            logging.info('(After) ' + str(agent))
+            if log:
+
+                ga.log.info('(After) ' + str(agent))
 
         return agents
 
@@ -72,11 +89,17 @@ def gaussian():
         :return: The updated set of agents with mutations.
         """
 
-        logging.info(' Gaussian Mutation '.center(180, '='))
+        log = config.grove_config['logging']['mutation']
+
+        if log:
+
+            ga.log.info(' Gaussian Mutation '.center(180, '='))
 
         for agent in agents:
 
-            logging.info('(Before) ' + str(agent))
+            if log:
+
+                ga.log.info('(Before) ' + str(agent))
 
             for idx, param in enumerate(agent.genotype):
 
@@ -94,11 +117,15 @@ def gaussian():
                             scale=(0.05 * agent.genotype_ub[idx])
                         )
 
-                    logging.info('Mutating Parameter ' + str(idx) + ': ' + str(param) + ' -> ' + str(val))
+                    if log:
+
+                        ga.log.info('Mutating Parameter ' + str(idx) + ': ' + str(param) + ' -> ' + str(val))
 
                     agent.genotype[idx] = val
 
-            logging.info('(After) ' + str(agent))
+            if log:
+
+                ga.log.info('(After) ' + str(agent))
 
         return agents
 
