@@ -101,7 +101,13 @@ def distributed(population, generations, agents, pre_evaluation, evaluation, pos
     import logging
 
     # Configure the cluster.
-    cluster = dispy.JobCluster(evaluation, nodes=nodes, depends=depends, loglevel=logging.DEBUG)
+    if isinstance(evaluation, basestring) or hasattr(evaluation, '__call__'):
+
+        cluster = dispy.JobCluster(evaluation, nodes=nodes, depends=depends, loglevel=logging.DEBUG)
+
+    else:
+
+        raise TypeError('evaluation is not a string or callable', evaluation)
 
     start_time = time.time()
 
