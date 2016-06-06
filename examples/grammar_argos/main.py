@@ -66,9 +66,9 @@ def evaluation(agent=None):
     :return: The agent with updated evaluation value.
     """
 
-    from lyssa.entity import Food, Nest, SimAgent
-    from lyssa.environment import Environment
-    from lyssa.simulation import Simulation
+    from simulation.entity import Food, Nest, SimAgent
+    from simulation.environment import Environment
+    from simulation.simulation import Simulation
 
     import thriftpy.transport as tp
     import thriftpy.protocol as pc
@@ -97,14 +97,13 @@ def evaluation(agent=None):
     env = Environment()
 
     # Create and execute the simulation.
-    sim = Simulation(environment=env, entities=entities, ast=root)
-    return str(root)
+    sim = Simulation(environment=env, entities=entities, parse_tree=root)
     sim.execute()
 
     # Get the food tags collected, and return as the evaluation score.
     nest = filter(lambda x: isinstance(x, Nest), sim.entities)
 
-    return nest.food_count
+    return nest[0].food_count
 
 
 def post_evaluation(agents=None):
@@ -136,20 +135,30 @@ if __name__ == "__main__":
     # Load the grove configuration.
     config.load_config(args.config)
 
+    # Initialize logging handler.
+    from logbook import FileHandler, Logger
+    import time
+
+    log_handler = FileHandler('grove-' + time.strftime("%I:%M-M%mD%dY%Y" + '.log'))
+    log = Logger('Grove Logger')
+
     # Change the current directory to ARGoS (required by the simulator).
     os.chdir(os.path.expanduser('~') + '/ARGoS/iAnt-GES-ARGoS')
 
     # Run the genetic algorithm.
-    ga.evolve(
-        args.population or config.grove_config['ga']['parameters']['population'],
-        args.generations or config.grove_config['ga']['parameters']['generations'],
-        GESAgent,
-        pre_evaluation,
-        evaluation,
-        post_evaluation,
-        selection.tournament(4, 5),
-        crossover.one_point(),
-        mutation.gaussian(),
-        [], #['10.0.0.30', '10.0.0.31', '10.0.0.32', '10.0.0.33', '10.0.0.34', '10.0.0.35', '10.0.0.36'],
-        [] #[Agent, GESAgent],
-    )
+    with log_handler.applicationbound():
+
+        ga.evolve(
+            args.population or config.grove_config['ga']['parameters']['population'],
+            args.generations or config.grove_config['ga']['parameters']['generations'],
+            GESAgent,
+            pre_evaluation,
+            evaluation,
+            post_evaluation,
+            selection.tournament(4, 5),
+            crossover.one_point(),
+            mutation.gaussian(),
+            [], #['10.0.0.30', '10.0.0.31', '10.0.0.32', '10.0.0.33', '10.0.0.34', '10.0.0.35', '10.0.0.36'],
+            [], #[Agent, GESAgent],
+            log
+        )

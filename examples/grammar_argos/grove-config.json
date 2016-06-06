@@ -25,8 +25,8 @@
         "10.0.0.36"
     ],
     "parameters": {
-        "population": 40,
-        "generations": 40,
+        "population": 8,
+        "generations": 10,
         "agent_type": "GESAgent",
         "evaluation_func": "",
         "selection_func": "",

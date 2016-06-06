@@ -63,13 +63,9 @@ struct Action {
 }
 
 struct Rule {
-  1: list<Precondition> preconditions,
-  2: list<Behavior> behaviors,
-  3: list<Action> actions
-}
-
-struct RuleSet {
-  1: list<Rule> rule_list = []
+  1: list<Precondition> preconditions = [],
+  2: list<Behavior> behaviors = [],
+  3: list<Action> actions = []
 }
 
 struct Initialization {
@@ -80,5 +76,6 @@ struct Initialization {
 
 struct Root {
   1: Initialization init,
-  2: RuleSet rules
+	2: Behavior default_behavior,
+  3: list<Rule> rules = []
 }
