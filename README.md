@@ -1,15 +1,15 @@
 # grove #
 
-Grove is a genetic algorithm and grammatical evolution library targeting swarm-based models.
+Grove is a genetic algorithm and grammatical evolution library.
 
 ### Features ###
 
 * Generic template for evolving agent based models.
-* Includes popular built-in evolutionary function (selection, crossover, mutation, etc...).
 * [Grammatical Evolution](https://en.wikipedia.org/wiki/Grammatical_evolution) supporting popular formal grammar representations such as BNF, Google Protocol Buffers, and Apache Thrift.
+* Distributed execution of evaluation functions and grammar-related procedures.
 * Extensive logging and output files for data analysis.
 
-### Getting Started ###
+### Downloads ###
 
 `cd <directory of your choice>`
 
@@ -21,7 +21,9 @@ Grove is a genetic algorithm and grammatical evolution library targeting swarm-b
 
 `pip install -r requirements.txt`
 
-Check out the `examples` directory for some basic tutorials.
+### Documentation ###
+
+Check the Grove User's Guide for documentation and examples.
 
 ### Contribution ###
 
