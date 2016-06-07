@@ -1,7 +1,7 @@
 # Required Imports
 import random
-from evolution.grammar import Grammar
 
+from grammar import Grammar
 # Google Protocol Buffer
 import examples.grammar_argos.proto.foraging_pb2 as pb
 import google.protobuf.text_format as tf

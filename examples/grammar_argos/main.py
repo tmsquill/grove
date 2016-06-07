@@ -1,16 +1,16 @@
 import os
 import random
 
-from evolution import config, ga, grammar, selection, crossover, mutation
-from evolution.agent import Agent
-
-import thriftpy.transport as tp
 import thriftpy.protocol as pc
+import thriftpy.transport as tp
+
+from evolution import agent, config, ga, selection, crossover, mutation
+from grammar import grammar
 
 grammar_o = None
 
 
-class GESAgent(Agent):
+class GESAgent(agent.Agent):
 
     """ An agent targeted towards GES. """
 

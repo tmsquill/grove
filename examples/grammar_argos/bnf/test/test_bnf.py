@@ -1,6 +1,7 @@
 # Required Imports
 import random
-from evolution.grammar import Grammar
+
+from grammar import Grammar
 
 # Backus-Naur Form
 bnf = '../foraging.bnf'

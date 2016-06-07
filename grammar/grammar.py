@@ -1,6 +1,6 @@
 import inspect
 import json
-import logging
+import evolution.ga
 import random
 import re
 import thriftpy
@@ -133,11 +133,11 @@ class Grammar:
     def generate(self, in_seq, max_wraps=2):
 
         """
-        Generates an AST with the input sequence of integers. The generation type depends on
+        Generates an parse tree with the input sequence of integers. The generation type depends on
         the representation of the grammar object (BNF, Proto, Thrift).
         :param in_seq: The random sequence (list) of integers.
         :param max_wraps: The number of times to wrap the input.
-        :return: The generated AST built with the input sequence.
+        :return: The generated parse tree built with the input sequence.
         """
 
         if self.representation == 'proto':
@@ -155,10 +155,10 @@ class Grammar:
     def generate_from_proto(self, in_seq, wraps=2):
 
         """
-        Uses reflection to form an AST with a Google Protocol Buffer auto-generated class.
+        Uses reflection to form an parse tree with a Google Protocol Buffer auto-generated class.
         :param in_seq: The random sequence (list) of integers.
         :param wraps: The number of times to wrap the input.
-        :return: An AST represented as an instance of a Google Protocol Buffer class.
+        :return: An parse tree represented as an instance of a Google Protocol Buffer class.
         """
 
         print 'Input Sequence     -> ' + str(in_seq)
@@ -261,13 +261,13 @@ class Grammar:
     def generate_from_thrift(self, in_seq=None, wraps=2):
 
         """
-        Uses reflection to form an AST with an Apache Thrift auto-generated class.
+        Uses reflection to form an parse tree with an Apache Thrift auto-generated class.
         :param in_seq: The random sequence (list) of integers.
         :param wraps: The number of times to wrap the input.
-        :return: An AST represented as an instance of a Apache Thrift class.
+        :return: An parse tree represented as an instance of a Apache Thrift class.
         """
 
-        logging.debug('Input Sequence     -> ' + str(in_seq))
+        evolution.ga.log.debug('Input Sequence     -> ' + str(in_seq))
 
         used_in_seq = 0
         output = self.thrift.Root()
@@ -281,7 +281,7 @@ class Grammar:
 
                 wraps -= 1
 
-            logging.debug('\nUnexpanded Symbols -> ' + str(unexpanded_symbols))
+            evolution.ga.log.debug('\nUnexpanded Symbols -> ' + str(unexpanded_symbols))
 
             # Expand a production.
             current_symbol = unexpanded_symbols.pop(0)
@@ -295,24 +295,24 @@ class Grammar:
                     setattr(current_symbol[4], current_symbol[1], instance)
                 current_symbol = (current_symbol[0], current_symbol[1], instance, current_symbol[3], current_symbol[4])
 
-            logging.debug('Current Symbol     -> ' + str(current_symbol))
+            evolution.ga.log.debug('Current Symbol     -> ' + str(current_symbol))
 
-            logging.debug(type(getattr(current_symbol[4], current_symbol[1])))
+            evolution.ga.log.debug(type(getattr(current_symbol[4], current_symbol[1])))
 
             # Non-terminal symbol (List).
             if isinstance(current_symbol[2], tuple):
 
-                logging.debug('<-- Non-Terminal Symbol (List) --->')
+                evolution.ga.log.debug('<-- Non-Terminal Symbol (List) --->')
 
                 if getattr(current_symbol[4], current_symbol[1]) is None:
 
                     setattr(current_symbol[4], current_symbol[1], list())
 
                 production_choices = extract_list_productions(current_symbol)
-                logging.debug('Production Choices -> ' + str(production_choices))
+                evolution.ga.log.debug('Production Choices -> ' + str(production_choices))
 
                 amount = int(in_seq[used_in_seq % len(in_seq)] % 10)
-                logging.debug('Amount             -> ' + str(amount))
+                evolution.ga.log.debug('Amount             -> ' + str(amount))
 
                 used_in_seq += 1
 
@@ -323,14 +323,14 @@ class Grammar:
             # Non-terminal symbol (List Element)
             elif isinstance(getattr(current_symbol[4], current_symbol[1]), list):
 
-                logging.debug('<-- Non-Terminal Symbol (List Element) --->')
+                evolution.ga.log.debug('<-- Non-Terminal Symbol (List Element) --->')
 
-                logging.debug(getattr(current_symbol[4], current_symbol[1]))
+                evolution.ga.log.debug(getattr(current_symbol[4], current_symbol[1]))
                 setattr(current_symbol[4], current_symbol[1], getattr(current_symbol[4], current_symbol[1]) + [current_symbol[2]])
-                logging.debug(getattr(current_symbol[4], current_symbol[1]))
+                evolution.ga.log.debug(getattr(current_symbol[4], current_symbol[1]))
 
                 production_choices = wrap_thrift_spec(current_symbol[2]).values()
-                logging.debug('Production Choices -> ' + str(production_choices))
+                evolution.ga.log.debug('Production Choices -> ' + str(production_choices))
 
                 # Required fields.
                 unexpanded_symbols = production_choices + unexpanded_symbols
@@ -338,10 +338,10 @@ class Grammar:
             # Non-terminal symbol.
             elif hasattr(current_symbol[2], 'thrift_spec') and not isinstance(
                     getattr(current_symbol[4], current_symbol[1]), list):
-                logging.debug('<-- Non-Terminal Symbol --->')
+                evolution.ga.log.debug('<-- Non-Terminal Symbol --->')
 
                 production_choices = wrap_thrift_spec(current_symbol[2]).values()
-                logging.debug('Production Choices -> ' + str(production_choices))
+                evolution.ga.log.debug('Production Choices -> ' + str(production_choices))
 
                 # Required fields.
                 unexpanded_symbols = production_choices + unexpanded_symbols
@@ -349,23 +349,23 @@ class Grammar:
             # Terminal symbol.
             else:
 
-                logging.debug('<-- Terminal Symbol --->')
+                evolution.ga.log.debug('<-- Terminal Symbol --->')
                 attrs = [attr for attr in dir(current_symbol[2]) if not callable(attr) and not attr.startswith('_')]
-                logging.debug('Choices            -> ' + str(attrs))
+                evolution.ga.log.debug('Choices            -> ' + str(attrs))
                 setattr(current_symbol[4], current_symbol[1], getattr(current_symbol[2], attrs[int(in_seq[used_in_seq % len(in_seq)] % len(attrs))]))
                 used_in_seq += 1
 
-            logging.debug('Output             -> ' + str(output))
+            evolution.ga.log.debug('Output             -> ' + str(output))
 
         return output, used_in_seq
 
     def generate_from_bnf(self, in_seq, wraps=2):
 
         """
-        Forms an AST from a random input sequence and a Backus-Naur Form file.
+        Forms an parse tree from a random input sequence and a Backus-Naur Form file.
         :param in_seq: The random sequence (list) of integers.
         :param wraps: The number of times to wrap the input.
-        :return: An AST represented as an XML file.
+        :return: An parse tree represented as an XML file.
         """
 
         print 'Input Sequence     -> ' + str(in_seq)

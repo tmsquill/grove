@@ -1,7 +1,8 @@
 # Required Imports
-import evolution.grammar as grammar
 import random
-from evolution.grammar import Grammar
+
+import grammar as grammar
+from grammar import Grammar
 
 # Generate random sequence for AST creation.
 sequence = [random.randint(0, 128) for _ in xrange(128)]
