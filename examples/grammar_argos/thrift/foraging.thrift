@@ -1,3 +1,12 @@
+// Actions Blacklists
+const map<i32, set<i32>> idaction_blacklist = {
+	4: [0, 1, 2, 3, 5, 6],
+	5: [4, 6],
+	6: [5]
+}
+
+
+
 // Terminal Expansions
 enum IdPrecondition {
 	PRECONDITION_0 = 0,
@@ -19,7 +28,13 @@ enum IdBehavior {
 
 enum IdAction {
   ACTION_0 = 0,
-  ACTION_1 = 1
+  ACTION_1 = 1,
+  ACTION_2 = 2,
+  ACTION_3 = 3,
+  ACTION_4 = 4,
+  ACTION_5 = 5,
+  ACTION_6 = 6,
+  ACTION_7 = 7,
 }
 
 enum Probability {
