@@ -1,13 +1,8 @@
 import os
 import random
 
+from evolution import config, ga, grammar, selection, crossover, mutation
 from evolution.agent import Agent
-import evolution.config as config
-import evolution.ga as ga
-import evolution.grammar as grammar
-import evolution.selection as selection
-import evolution.crossover as crossover
-import evolution.mutation as mutation
 
 import thriftpy.transport as tp
 import thriftpy.protocol as pc

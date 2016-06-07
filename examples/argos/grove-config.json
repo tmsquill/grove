@@ -62,7 +62,7 @@
     ],
     "parameters": {
       "population": 8,
-      "generations": 40,
+      "generations": 3,
       "agent_types": "CPFAAgent",
       "evaluation_func": "",
       "selection_func": "",

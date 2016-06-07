@@ -2,12 +2,8 @@ import numpy as np
 import os
 import random
 
+from evolution import config, ga, selection, crossover, mutation
 from evolution.agent import Agent
-import evolution.config as config
-import evolution.ga as ga
-import evolution.selection as selection
-import evolution.crossover as crossover
-import evolution.mutation as mutation
 
 
 class CPFAAgent(Agent):
@@ -119,20 +115,30 @@ if __name__ == "__main__":
     # Load the grove configuration.
     config.load_config(args.config)
 
+    # Initialize logging handler.
+    from logbook import FileHandler, Logger
+    import time
+
+    log_handler = FileHandler('grove-' + time.strftime("%I:%M-M%mD%dY%Y" + '.log'))
+    log = Logger('Grove Logger')
+
     # Change the current directory to ARGoS (required by the simulator).
     os.chdir(os.path.expanduser('~') + '/ARGoS/iAnt-ARGoS-master')
 
     # Run the genetic algorithm.
-    ga.evolve(
-        args.population or config.grove_config['ga']['parameters']['population'],
-        args.generations or config.grove_config['ga']['parameters']['generations'],
-        CPFAAgent,
-        pre_evaluation,
-        evaluation,
-        post_evaluation,
-        selection.tournament(4, 5),
-        crossover.one_point(),
-        mutation.gaussian(),
-        [],
-        []
-    )
+    with log_handler.applicationbound():
+
+        ga.evolve(
+            args.population or config.grove_config['ga']['parameters']['population'],
+            args.generations or config.grove_config['ga']['parameters']['generations'],
+            CPFAAgent,
+            pre_evaluation,
+            evaluation,
+            post_evaluation,
+            selection.tournament(4, 5),
+            crossover.one_point(),
+            mutation.gaussian(),
+            [],
+            [],
+            log
+        )
