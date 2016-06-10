@@ -16,11 +16,6 @@ class CPFAAgent(Agent):
         self.genotype_len = len(self.genotype)
 
     @staticmethod
-    def factory():
-
-        return CPFAAgent()
-
-    @staticmethod
     def init_agents(population):
 
         agents = []

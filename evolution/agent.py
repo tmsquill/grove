@@ -1,10 +1,10 @@
 import abc
-import itertools
-
 import config
+import itertools
 
 
 class Agent(object):
+
     """
     An abstract representation of an agent. All agents have a unique ID, an evaluation value, and information regarding
     their genotype. The factory and init_agents methods are abstract and must be implemented as static methods in the
@@ -64,14 +64,8 @@ class Agent(object):
         return result
 
     @abc.abstractmethod
-    def factory(self):
-        """
-        Factory method to instantiate a new Agent object.
-        :return: Returns a newly created Agent object.
-        """
-
-    @abc.abstractmethod
     def init_agents(self, population):
+
         """
         Initializes a set of agents based on the population size.
         :return: Returns a set of newly created agents.

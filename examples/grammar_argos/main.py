@@ -5,7 +5,6 @@ import thriftpy.protocol as pc
 import thriftpy.transport as tp
 
 from evolution import agent, config, ga, selection, crossover, mutation
-from grammar import grammar
 
 grammar_o = None
 
@@ -22,11 +21,6 @@ class GESAgent(agent.Agent):
 
         self.phenotype = None
         self.used_in_seq = 0
-
-    @staticmethod
-    def factory():
-
-        return GESAgent()
 
     @staticmethod
     def init_agents(population):
@@ -121,11 +115,10 @@ if __name__ == "__main__":
     parser.add_argument('-b', '--grammar', action='store', type=str)
     args = parser.parse_args()
 
-    # Compile the Thrift file into a python module.
-    thrift = grammar.compile_thrift(args.grammar)
+    # Load the grammar file.
+    from grammar.grammar import Grammar
 
-    # Construct the grammar object.
-    grammar_o = grammar.Grammar(thrift)
+    grammar = Grammar(args.grammar)
 
     # Load the grove configuration.
     config.load_config(args.config)
@@ -153,7 +146,7 @@ if __name__ == "__main__":
             selection.tournament(4, 5),
             crossover.one_point(),
             mutation.gaussian(),
-            [], #['10.0.0.30', '10.0.0.31', '10.0.0.32', '10.0.0.33', '10.0.0.34', '10.0.0.35', '10.0.0.36'],
-            [], #[Agent, GESAgent],
+            [],
+            [],
             log
         )
