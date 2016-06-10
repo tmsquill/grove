@@ -7,6 +7,7 @@ import random
 def boundary():
 
     def _(agents):
+
         """
         Boundary mutation replaces chosen genes within the genome with either lower or upper bounds for each
         respective gene.
@@ -82,6 +83,7 @@ def uniform():
 def gaussian():
 
     def _(agents):
+
         """
         Gaussian mutation adds a unit gaussian distributed value to the chosen gene. Bounds checking ensures
         the mutation does not violate legal ranges for the gene.

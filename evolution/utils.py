@@ -5,6 +5,7 @@ import os
 
 
 def generate_csv(generations=None):
+
     """
     Generates a CSV file from a set of generations containing archives of previous states of all agents.
     :param generations: The generations containing archives of the agents at each generation.

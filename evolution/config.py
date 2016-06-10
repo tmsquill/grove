@@ -4,6 +4,7 @@ grove_config = {}
 
 
 def load_config(config_file_name=None):
+
     """
     Loads the JSON configuration file into the configuration dictionary.
     :param config_file_name: The JSON configuration file name.
@@ -16,6 +17,7 @@ def load_config(config_file_name=None):
 
 
 def pretty_config():
+
     """
     Pretty-print the configuration.
     :return: The pretty-printed string version of the configuration.

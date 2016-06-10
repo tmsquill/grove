@@ -11,6 +11,7 @@ def truncation(elite_proportion=None):
         raise ValueError('invalid elite proportion specified for truncation selection closure', elite_proportion)
 
     def _(agents):
+
         """
         Truncation selection orders agents of the population by evaluation value then chooses some proportion of the
         highest performing agents for use in the reproduction phase.
@@ -55,6 +56,7 @@ def tournament(agents_ret=None, tournament_size=None):
         raise ValueError('invalid tournament size specified for tournament selection closure', tournament_size)
 
     def _(agents):
+
         """
         Tournament selection involves holding several "tournaments" amongst randomly chosen subsets of agents in
         the population. Winners of the tournaments move on for use in the reproduction phase. Changing the
@@ -103,6 +105,7 @@ def roulette(sample=None, size=None):
         raise ValueError('invalid size specified for roulette selection closure', size)
 
     def _(agents):
+
         """
         Roulette selection (stochastic acceptance version) involves using the evaluation value to associate a
         probability with each agent. The higher the evaluation value, the more likely it is to be selected for
