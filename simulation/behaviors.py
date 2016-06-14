@@ -6,6 +6,14 @@ from utils import Direction, Point
 
 def move_north(agent=None, entities=None, environment=None):
 
+    """
+    Behavior that causes an agent to move north one unit.
+    :param agent: The agent to perform the behavior.
+    :param entities: A list of entities in the simulation.
+    :param environment: The environment containing the agent.
+    :return: The updated agent.
+    """
+
     if isinstance(agent, entity.SimAgent) and environment.body.contains(Point(agent.body.top_left().x, agent.body.top_left().y - 1)):
 
         agent.body.set_points(Point(agent.body.top_left().x, agent.body.top_left().y - 1),
@@ -15,6 +23,14 @@ def move_north(agent=None, entities=None, environment=None):
 
 
 def move_east(agent=None, entities=None, environment=None):
+
+    """
+    Behavior that causes an agent to move east one unit.
+    :param agent: The agent to perform the behavior.
+    :param entities: A list of entities in the simulation.
+    :param environment: The environment containing the agent.
+    :return: The updated agent.
+    """
 
     if isinstance(agent, entity.SimAgent) and environment.body.contains(Point(agent.body.bottom_right().x + 1, agent.body.bottom_right().y)):
 
@@ -26,6 +42,14 @@ def move_east(agent=None, entities=None, environment=None):
 
 def move_south(agent=None, entities=None, environment=None):
 
+    """
+    Behavior that causes an agent to move south one unit.
+    :param agent: The agent to perform the behavior.
+    :param entities: A list of entities in the simulation.
+    :param environment: The environment containing the agent.
+    :return: The updated agent.
+    """
+
     if isinstance(agent, entity.SimAgent) and environment.body.contains(Point(agent.body.bottom_right().x, agent.body.bottom_right().y + 1)):
 
         agent.body.set_points(Point(agent.body.top_left().x, agent.body.top_left().y + 1),
@@ -35,6 +59,14 @@ def move_south(agent=None, entities=None, environment=None):
 
 
 def move_west(agent=None, entities=None, environment=None):
+
+    """
+    Behavior that causes an agent to move west one unit.
+    :param agent: The agent to perform the behavior.
+    :param entities: A list of entities in the simulation.
+    :param environment: The environment containing the agent.
+    :return: The updated agent.
+    """
 
     if isinstance(agent, entity.SimAgent) and environment.body.contains(Point(agent.body.top_left().x - 1, agent.body.top_left().y)):
 

@@ -1,6 +1,5 @@
 import preconditions as pc
 import behaviors as b
-import actions as a
 
 pc = {
     0: pc.on_border,
@@ -18,10 +17,6 @@ b = {
     5: b.drop_food,
     6: b.random_walk,
     7: b.return_home
-}
-
-a = {
-
 }
 
 prob = {

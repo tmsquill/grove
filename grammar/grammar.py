@@ -3,6 +3,7 @@ import thriftpy
 
 
 class Grammar:
+
     """
     Context free grammar that can be defined by:
     - Python functions.

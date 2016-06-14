@@ -12,6 +12,7 @@ class Environment:
         return self.__class__.__name__ + ' ' + str(self.body)
 
     def expand(self, amount=1):
+
         """
         Expands the bounds of the environment in all directions.
         :param amount: The amount of units to expand.
@@ -23,6 +24,7 @@ class Environment:
         self.body.set_points(Point(tl.x - amount, tl.y - amount), Point(br.x + amount, br.y + amount))
 
     def contract(self, amount=1):
+
         """
         Contracts the bounds of the environment in all directions.
         :param amount: The amount of units to contract.

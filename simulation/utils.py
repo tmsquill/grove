@@ -1,13 +1,16 @@
-from enum import Enum
 import csv
 import math
 import os
 
+from enum import Enum
+
 
 class Direction(Enum):
+
     """
     Cardinal directions used to represent the orientation of entities on a 2D grid.
     """
+
     North = 0,
     East = 1,
     South = 2,

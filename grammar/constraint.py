@@ -1,4 +1,5 @@
 def find_blacklists(thrift):
+
     """
     Finds all blacklists in a Apache Thrift module.
     :param thrift: The Apache Thrift module to search.
@@ -11,6 +12,7 @@ def find_blacklists(thrift):
 
 
 def find_whitelists(thrift):
+
     """
     Finds all whitelists in a Apache Thrift module.
     :param thrift: The Apache Thrift module to search.
@@ -23,6 +25,7 @@ def find_whitelists(thrift):
 
 
 def verify_lists(blacklist, whitelist):
+
     """
     Verifies that a given blacklist and whitelist do not contain an invalid mapping. An invalid mapping
     occurs if there exists a key in both lists such a non-empty intersection of the resulting sets is present.
