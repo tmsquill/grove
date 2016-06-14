@@ -33,7 +33,7 @@ class Generation:
         :param agents: The set of agents to bind to the generation.
         """
 
-        self.agents = copy.deepcopy(agents)
+        self.agents = copy.copy(agents)
 
     def csv(self):
 

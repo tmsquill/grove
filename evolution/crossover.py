@@ -34,8 +34,8 @@ def one_point():
                 ga.log.info('Parent 1: ' + str(parent1))
                 ga.log.info('Parent 2: ' + str(parent2))
 
-            child1 = parent1.__class__.factory()
-            child2 = parent2.__class__.factory()
+            child1 = parent1.__class__()
+            child2 = parent2.__class__()
 
             split = random.randint(0, parent1.genotype_len - 1)
 
@@ -94,8 +94,8 @@ def two_point():
                 ga.log.info('Parent 1: ' + str(parent1))
                 ga.log.info('Parent 2: ' + str(parent2))
 
-            child1 = parent1.__class__.factory()
-            child2 = parent2.__class__.factory()
+            child1 = parent1.__class__()
+            child2 = parent2.__class__()
 
             split1 = random.randint(0, parent1.genotype_len - 1)
             split2 = random.randint(0, parent1.genotype_len - 1)
@@ -157,8 +157,8 @@ def uniform():
                 ga.log.info('Parent 1: ' + str(parent1))
                 ga.log.info('Parent 2: ' + str(parent2))
 
-            child1 = parent1.__class__.factory()
-            child2 = parent1.__class__.factory()
+            child1 = parent1.__class__()
+            child2 = parent1.__class__()
 
             for i in xrange(parent1.genotype_len):
 

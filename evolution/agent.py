@@ -53,6 +53,7 @@ class Agent(object):
             self.genotype_mp = mp
 
         self.genotype = []
+        self.payload = None
 
     def __str__(self):
 

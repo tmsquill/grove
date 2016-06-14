@@ -20,4 +20,4 @@ def generate_csv(generations=None):
         writer.writerow(header)
         writer.writerows(data)
 
-    print 'Created CSV file at ' + os.getcwd() + '/' + agent_type + '.cs'
+    print 'Created CSV file at ' + os.getcwd() + '/' + agent_type + '.csv'
