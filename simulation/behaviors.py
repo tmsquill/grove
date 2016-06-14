@@ -6,7 +6,7 @@ from utils import Direction, Point
 
 def move_north(agent=None, entities=None, environment=None):
 
-    if environment.body.contains(Point(agent.body.top_left().x, agent.body.top_left().y - 1)):
+    if isinstance(agent, entity.SimAgent) and environment.body.contains(Point(agent.body.top_left().x, agent.body.top_left().y - 1)):
 
         agent.body.set_points(Point(agent.body.top_left().x, agent.body.top_left().y - 1),
                               Point(agent.body.bottom_right().x, agent.body.bottom_right().y - 1))
@@ -16,7 +16,7 @@ def move_north(agent=None, entities=None, environment=None):
 
 def move_east(agent=None, entities=None, environment=None):
 
-    if environment.body.contains(Point(agent.body.bottom_right().x + 1, agent.body.bottom_right().y)):
+    if isinstance(agent, entity.SimAgent) and environment.body.contains(Point(agent.body.bottom_right().x + 1, agent.body.bottom_right().y)):
 
         agent.body.set_points(Point(agent.body.top_left().x + 1, agent.body.top_left().y),
                               Point(agent.body.bottom_right().x + 1, agent.body.bottom_right().y))
@@ -26,7 +26,7 @@ def move_east(agent=None, entities=None, environment=None):
 
 def move_south(agent=None, entities=None, environment=None):
 
-    if environment.body.contains(Point(agent.body.bottom_right().x, agent.body.bottom_right().y + 1)):
+    if isinstance(agent, entity.SimAgent) and environment.body.contains(Point(agent.body.bottom_right().x, agent.body.bottom_right().y + 1)):
 
         agent.body.set_points(Point(agent.body.top_left().x, agent.body.top_left().y + 1),
                               Point(agent.body.bottom_right().x, agent.body.bottom_right().y + 1))
@@ -36,7 +36,7 @@ def move_south(agent=None, entities=None, environment=None):
 
 def move_west(agent=None, entities=None, environment=None):
 
-    if environment.body.contains(Point(agent.body.top_left().x - 1, agent.body.top_left().y)):
+    if isinstance(agent, entity.SimAgent) and environment.body.contains(Point(agent.body.top_left().x - 1, agent.body.top_left().y)):
 
         agent.body.set_points(Point(agent.body.top_left().x - 1, agent.body.top_left().y),
                               Point(agent.body.bottom_right().x - 1, agent.body.bottom_right().y))
@@ -71,7 +71,7 @@ def drop_food(agent=None, entities=None, environment=None):
     :return: The updated agent.
     """
 
-    nest = filter(lambda x: isinstance(x, entity.Nest), entities)
+    nest = filter(lambda x: isinstance(x, entity.Nest), entities)[0]
 
     if isinstance(agent, entity.SimAgent) and agent.holding_food:
 
@@ -94,23 +94,27 @@ def random_walk(agent=None, entities=None, environment=None):
     :return: The updated agent.
     """
 
-    random_direction = random.choice(list(Direction))
+    if isinstance(agent, entity.SimAgent):
 
-    if random_direction == Direction.North:
+        random_direction = random.choice(list(Direction))
 
-        return move_north(agent, environment)
+        if random_direction == Direction.North:
 
-    elif random_direction == Direction.East:
+            return move_north(agent, entities, environment)
 
-        return move_east(agent, environment)
+        elif random_direction == Direction.East:
 
-    elif random_direction == Direction.South:
+            return move_east(agent, entities, environment)
 
-        return move_south(agent, environment)
+        elif random_direction == Direction.South:
 
-    elif random_direction == Direction.West:
+            return move_south(agent, entities, environment)
 
-        return move_west(agent, environment)
+        elif random_direction == Direction.West:
+
+            return move_west(agent, entities, environment)
+
+    return agent
 
 
 def return_home(agent=None, entities=None, environment=None):
@@ -125,9 +129,11 @@ def return_home(agent=None, entities=None, environment=None):
 
     nest = filter(lambda x: isinstance(x, entity.Nest), entities)
 
-    agent.body.top = (nest.body.top + nest.body.bottom) / 2
-    agent.body.right = (nest.body.left + nest.body.right) / 2
-    agent.body.bottom = (nest.body.top + nest.body.bottom) / 2
-    agent.body.left = (nest.body.left + nest.body.right) / 2
+    if isinstance(agent, entity.SimAgent):
+
+        agent.body.top = (nest[0].body.top + nest[0].body.bottom) / 2
+        agent.body.right = (nest[0].body.left + nest[0].body.right) / 2
+        agent.body.bottom = (nest[0].body.top + nest[0].body.bottom) / 2
+        agent.body.left = (nest[0].body.left + nest[0].body.right) / 2
 
     return agent
