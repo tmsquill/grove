@@ -26,7 +26,7 @@ def truncation(elite_proportion=None):
 
         if log:
 
-            ga.log.info(' Truncation Selection '.center(180, '='))
+            ga.log.info(' Truncation Selection '.center(180, '=') + '\n')
             ga.log.info(
                 " (Before) {0} Population Size {1} ".center(180, '-').format(agents[0].__class__.__name__, len(agents)))
             ga.log.info('\n' + '\n'.join(map(str, agents)) + '\n')
@@ -70,7 +70,7 @@ def tournament(agents_ret=None, tournament_size=None):
 
         if log:
 
-            ga.log.info(' Tournament Selection '.center(180, '='))
+            ga.log.info(' Tournament Selection '.center(180, '=') + '\n')
             ga.log.info(
             " (Before) {0} Population Size {1} ".center(180, '-').format(agents[0].__class__.__name__, len(agents)))
             ga.log.info('\n' + '\n'.join(map(str, agents)) + '\n')
@@ -120,7 +120,7 @@ def roulette(sample=None, size=None):
 
         if log:
 
-            ga.log.info(' Roulette Selection '.center(180, '='))
+            ga.log.info(' Roulette Selection '.center(180, '=') + '\n')
             ga.log.info(
             " (Before) {0} Population Size {1} ".center(180, '-').format(agents[0].__class__.__name__, len(agents)))
             ga.log.info('\n' + '\n'.join(map(str, agents)) + '\n')

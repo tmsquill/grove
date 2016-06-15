@@ -20,7 +20,7 @@ def one_point():
 
         if log:
 
-            ga.log.info(' One-Point Crossover '.center(180, '='))
+            ga.log.info(' One-Point Crossover '.center(180, '=') + '\n')
 
         offspring = []
 
@@ -80,7 +80,7 @@ def two_point():
 
         if log:
 
-            ga.log.info(' Two-Point Crossover '.center(180, '='))
+            ga.log.info(' Two-Point Crossover '.center(180, '=') + '\n')
 
         offspring = []
 
@@ -143,7 +143,7 @@ def uniform():
 
         if log:
 
-            ga.log.info(' Uniform Crossover '.center(180, '='))
+            ga.log.info(' Uniform Crossover '.center(180, '=') + '\n')
 
         offspring = []
 

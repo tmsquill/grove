@@ -60,7 +60,8 @@ class Agent(object):
         result = ''
         result += self.__class__.__name__ + ' ID: ' + "{:4}".format(self.id)
         result += ' Evaluation Value: ' + "{:8f}".format(self.value) + ' '
-        result += ' '.join([str(idx) + ': ' + "{:4f}".format(param) for idx, param in enumerate(self.genotype)])
+        #result += ' '.join([str(idx) + ': ' + "{:4f}".format(param) for idx, param in enumerate(self.genotype)])
+        result += '| ' + ' | '.join('{0}: {1:>8.3f}'.format(idx, param) for idx, param in enumerate(self.genotype))
 
         return result
 

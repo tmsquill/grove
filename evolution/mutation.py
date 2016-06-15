@@ -19,7 +19,7 @@ def boundary():
 
         if log:
 
-            ga.log.info(' Boundary Mutation '.center(180, '='))
+            ga.log.info(' Boundary Mutation '.center(180, '=') + '\n')
 
         for agent in agents:
 
@@ -35,7 +35,7 @@ def boundary():
 
             if log:
 
-                ga.log.info('(After) ' + str(agent))
+                ga.log.info('(After) ' + str(agent) + '\n')
 
         return agents
 
@@ -57,7 +57,7 @@ def uniform():
 
         if log:
 
-            ga.log.info(' Uniform Mutation '.center(180, '='))
+            ga.log.info(' Uniform Mutation '.center(180, '=') + '\n')
 
         for agent in agents:
 
@@ -73,7 +73,7 @@ def uniform():
 
             if log:
 
-                ga.log.info('(After) ' + str(agent))
+                ga.log.info('(After) ' + str(agent) + '\n')
 
         return agents
 
@@ -95,7 +95,7 @@ def gaussian():
 
         if log:
 
-            ga.log.info(' Gaussian Mutation '.center(180, '='))
+            ga.log.info(' Gaussian Mutation '.center(180, '=') + '\n')
 
         for agent in agents:
 
@@ -127,7 +127,7 @@ def gaussian():
 
             if log:
 
-                ga.log.info('(After) ' + str(agent))
+                ga.log.info('(After) ' + str(agent) + '\n')
 
         return agents
 

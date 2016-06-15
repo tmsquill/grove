@@ -48,21 +48,23 @@ def evolve(population, generations, agent_type, pre_evaluation, evaluation, post
     # Initialize Agents.
     ga_agents = agent_type.init_agents(population)
 
-    log.info(' Agent Initialization '.center(180, '='))
-    log.info('\n' + '\n'.join(map(str, ga_agents)))
+    log.info('\n' + ' Agent Initialization '.center(180, '=') + '\n')
+    log.info('\n'.join(map(str, ga_agents)))
 
-    if not nodes and not depends:
+    # if not nodes and not depends:
+    #
+    #
+    #
+    # else:
 
-        serial(population, ga_generations, ga_agents, pre_evaluation, evaluation, post_evaluation, selection, crossover, mutation)
+    #serial(population, ga_generations, ga_agents, pre_evaluation, evaluation, post_evaluation, selection, crossover, mutation)
 
-    else:
-
-        distributed(population, ga_generations, ga_agents, pre_evaluation, evaluation, post_evaluation, selection, crossover, mutation, nodes, depends)
+    distributed(population, ga_generations, ga_agents, pre_evaluation, evaluation, post_evaluation, selection, crossover, mutation, nodes, depends)
 
 
 def serial(population, generations, agents, pre_evaluation, evaluation, post_evaluation, selection, crossover, mutation):
 
-    log.info(' Evolution (Serial) '.center(180, '=') + '\n')
+    log.info('\n' + ' Evolution (Serial) '.center(180, '=') + '\n')
     print ' Evolution (Serial) '.center(180, '=') + '\n'
 
     start_time = time.time()
@@ -95,7 +97,7 @@ def serial(population, generations, agents, pre_evaluation, evaluation, post_eva
 
 def distributed(population, generations, agents, pre_evaluation, evaluation, post_evaluation, selection, crossover, mutation, nodes, depends):
 
-    log.info(' Evolution (Distributed) '.center(180, '=') + '\n')
+    log.info('\n' + ' Evolution (Distributed) '.center(180, '=') + '\n')
     print ' Evolution (Distributed) '.center(180, '=') + '\n'
 
     # TODO - Remove logging when able.
@@ -123,7 +125,7 @@ def distributed(population, generations, agents, pre_evaluation, evaluation, pos
 
         for agent in agents:
 
-            job = cluster.submit(agent)
+            job = cluster.submit(agent.payload)
             job.id = agent.id
             jobs.append(job)
 
