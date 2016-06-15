@@ -8,7 +8,7 @@ from generation import Generation
 log = None
 
 
-def evolve(population, generations, agent_type, pre_evaluation, evaluation, post_evaluation, selection, crossover, mutation, nodes, depends, logger):
+def evolve(population, generations, agent_type, pre_evaluation, evaluation, post_evaluation, selection, crossover, mutation, evaluation_type, nodes, depends, logger):
 
     """
     Performs evolution on a set of agents over a number of generations. The desired evolutionary functions must be
@@ -22,6 +22,7 @@ def evolve(population, generations, agent_type, pre_evaluation, evaluation, post
     :param selection: The selection function.
     :param crossover: The crossover function.
     :param mutation: The mutation function.
+    :param evaluation_type: The type of execution for evaluation. Either serial or distributed.
     :param nodes: The nodes in the cluster used for computing the evaluation function.
     :param depends: The list of dependencies needed by dispynodes to perform computation of the evaluation function.
     :param logger: The logger object.
@@ -51,15 +52,19 @@ def evolve(population, generations, agent_type, pre_evaluation, evaluation, post
     log.info('\n' + ' Agent Initialization '.center(180, '=') + '\n')
     log.info('\n'.join(map(str, ga_agents)))
 
-    # if not nodes and not depends:
-    #
-    #
-    #
-    # else:
+    if evaluation_type == 'serial':
 
-    #serial(population, ga_generations, ga_agents, pre_evaluation, evaluation, post_evaluation, selection, crossover, mutation)
+        serial(population, ga_generations, ga_agents, pre_evaluation, evaluation, post_evaluation, selection, crossover,
+               mutation)
 
-    distributed(population, ga_generations, ga_agents, pre_evaluation, evaluation, post_evaluation, selection, crossover, mutation, nodes, depends)
+    elif evaluation_type == 'distributed':
+
+        distributed(population, ga_generations, ga_agents, pre_evaluation, evaluation, post_evaluation, selection,
+                    crossover, mutation, nodes, depends)
+
+    else:
+
+        raise ValueError('evaluation_type is invalid', evaluation_type)
 
 
 def serial(population, generations, agents, pre_evaluation, evaluation, post_evaluation, selection, crossover, mutation):
@@ -125,7 +130,7 @@ def distributed(population, generations, agents, pre_evaluation, evaluation, pos
 
         for agent in agents:
 
-            job = cluster.submit(agent.payload)
+            job = cluster.submit(agent.genotype, agent.payload)
             job.id = agent.id
             jobs.append(job)
 
