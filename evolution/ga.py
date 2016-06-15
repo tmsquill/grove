@@ -130,7 +130,7 @@ def distributed(population, generations, agents, pre_evaluation, evaluation, pos
 
         for agent in agents:
 
-            job = cluster.submit(agent.genotype, agent.payload)
+            job = cluster.submit(agent.payload)
             job.id = agent.id
             jobs.append(job)
 

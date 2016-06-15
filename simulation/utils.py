@@ -250,14 +250,13 @@ def generate_csv(simulation=None):
     :param simulation: Simulation containing a state archive.
     """
 
-    from datetime import datetime
-
+    name = id(simulation)
     header = ['Timestamp'] + ['Type'] + ['ID'] + ['Direction'] + ['Left'] + ['Top'] + ['Right'] + ['Bottom']
     data = [state for state in simulation.state_archive]
 
-    with open(datetime.now().strftime('%Y-%m-%d-%H:%M:%S') + ".csv", "w") as csv_file:
+    with open(str(name) + ".csv", "w") as csv_file:
         writer = csv.writer(csv_file)
         writer.writerow(header)
         writer.writerows(data)
 
-    print 'Created CSV file at ' + os.getcwd()
+    print 'Created CSV file at ' + os.getcwd() + '/' + str(name) + '.csv'
