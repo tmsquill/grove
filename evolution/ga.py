@@ -1,9 +1,10 @@
-import config
-import dispy
 import time
-import utils
 
+import dispy
+
+import utils
 from generation import Generation
+from grove import config
 
 log = None
 

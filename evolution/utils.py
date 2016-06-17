@@ -1,7 +1,8 @@
-import config
 import csv
 import itertools
 import os
+
+from grove import config
 
 
 def generate_csv(generations=None):

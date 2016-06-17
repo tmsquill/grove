@@ -1,7 +1,8 @@
-import config
-import ga
-from operator import attrgetter
 import random
+from operator import attrgetter
+
+import ga
+from grove import config
 
 
 def truncation(elite_proportion=None):

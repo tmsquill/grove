@@ -1,6 +1,7 @@
 import abc
-import config
 import itertools
+
+from grove import config
 
 
 class Agent(object):
