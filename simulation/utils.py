@@ -3,6 +3,7 @@ import math
 import os
 
 from enum import Enum
+from pymongo import MongoClient
 
 
 class Direction(Enum):
@@ -196,7 +197,6 @@ class Rectangle:
 
         return "%s(%r, %r)" % (self.__class__.__name__, Point(self.left, self.top), Point(self.right, self.bottom))
 
-
     def set_points(self, pt1, pt2):
 
         """Reset the rectangle coordinates."""
@@ -241,6 +241,27 @@ class Rectangle:
         p1 = Point(self.left-n, self.top-n)
         p2 = Point(self.right+n, self.bottom+n)
         return Rectangle(p1, p2)
+
+
+def generate_mongo(simulation=None, host='localhost', port=27017):
+
+    """
+    Adds a simulation to a MongoDB for further data analysis.
+    :param simulation: Simulation containing a state archive.
+    :param host: The host to reach the MongoDB instance.
+    :param port: The port to reach the MongoDB instance.
+    """
+
+    connection = MongoClient(host, port)
+    simulations = connection['grove']['simulations']
+
+    names = ['Timestamp', 'Type', 'ID', 'Direction', 'Behavior', 'Left', 'Top', 'Right', 'Bottom']
+    payload = [{names[idx]: str(state[idx]) for idx in xrange(len(names))} for state in simulation.state_archive]
+
+    simulations.insert_many(payload)
+    connection.close()
+
+    print 'Saved simulation to MongoDB instance at ' + host + ':' + str(port)
 
 
 def generate_csv(simulation=None):
