@@ -20,11 +20,12 @@ def generate_mongo(generations=None, host='localhost', port=27017):
     evolutions = connection['grove']['evolutions']
 
     data = [[(generation.id, agent.genotype, agent.value) for agent in generation.agents] for generation in generations]
+    hashed = str(hash(tuple(generations)))
 
-    evolutions.insert({str(hash(tuple(generations))): Binary(pickle.dumps(data))})
+    evolutions.insert({hashed: Binary(pickle.dumps(data))})
     connection.close()
 
-    print 'Saved evolution data to MongoDB instance at ' + host + ':' + str(port)
+    print 'Saved evolution data to MongoDB instance at ' + host + ':' + str(port) + ' -> db.grove.evolutions.' + hashed
 
 
 def generate_csv(generations=None):
