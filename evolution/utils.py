@@ -1,24 +1,47 @@
 import csv
 import itertools
+import pickle
 import os
 
-from grove import config
+from bson.binary import Binary
+from pymongo import MongoClient
+
+
+def generate_mongo(generations=None, host='localhost', port=27017):
+
+    """
+    Adds an evolutionary run to a MongoDB instance for further data analysis.
+    :param generations: The generations containing archives of the agents at each generation.
+    :param host: The host to reach the MongoDB instance.
+    :param port: The port to reach the MongoDB instance.
+    """
+
+    connection = MongoClient(host, port)
+    evolutions = connection['grove']['evolutions']
+
+    data = [[(generation.id, agent.genotype, agent.value) for agent in generation.agents] for generation in generations]
+
+    evolutions.insert({str(hash(tuple(generations))): Binary(pickle.dumps(data))})
+    connection.close()
+
+    print 'Saved evolution data to MongoDB instance at ' + host + ':' + str(port)
 
 
 def generate_csv(generations=None):
 
     """
-    Generates a CSV file from a set of generations containing archives of previous states of all agents.
+    Adds an evolutionary run to a CSV file for further data analysis.
     :param generations: The generations containing archives of the agents at each generation.
     """
 
-    agent_type = str(type(generations[0].agents[0]).__name__)
-    header = ['GID'] + ['AID'] + ['Evaluation Value'] + config.grove_config['agent'][agent_type]['genotype_abbr_names']
-    data = itertools.chain.from_iterable([generation.csv() for generation in generations])
+    header = ['GID', 'Genotype', 'Value']
+    data = [[(generation.id, agent.genotype, agent.value) for agent in generation.agents] for generation in generations]
+    hashed = str(hash(tuple(generations)))
 
-    with open(agent_type + ".csv", "w") as csv_file:
+    with open(hashed + ".csv", "w") as csv_file:
+
         writer = csv.writer(csv_file)
         writer.writerow(header)
-        writer.writerows(data)
+        writer.writerows(itertools.chain.from_iterable(data))
 
-    print 'Created CSV file at ' + os.getcwd() + '/' + agent_type + '.csv'
+    print 'Saved evolution data to CSV at ' + os.getcwd() + '/' + hashed + '.csv'

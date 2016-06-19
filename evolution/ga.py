@@ -1,8 +1,7 @@
-import time
-
 import dispy
-
+import time
 import utils
+
 from generation import Generation
 from grove import config
 
@@ -44,10 +43,10 @@ def evolve(population, generations, agent_type, pre_evaluation, evaluation, post
 
         raise ValueError('post_evaluation_func is not callable', post_evaluation)
 
-    # Initialize Generations.
+    # Initialize generations.
     ga_generations = [Generation() for _ in xrange(generations)]
 
-    # Initialize Agents.
+    # Initialize agents.
     ga_agents = agent_type.init_agents(population)
 
     log.info('\n' + ' Agent Initialization '.center(180, '=') + '\n')
@@ -95,10 +94,13 @@ def serial(population, generations, agents, pre_evaluation, evaluation, post_eva
         agents = crossover(agents, population)
         agents = mutation(agents)
 
-    log.info("Evolution finished in %s seconds " % (time.time() - start_time))
-    print "Evolution finished in %s seconds " % (time.time() - start_time)
+    total_time = time.time() - start_time
+    log.info("Evolution finished in %s seconds " % total_time)
+    print "Evolution finished in %s seconds " % total_time
 
-    utils.generate_csv(generations)
+    if config.grove_config['data']['collection_type']:
+
+        getattr(utils, 'generate_' + config.grove_config['data']['collection_type'])(generations)
 
 
 def distributed(population, generations, agents, pre_evaluation, evaluation, post_evaluation, selection, crossover, mutation, nodes, depends):
@@ -141,7 +143,9 @@ def distributed(population, generations, agents, pre_evaluation, evaluation, pos
 
             job()
             print("Result of program %s with job ID %s starting at %s is %s with stdout %s" % (
-            evaluation, job.id, job.start_time, job.result, job.stdout))
+                evaluation, job.id, job.start_time, job.result, job.stdout))
+            agent = filter(lambda x: x.id == job.id, agents)[0]
+            agent.value = job.result
 
         agents = post_evaluation(agents)
 
@@ -154,7 +158,10 @@ def distributed(population, generations, agents, pre_evaluation, evaluation, pos
 
     cluster.stats()
 
-    log.info("Evolution finished in %s seconds " % (time.time() - start_time))
-    print "Evolution finished in %s seconds " % (time.time() - start_time)
+    total_time = time.time() - start_time
+    log.info("Evolution finished in %s seconds " % total_time)
+    print "Evolution finished in %s seconds " % total_time
 
-    utils.generate_csv(generations)
+    if config.grove_config['data']['collection_type']:
+
+        getattr(utils, 'generate_' + config.grove_config['data']['collection_type'])(generations)
