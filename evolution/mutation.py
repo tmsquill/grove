@@ -1,9 +1,8 @@
+import ga
 import random
 
-import numpy as np
-
-import ga
 from grove import config
+import numpy as np
 
 
 def boundary():

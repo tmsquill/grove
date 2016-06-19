@@ -1,6 +1,6 @@
+import ga
 import random
 
-import ga
 from grove import config
 
 
