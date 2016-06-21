@@ -2,8 +2,9 @@ import numpy as np
 import os
 import random
 
-from evolution import config, ga, selection, crossover, mutation
+from evolution import ga, selection, crossover, mutation
 from evolution.agent import Agent
+from grove import config
 
 
 class CPFAAgent(Agent):
@@ -79,7 +80,10 @@ def evaluation(agent=None):
     output = None
 
     try:
-        output = subprocess.check_output(['/usr/local/bin/argos3 -c ./experiments/xml/CPFA-' + str(agent.id % 8) + '.xml'], shell=True, stderr=subprocess.STDOUT)
+        output = subprocess.check_output(
+            ['/usr/local/bin/argos3 -c ./experiments/xml/CPFA-' + str(agent.id % 8) + '.xml'],
+            shell=True,
+            stderr=subprocess.STDOUT)
     except CalledProcessError as e:
         output = e.output
 

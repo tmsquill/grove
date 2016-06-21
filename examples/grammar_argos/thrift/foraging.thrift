@@ -1,8 +1,12 @@
 // Actions Blacklists
-const map<i32, set<i32>> idaction_blacklist = {
-	4: [0, 1, 2, 3, 5, 6],
-	5: [4, 6],
-	6: [5]
+const map<string, set<string>> idaction_blacklist = {
+	'BEHAVIOR_4': ['BEHAVIOR_0', 'BEHAVIOR_1', 'BEHAVIOR_2', 'BEHAVIOR_3', 'BEHAVIOR_5', 'BEHAVIOR_6'],
+	'BEHAVIOR_5': ['BEHAVIOR_4', 'BEHAVIOR_6'],
+	'BEHAVIOR_6': ['BEHAVIOR_5']
+}
+
+const map<string, set<string>> idaction_whitelist = {
+	'BEHAVIOR_6': ['BEHAVIOR_4']
 }
 
 

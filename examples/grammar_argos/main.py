@@ -1,26 +1,24 @@
 import os
 import random
 
-import thriftpy.protocol as pc
-import thriftpy.transport as tp
-
-from evolution import agent, config, ga, selection, crossover, mutation
-
-grammar_o = None
+from evolution.agent import Agent
+from evolution import ga, selection, crossover, mutation
+from grammar.parse_tree import ParseTree
+from grove import config
 
 
-class GESAgent(agent.Agent):
+class GESAgent(Agent):
 
-    """ An agent targeted towards GES. """
+    """ An agent targeted for GES. """
+
+    grammar = None
 
     def __init__(self):
 
         super(GESAgent, self).__init__()
 
         self.genotype = [random.randint(lower, upper) for lower, upper in zip(self.genotype_lb, self.genotype_ub)]
-
-        self.phenotype = None
-        self.used_in_seq = 0
+        self.parse_tree = ParseTree(GESAgent.grammar, self.genotype)
 
     @staticmethod
     def init_agents(population):
@@ -30,69 +28,83 @@ class GESAgent(agent.Agent):
         :param population: The population (number of agents) to initialize.
         :return: The initialized population.
         """
-        return [GESAgent.factory() for _ in xrange(population)]
+
+        return [GESAgent() for _ in xrange(population)]
 
 
 def pre_evaluation(agents=None):
 
     for agent in agents:
 
-        phenotype, used_in_seq = grammar_o.generate(agent.genotype)
-
-        transOut = tp.TMemoryBuffer()
-        protocolOut = pc.TBinaryProtocol(transOut)
-        phenotype.write(protocolOut)
-        agent.phenotype = transOut.getvalue()
+        agent.parse_tree.generate()
+        agent.payload = agent.parse_tree.serialize()
 
     return agents
 
 
-def evaluation(agent=None):
+def evaluation(payload=None):
 
     """
-    Evaluation function that executes ARGoS with the specified agent.
-    :param agent: The agent to evaluate in the ARGoS simulation.
-    :return: The agent with updated evaluation value.
+    Evaluation function that executes a simulation with the specified payload.
+    :param payload: The payload to evaluate.
+    :return: The evaluation value determined by executing the evaluation function with the payload.
     """
 
-    from simulation.entity import Food, Nest, SimAgent
-    from simulation.environment import Environment
-    from simulation.simulation import Simulation
+    import os
+    import traceback
 
-    import thriftpy.transport as tp
-    import thriftpy.protocol as pc
-    import thriftpy
+    os.chdir(os.path.expanduser('~') + '/lyssa/simulations')
 
-    # Path to Thrift
-    thrift_path = '/Users/Zivia/PycharmProjects/py.evolve/examples/grammar_argos/thrift/foraging.thrift'
+    try:
 
-    # Compile the Thrift and read the grammar.
-    module_name = os.path.splitext(os.path.basename(thrift_path))[0] + '_thrift'
-    thrift = thriftpy.load(thrift_path, module_name=module_name)
+        import sys
+        sys.path.append('/Users/Zivia/PycharmProjects/grove')
 
-    transportIn = tp.TMemoryBuffer(agent.phenotype)
-    protocolIn = pc.TBinaryProtocol(transportIn)
-    root = thrift.Root()
-    root.read(protocolIn)
+        from simulation.entity import SimAgent, Food, Nest
+        from simulation.environment import Environment
+        from simulation.simulation import Simulation
+        from simulation.utils import generate_csv
 
-    # Create the entities for the simulation.
-    agents = [SimAgent(position=(random.randint(0, 20), random.randint(0, 20))) for _ in xrange(5)]
-    nest = Nest(position=(8, 8), size=(4, 4))
-    food = [Food(position=(random.randint(0, 20), random.randint(0, 20))) for _ in xrange(10)]
+        import thriftpy.transport as tp
+        import thriftpy.protocol as pc
+        import thriftpy
 
-    entities = agents + [nest] + food
+        # Path to Thrift
+        thrift_path = '/Users/Zivia/PycharmProjects/grove/examples/grammar_argos/thrift/foraging.thrift'
 
-    # Create the environment for the simulation.
-    env = Environment()
+        # Compile the Thrift and read the grammar.
+        module_name = os.path.splitext(os.path.basename(thrift_path))[0] + '_thrift'
+        thrift = thriftpy.load(thrift_path, module_name=module_name)
 
-    # Create and execute the simulation.
-    sim = Simulation(environment=env, entities=entities, parse_tree=root)
-    sim.execute()
+        transportIn = tp.TMemoryBuffer(payload)
+        protocolIn = pc.TBinaryProtocol(transportIn)
+        root = thrift.Root()
+        root.read(protocolIn)
 
-    # Get the food tags collected, and return as the evaluation score.
-    nest = filter(lambda x: isinstance(x, Nest), sim.entities)
+        # Create the entities for the simulation.
+        agents = [SimAgent(position=(random.randint(0, 20), random.randint(0, 20))) for _ in xrange(5)]
+        nest = Nest(position=(8, 8), size=(4, 4))
+        food = [Food(position=(random.randint(0, 20), random.randint(0, 20))) for _ in xrange(10)]
 
-    return nest[0].food_count
+        entities = agents + [nest] + food
+
+        # Create the environment for the simulation.
+        env = Environment()
+
+        # Create and execute the simulation.
+        sim = Simulation(environment=env, entities=entities, parse_tree=root)
+        sim.execute()
+
+        generate_csv(sim)
+
+        # Get the food tags collected, and return as the evaluation score.
+        nest = filter(lambda x: isinstance(x, Nest), sim.entities)
+
+        return nest[0].food_count
+
+    except Exception:
+
+        return traceback.format_exc()
 
 
 def post_evaluation(agents=None):
@@ -102,11 +114,11 @@ def post_evaluation(agents=None):
 
 if __name__ == "__main__":
 
+    # Parser for command line arguments.
     import argparse
 
-    # Parser for command line arguments.
     parser = argparse.ArgumentParser(description='grove')
-    parser.add_argument('-config', action='store', type=str, default='grove-config.json')
+    parser.add_argument('-config', action='store', type=str, default='examples/grammar_argos/grove-config.json')
     parser.add_argument('-p', '--population', action='store', type=int)
     parser.add_argument('-g', '--generations', action='store', type=int)
     parser.add_argument('-c', '--crossover_function', action='store', type=str, default='truncation')
@@ -118,35 +130,37 @@ if __name__ == "__main__":
     # Load the grammar file.
     from grammar.grammar import Grammar
 
-    grammar = Grammar(args.grammar)
+    GESAgent.grammar = Grammar(args.grammar)
 
     # Load the grove configuration.
     config.load_config(args.config)
+
+    # Change the current directory to ARGoS (required by the simulator).
+    os.chdir(os.path.expanduser('~') + '/lyssa')
 
     # Initialize logging handler.
     from logbook import FileHandler, Logger
     import time
 
-    log_handler = FileHandler('grove-' + time.strftime("%I:%M-M%mD%dY%Y" + '.log'))
+    log_handler = FileHandler('./log/grove-' + time.strftime("%I:%M-M%mD%dY%Y" + '.log'))
+    log_handler.format_string = '{record.message}'
     log = Logger('Grove Logger')
-
-    # Change the current directory to ARGoS (required by the simulator).
-    os.chdir(os.path.expanduser('~') + '/ARGoS/iAnt-GES-ARGoS')
 
     # Run the genetic algorithm.
     with log_handler.applicationbound():
 
         ga.evolve(
-            args.population or config.grove_config['ga']['parameters']['population'],
-            args.generations or config.grove_config['ga']['parameters']['generations'],
-            GESAgent,
-            pre_evaluation,
-            evaluation,
-            post_evaluation,
-            selection.tournament(4, 5),
-            crossover.one_point(),
-            mutation.gaussian(),
-            [],
-            [],
-            log
+            population=args.population or config.grove_config['ga']['parameters']['population'],
+            generations=args.generations or config.grove_config['ga']['parameters']['generations'],
+            agent_type=GESAgent,
+            pre_evaluation=pre_evaluation,
+            evaluation=evaluation,
+            post_evaluation=post_evaluation,
+            selection=selection.tournament(4, 5),
+            crossover=crossover.one_point(),
+            mutation=mutation.gaussian(),
+            evaluation_type='distributed',
+            nodes=[],
+            depends=[],
+            logger=log
         )

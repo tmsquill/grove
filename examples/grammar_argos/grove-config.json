@@ -7,10 +7,10 @@
         "genotype_ub": 127,
         "genotype_mp": 0.1,
         "genotype_names": [
-            "Codon"
+            "Genome"
         ],
         "genotype_abbr_names": [
-            "CODON"
+            "Genome"
         ]
     }
   },
@@ -26,13 +26,16 @@
     ],
     "parameters": {
         "population": 8,
-        "generations": 10,
+        "generations": 1,
         "agent_type": "GESAgent",
         "evaluation_func": "",
         "selection_func": "",
         "crossover_func": "",
         "mutation_func": ""
     }
+  },
+  "data": {
+      "collection_type": "csv"
   },
   "logging": {
       "grammar": false,
