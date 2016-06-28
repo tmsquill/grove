@@ -35,7 +35,7 @@
     }
   },
   "data": {
-      "collection_type": "csv"
+      "collection_type": "mongo"
   },
   "logging": {
       "grammar": false,

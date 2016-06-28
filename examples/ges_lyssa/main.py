@@ -63,14 +63,14 @@ def evaluation(payload=None):
         from simulation.entity import SimAgent, Food, Nest
         from simulation.environment import Environment
         from simulation.simulation import Simulation
-        from simulation.utils import generate_csv
+        from simulation.utils import generate_mongo
 
         import thriftpy.transport as tp
         import thriftpy.protocol as pc
         import thriftpy
 
         # Path to Thrift
-        thrift_path = '/Users/Zivia/PycharmProjects/grove/examples/grammar_argos/thrift/foraging.thrift'
+        thrift_path = '/Users/Zivia/PycharmProjects/grove/examples/ges_lyssa/thrift/foraging.thrift'
 
         # Compile the Thrift and read the grammar.
         module_name = os.path.splitext(os.path.basename(thrift_path))[0] + '_thrift'
@@ -95,7 +95,7 @@ def evaluation(payload=None):
         sim = Simulation(environment=env, entities=entities, parse_tree=root)
         sim.execute()
 
-        generate_csv(sim)
+        generate_mongo(sim)
 
         # Get the food tags collected, and return as the evaluation score.
         nest = filter(lambda x: isinstance(x, Nest), sim.entities)
@@ -118,7 +118,7 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(description='grove')
-    parser.add_argument('-config', action='store', type=str, default='examples/grammar_argos/grove-config.json')
+    parser.add_argument('-config', action='store', type=str, default='examples/ges_lyssa/grove-config.json')
     parser.add_argument('-p', '--population', action='store', type=int)
     parser.add_argument('-g', '--generations', action='store', type=int)
     parser.add_argument('-c', '--crossover_function', action='store', type=str, default='truncation')
@@ -138,29 +138,19 @@ if __name__ == "__main__":
     # Change the current directory to ARGoS (required by the simulator).
     os.chdir(os.path.expanduser('~') + '/lyssa')
 
-    # Initialize logging handler.
-    from logbook import FileHandler, Logger
-    import time
-
-    log_handler = FileHandler('./log/grove-' + time.strftime("%I:%M-M%mD%dY%Y" + '.log'))
-    log_handler.format_string = '{record.message}'
-    log = Logger('Grove Logger')
-
     # Run the genetic algorithm.
-    with log_handler.applicationbound():
-
-        ga.evolve(
-            population=args.population or config.grove_config['ga']['parameters']['population'],
-            generations=args.generations or config.grove_config['ga']['parameters']['generations'],
-            agent_type=GESAgent,
-            pre_evaluation=pre_evaluation,
-            evaluation=evaluation,
-            post_evaluation=post_evaluation,
-            selection=selection.tournament(4, 5),
-            crossover=crossover.one_point(),
-            mutation=mutation.gaussian(),
-            evaluation_type='distributed',
-            nodes=[],
-            depends=[],
-            logger=log
-        )
+    ga.evolve(
+        population=args.population or config.grove_config['ga']['parameters']['population'],
+        generations=args.generations or config.grove_config['ga']['parameters']['generations'],
+        agent_type=GESAgent,
+        pre_evaluation=pre_evaluation,
+        evaluation=evaluation,
+        post_evaluation=post_evaluation,
+        selection=selection.tournament(4, 5),
+        crossover=crossover.one_point(),
+        mutation=mutation.gaussian(),
+        evaluation_type='distributed',
+        nodes=[],
+        depends=[],
+        log_path=None
+    )
