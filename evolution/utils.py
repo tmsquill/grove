@@ -1,9 +1,7 @@
 import csv
 import itertools
-import pickle
 import os
 
-from bson.binary import Binary
 from pymongo import MongoClient
 
 
@@ -22,7 +20,7 @@ def generate_mongo(generations=None, host='localhost', port=27017):
     data = [[(generation.id, agent.genotype, agent.value) for agent in generation.agents] for generation in generations]
     hashed = str(hash(tuple(generations)))
 
-    evolutions.insert({hashed: Binary(pickle.dumps(data))})
+    evolutions.insert({hashed: str(data)})
     connection.close()
 
     print 'Saved evolution data to MongoDB instance at ' + host + ':' + str(port) + ' -> db.grove.evolutions.' + hashed
