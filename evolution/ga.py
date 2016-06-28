@@ -4,11 +4,12 @@ import utils
 
 from generation import Generation
 from grove import config
+from logbook import FileHandler, Logger
 
 log = None
 
 
-def evolve(population, generations, agent_type, pre_evaluation, evaluation, post_evaluation, selection, crossover, mutation, evaluation_type, nodes, depends, logger):
+def evolve(population, generations, agent_type, pre_evaluation, evaluation, post_evaluation, selection, crossover, mutation, evaluation_type, nodes, depends, log_path):
 
     """
     Performs evolution on a set of agents over a number of generations. The desired evolutionary functions must be
@@ -25,46 +26,60 @@ def evolve(population, generations, agent_type, pre_evaluation, evaluation, post
     :param evaluation_type: The type of execution for evaluation. Either serial or distributed.
     :param nodes: The nodes in the cluster used for computing the evaluation function.
     :param depends: The list of dependencies needed by dispynodes to perform computation of the evaluation function.
-    :param logger: The logger object.
+    :param log_path: The directory that Grove will produce log files. If not specified logs will be saved to the
+    current working directory.
     """
 
-    global log
-    log = logger
+    # Initialize logging.
+    if log_path:
 
-    # Log Configuration
-    log.info(config.pretty_config())
-
-    # Validate pre and post evaluation functions.
-    if not hasattr(pre_evaluation, '__call__'):
-
-        raise ValueError('pre_evaluation_func is not callable', pre_evaluation)
-
-    if not hasattr(post_evaluation, '__call__'):
-
-        raise ValueError('post_evaluation_func is not callable', post_evaluation)
-
-    # Initialize generations.
-    ga_generations = [Generation() for _ in xrange(generations)]
-
-    # Initialize agents.
-    ga_agents = agent_type.init_agents(population)
-
-    log.info('\n' + ' Agent Initialization '.center(180, '=') + '\n')
-    log.info('\n'.join(map(str, ga_agents)))
-
-    if evaluation_type == 'serial':
-
-        serial(population, ga_generations, ga_agents, pre_evaluation, evaluation, post_evaluation, selection, crossover,
-               mutation)
-
-    elif evaluation_type == 'distributed':
-
-        distributed(population, ga_generations, ga_agents, pre_evaluation, evaluation, post_evaluation, selection,
-                    crossover, mutation, nodes, depends)
+        log_handler = FileHandler(log_path + '/log/grove-' + time.strftime("%I:%M-M%mD%dY%Y" + '.log'))
 
     else:
 
-        raise ValueError('evaluation_type is invalid', evaluation_type)
+        log_handler = FileHandler('./log/grove-' + time.strftime("%I:%M-M%mD%dY%Y" + '.log'))
+
+    log_handler.format_string = '{record.message}'
+
+    global log
+    log = Logger('Grove Logger')
+
+    with log_handler.applicationbound():
+
+        # Log Configuration
+        log.info(config.pretty_config())
+
+        # Validate pre and post evaluation functions.
+        if not hasattr(pre_evaluation, '__call__'):
+
+            raise ValueError('pre_evaluation_func is not callable', pre_evaluation)
+
+        if not hasattr(post_evaluation, '__call__'):
+
+            raise ValueError('post_evaluation_func is not callable', post_evaluation)
+
+        # Initialize generations.
+        ga_generations = [Generation() for _ in xrange(generations)]
+
+        # Initialize agents.
+        ga_agents = agent_type.init_agents(population)
+
+        log.info('\n' + ' Agent Initialization '.center(180, '=') + '\n')
+        log.info('\n'.join(map(str, ga_agents)))
+
+        if evaluation_type == 'serial':
+
+            serial(population, ga_generations, ga_agents, pre_evaluation, evaluation, post_evaluation, selection,
+                   crossover, mutation)
+
+        elif evaluation_type == 'distributed':
+
+            distributed(population, ga_generations, ga_agents, pre_evaluation, evaluation, post_evaluation, selection,
+                        crossover, mutation, nodes, depends)
+
+        else:
+
+            raise ValueError('evaluation_type is invalid', evaluation_type)
 
 
 def serial(population, generations, agents, pre_evaluation, evaluation, post_evaluation, selection, crossover, mutation):
