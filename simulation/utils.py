@@ -20,227 +20,148 @@ class Direction(Enum):
 
 class Point:
 
-    """A point identified by (x,y) coordinates.
-
-    supports: +, -, *, /, str, repr
-
-    length  -- calculate length of vector to point from origin
-    distance_to  -- calculate distance between two points
-    as_tuple  -- construct tuple (x,y)
-    clone  -- construct a duplicate
-    integerize  -- convert x & y to integers
-    floatize  -- convert x & y to floats
-    move_to  -- reset x & y
-    slide  -- move (in place) +dx, +dy, as spec'd by point
-    slide_xy  -- move (in place) +dx, +dy
-    rotate  -- rotate around the origin
-    rotate_about  -- rotate around another point
+    """
+    A point identified by (x, y) coordinates.
     """
 
-    def __init__(self, x=0.0, y=0.0):
+    def __init__(self, x=None, y=None):
 
-        self.x = x
-        self.y = y
+        self.position = [x, y]
 
-    def __add__(self, p):
+    def __add__(self, point=None):
 
-        """Point(x1+x2, y1+y2)"""
-        return Point(self.x+p.x, self.y+p.y)
+        return Point(position=(self.position[0] + point.position[0], self.position[1] + point.position[1]))
 
-    def __sub__(self, p):
+    def __sub__(self, point):
 
-        """Point(x1-x2, y1-y2)"""
-        return Point(self.x-p.x, self.y-p.y)
+        return Point(position=(self.position[0] - point.position[0], self.position[1] - point.position[1]))
 
     def __mul__(self, scalar):
 
-        """Point(x1*x2, y1*y2)"""
-        return Point(self.x*scalar, self.y*scalar)
+        return Point(position=(self.position[0] * scalar, self.position[1] * scalar))
 
     def __div__(self, scalar):
 
-        """Point(x1/x2, y1/y2)"""
-        return Point(self.x/scalar, self.y/scalar)
+        return Point(position=(self.position[0] / scalar, self.position[1] / scalar))
 
     def __str__(self):
 
-        return "(%s, %s)" % (self.x, self.y)
+        return str(self.position)
 
     def __repr__(self):
 
-        return "%s(%r, %r)" % (self.__class__.__name__, self.x, self.y)
+        return str(self.position)
 
     def length(self):
 
-        return math.sqrt(self.x**2 + self.y**2)
+        return math.sqrt(self.position[0] ** 2 + self.position[1] ** 2)
 
-    def distance_to(self, p):
+    def distance_to(self, point):
 
-        """Calculate the distance between two points."""
-        return (self - p).length()
+        return (self - point).length()
 
     def as_tuple(self):
 
-        """(x, y)"""
-        return (self.x, self.y)
+        return (self.position[0], self.position[1])
 
     def clone(self):
 
-        """Return a full copy of this point."""
-        return Point(self.x, self.y)
+        return Point(position=[self.position[0], self.position[1]])
 
     def integerize(self):
 
-        """Convert co-ordinate values to integers."""
-        self.x = int(self.x)
-        self.y = int(self.y)
+        self.position = [int(self.position[0]), int(self.position[1])]
 
     def floatize(self):
 
-        """Convert co-ordinate values to floats."""
-        self.x = float(self.x)
-        self.y = float(self.y)
+        self.position = [float(self.position[0]), float(self.position[1])]
 
-    def move_to(self, x, y):
+    def move(self, position=None):
 
-        """Reset x & y coordinates."""
-        self.x = x
-        self.y = y
+        self.position = position
 
-    def slide(self, p):
+    def shift(self, delta=None):
 
-        """
-        Move to new (x+dx,y+dy).
-
-        Can anyone think up a better name for this function?
-        slide? shift? delta? move_by?
-        """
-
-        self.x = self.x + p.x
-        self.y = self.y + p.y
-
-    def slide_xy(self, dx, dy):
-
-        """
-        Move to new (x+dx,y+dy).
-
-        Can anyone think up a better name for this function?
-        slide? shift? delta? move_by?
-        """
-
-        self.x = self.x + dx
-        self.y = self.y + dy
-
-    def rotate(self, rad):
-
-        """Rotate counter-clockwise by rad radians.
-
-        Positive y goes *up,* as in traditional mathematics.
-
-        Interestingly, you can use this in y-down computer graphics, if
-        you just remember that it turns clockwise, rather than
-        counter-clockwise.
-
-        The new position is returned as a new Point.
-        """
-        s, c = [f(rad) for f in (math.sin, math.cos)]
-        x, y = (c*self.x - s*self.y, s*self.x + c*self.y)
-        return Point(x, y)
-
-    def rotate_about(self, p, theta):
-
-        """Rotate counter-clockwise around a point, by theta degrees.
-
-        Positive y goes *up,* as in traditional mathematics.
-
-        The new position is returned as a new Point.
-        """
-        result = self.clone()
-        result.slide(-p.x, -p.y)
-        result.rotate(theta)
-        result.slide(p.x, p.y)
-        return result
+        self.position[0] = self.position[0] + delta[0]
+        self.position[1] = self.position[1] + delta[1]
 
 
 class Rectangle:
 
-    """A rectangle identified by two points.
+    """
+    A rectangle identified by two points (top-left and bottom-right).
 
-    The rectangle stores left, top, right, and bottom values.
+    Coordinates are based on the Cartesian coordinate system.
 
-    Coordinates are based on screen coordinates.
-
-    origin                               top
-       +-----> x increases                |
-       |                           left  -+-  right
-       v                                  |
-    y increases                         bottom
-
-    set_points  -- reset rectangle coordinates
-    contains  -- is a point inside?
-    overlaps  -- does a rectangle overlap?
-    top_left  -- get top-left corner
-    bottom_right  -- get bottom-right corner
-    expanded_by  -- grow (or shrink)
+    y+                 top        top-left (x, y) +-------------+
+    ^                   |                         |             |
+    |             left -+- right                  |             |
+    + - - - > x+        |                         |             |
+    origin            bottom                      +-------------+ bottom-right (x, y)
     """
 
-    def __init__(self, pt1, pt2):
+    def __init__(self, top_left=None, bottom_right=None):
 
-        """Initialize a rectangle from two points."""
-        self.set_points(pt1, pt2)
+        self.top_left = top_left
+        self.bottom_right = bottom_right
 
     def __str__(self):
 
-        return "(%s, %s) (%s, %s)" % (self.left, self.top, self.right, self.bottom)
+        return str(self.top_left) + ' - ' + str(self.bottom_right)
 
     def __repr__(self):
 
-        return "%s(%r, %r)" % (self.__class__.__name__, Point(self.left, self.top), Point(self.right, self.bottom))
+        return str(self.top_left) + ' - ' + str(self.bottom_right)
 
-    def set_points(self, pt1, pt2):
+    def set_points(self, top_left=None, bottom_right=None):
 
-        """Reset the rectangle coordinates."""
-        (x1, y1) = pt1.as_tuple()
-        (x2, y2) = pt2.as_tuple()
-        self.left = min(x1, x2)
-        self.top = min(y1, y2)
-        self.right = max(x1, x2)
-        self.bottom = max(y1, y2)
-
-    def contains(self, pt):
-
-        """Return true if a point is inside the rectangle."""
-
-        x,y = pt.as_tuple()
-        return (self.left <= x <= self.right and
-                self.top <= y <= self.bottom)
-
-    def overlaps(self, other):
-
-        """Return true if a rectangle overlaps this rectangle."""
-        return (self.right > other.left and self.left < other.right and
-                self.top < other.bottom and self.bottom > other.top)
-
-    def top_left(self):
-
-        """Return the top-left corner as a Point."""
-        return Point(self.left, self.top)
-
-    def bottom_right(self):
-
-        """Return the bottom-right corner as a Point."""
-        return Point(self.right, self.bottom)
-
-    def expanded_by(self, n):
-
-        """Return a rectangle with extended borders.
-
-        Create a new rectangle that is wider and taller than the
-        immediate one. All sides are extended by "n" points.
         """
-        p1 = Point(self.left-n, self.top-n)
-        p2 = Point(self.right+n, self.bottom+n)
-        return Rectangle(p1, p2)
+        Resets the rectangle coordinates.
+        """
+
+        self.top_left = top_left
+        self.bottom_right = bottom_right
+
+    def contains_point(self, point):
+
+        """
+        Returns a boolean indicating if the given point is contained in the rectangle.
+        """
+
+        return (self.top_left.position[0] <= point.position[0] <= self.bottom_right.position[0] and
+                self.top_left.position[1] >= point.position[1] >= self.bottom_right.position[1])
+
+    def contains_rectangle(self, rectangle):
+
+        """
+        Returns a boolean indicating if the given rectangle is contained in the current rectangle.
+        """
+
+        return self.contains_point(rectangle.top_left) and self.contains_point(rectangle.bottom_right)
+
+    def expand(self, amount=1):
+
+        """
+        Expands the bounds of the rectangle in all directions.
+        :param amount: The amount of units to expand.
+        """
+
+        self.top_left.position[0] -= 1
+        self.top_left.position[1] += 1
+        self.bottom_right.position[0] += 1
+        self.bottom_right.position[1] -= 1
+
+    def contract(self, amount=1):
+
+        """
+        Contracts the bounds of the rectangle in all directions.
+        :param amount: The amount of units to contract.
+        """
+
+        self.top_left.position[0] += 1
+        self.top_left.position[1] -= 1
+        self.bottom_right.position[0] -= 1
+        self.bottom_right.position[1] += 1
 
 
 def generate_mongo(simulation=None, host='localhost', port=27017):
@@ -255,13 +176,12 @@ def generate_mongo(simulation=None, host='localhost', port=27017):
     connection = MongoClient(host, port)
     simulations = connection['grove']['simulations']
 
-    names = ['Timestamp', 'Type', 'ID', 'Direction', 'Behavior', 'Left', 'Top', 'Right', 'Bottom']
-    payload = [{names[idx]: str(state[idx]) for idx in xrange(len(names))} for state in simulation.state_archive]
+    data = [state for state in simulation.state_archive]
 
-    simulations.insert_many(payload)
+    simulations.insert({str(hash(simulation)): data})
     connection.close()
 
-    print 'Saved simulation to MongoDB instance at ' + host + ':' + str(port)
+    print 'Saved simulation data to MongoDB instance at ' + host + ':' + str(port)
 
 
 def generate_csv(simulation=None):
@@ -271,13 +191,13 @@ def generate_csv(simulation=None):
     :param simulation: Simulation containing a state archive.
     """
 
-    name = id(simulation)
-    header = ['Timestamp'] + ['Type'] + ['ID'] + ['Direction'] + ['Left'] + ['Top'] + ['Right'] + ['Bottom']
+    name = str(hash(simulation))
+    header = ['Timestamp', 'Type', 'ID', 'Direction', 'Behavior', 'Left', 'Top', 'Right', 'Bottom']
     data = [state for state in simulation.state_archive]
 
-    with open(str(name) + ".csv", "w") as csv_file:
+    with open(name + ".csv", "w") as csv_file:
         writer = csv.writer(csv_file)
         writer.writerow(header)
         writer.writerows(data)
 
-    print 'Created CSV file at ' + os.getcwd() + '/' + str(name) + '.csv'
+    print 'Created CSV file at ' + os.getcwd() + '/' + name + '.csv'

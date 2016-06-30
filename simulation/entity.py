@@ -5,9 +5,9 @@ from utils import Direction, Point, Rectangle
 
 
 class Entity:
+
     """
-    Abstract representation of an entity. An entity is a component present in a
-    spatial environment.
+    Abstract representation of an entity.
     """
 
     __metaclass__ = abc.ABCMeta
@@ -17,9 +17,9 @@ class Entity:
     def __init__(self, position=(0, 0), size=(1, 1), direction=Direction.North):
 
         self.id = SimAgent.eid()
-        self.body = Rectangle(Point(position[0], position[1]), Point(position[0] + size[0], position[1] + size[1]))
+        self.body = Rectangle(Point(position[0], position[1]), Point(position[0] + size[0], position[1] - size[1]))
         self.direction = direction
-        self.behavior = [None, 0]
+        self.behavior = None
 
     def __str__(self):
 
@@ -27,30 +27,28 @@ class Entity:
 
     def to_csv(self):
 
-        return [self.__class__.__name__] + \
-               [self.id] + \
-               [self.direction] + \
-               [self.behavior] + \
-               [self.body.left] + \
-               [self.body.top] + \
-               [self.body.right] + \
-               [self.body.bottom]
+        return [self.__class__.__name__,
+                self.id,
+                str(self.direction),
+                str(self.behavior),
+                self.body.top_left.position[0],
+                self.body.top_left.position[1],
+                self.body.bottom_right.position[0],
+                self.body.bottom_right.position[1]]
 
 
 class SimAgent(Entity):
 
-    def __init__(self, speed=5, holding_food=False, *args, **kwargs):
+    def __init__(self, holding_food=False, *args, **kwargs):
 
         super(SimAgent, self).__init__(*args, **kwargs)
-
-        self.speed = speed
 
         # State machine variables.
         self.holding_food = holding_food
 
     def __str__(self):
 
-        return self.__class__.__name__ + str(self.id)
+        return self.__class__.__name__ + str(self.id) + ' ' + str(self.behavior) + str(self.body)
 
 
 class Food(Entity):

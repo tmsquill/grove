@@ -11,10 +11,10 @@ def on_border(agent=None, entities=None, environment=None):
     :return: Boolean value indicating the result of the test.
     """
 
-    return agent.body.left == environment.body.left or \
-           agent.body.top == environment.body.top or \
-           agent.body.right == environment.body.right or \
-           agent.body.bottom == environment.body.bottom
+    return agent.body.top_left.position[0] == environment.body.top_left.position[0] or \
+           agent.body.top_left.position[1] == environment.body.top_left.position[1] or \
+           agent.body.bottom_right.position[0] == environment.body.bottom_right.position[0] or \
+           agent.body.bottom_right.position[1] == environment.body.bottom_right[1]
 
 
 def on_nest(agent=None, entities=None, environment=None):
@@ -27,9 +27,9 @@ def on_nest(agent=None, entities=None, environment=None):
     :return: Boolean value indicating the result of the test.
     """
 
-    nest = filter(lambda x: isinstance(x, entity.Nest), entities)
+    nest = filter(lambda x: isinstance(x, entity.Nest), entities)[0]
 
-    return nest[0].body.contains(agent.body.top_left()) and nest[0].body.contains(agent.body.bottom_right())
+    return nest.body.contains_rectangle(agent.body)
 
 
 def on_food(agent=None, entities=None, environment=None):
@@ -44,7 +44,7 @@ def on_food(agent=None, entities=None, environment=None):
 
     foods = filter(lambda x: isinstance(x, entity.Food), entities)
 
-    return any([food.body.contains(agent.body.top_left()) and food.body.contains(agent.body.bottom_right()) for food in foods])
+    return any([food.body.contains_rectangle(agent.body) for food in foods])
 
 
 def holding_food(agent=None, entities=None, environment=None):
