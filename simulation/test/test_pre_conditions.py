@@ -1,5 +1,5 @@
-from entity import SimAgent, Food, Nest
-from environment import Environment
+from simulation.entity import SimAgent, Food, Nest
+from simulation.environment import Environment
 
 import random
 import simulation.preconditions as pc
@@ -9,9 +9,7 @@ class TestPreConditions:
 
     env = Environment()
 
-    nest = Nest(position=(8, 8), size=(4, 4))
-    food = [Food(position=(random.randint(0, 20), random.randint(0, 20))) for _ in xrange(10)]
-    entities = food + [nest, Food(position=(6, 6))]
+    entities = [Food(position=(6, 6)), Nest(position=(8, 8), size=(4, 4))]
 
     def test_on_border(self):
 
@@ -21,7 +19,7 @@ class TestPreConditions:
 
     def test_on_nest(self):
 
-        agent = SimAgent(position=(10, 10))
+        agent = SimAgent(position=(10, 6))
 
         assert pc.on_nest(agent, self.entities, self.env)
 

@@ -1,70 +1,134 @@
-from entity import SimAgent
-from environment import Environment
+from simulation.entity import Food, Nest, SimAgent
+from simulation.environment import Environment
 
 import simulation.behaviors as behaviors
 
 
-class TestBehaviors:
+def test_move_north():
 
-    def test_move_north_out_of_bounds(self):
+    agent = SimAgent(position=(10, 10))
+    entities = [agent]
+    environment = Environment()
 
-        agent = SimAgent(position=(10, 0))
-        environment = Environment()
+    agent = behaviors.move_north(agent=agent, entities=entities, environment=environment)
 
-        agent = behaviors.move_north(agent, environment=environment)
+    assert agent.body.top_left.position[1] == 11 and agent.body.bottom_right.position[1] == 10
 
-        assert agent.body.top_left().y == 0
 
-    def test_move_east_out_of_bounds(self):
+def test_move_north_out_of_bounds():
 
-        agent = SimAgent(position=(19, 10))
-        environment = Environment()
+    agent = SimAgent(position=(10, 20))
+    entities = [agent]
+    environment = Environment()
 
-        agent = behaviors.move_east(agent, environment=environment)
+    agent = behaviors.move_north(agent=agent, entities=entities, environment=environment)
 
-        assert agent.body.bottom_right().x == 20
+    assert agent.body.top_left.position[1] == 20 and agent.body.bottom_right.position[1] == 19
 
-    def test_move_south_out_of_bounds(self):
 
-        agent = SimAgent(position=(10, 19))
-        environment = Environment()
+def test_move_east():
 
-        agent = behaviors.move_south(agent, environment=environment)
+    agent = SimAgent(position=(10, 10))
+    entities = [agent]
+    environment = Environment()
 
-        assert agent.body.bottom_right().y == 20
+    agent = behaviors.move_east(agent=agent, entities=entities, environment=environment)
 
-    def test_move_west_out_of_bounds(self):
+    assert agent.body.top_left.position[0] == 11 and agent.body.bottom_right.position[0] == 12
 
-        agent = SimAgent(position=(0, 10))
-        environment = Environment()
 
-        agent = behaviors.move_west(agent, environment=environment)
+def test_move_east_out_of_bounds():
 
-        assert agent.body.top_left().x == 0
+    agent = SimAgent(position=(20, 10))
+    entities = [agent]
+    environment = Environment()
 
-    def test_pickup_food(self):
+    agent = behaviors.move_east(agent=agent, entities=entities, environment=environment)
 
-        agent = SimAgent()
-        agent.holding_food = False
+    assert agent.body.top_left.position[0] == 20 and agent.body.bottom_right.position[0] == 21
 
-        agent = behaviors.pickup_food(agent)
 
-        assert agent.holding_food
+def test_move_south():
 
-    def test_drop_food(self):
+    agent = SimAgent(position=(10, 10))
+    entities = [agent]
+    environment = Environment()
 
-        agent = SimAgent()
-        agent.holding_food = True
+    agent = behaviors.move_south(agent=agent, entities=entities, environment=environment)
 
-        agent = behaviors.drop_food(agent)
+    assert agent.body.top_left.position[1] == 9 and agent.body.bottom_right.position[1] == 8
 
-        assert not agent.holding_food
 
-    def test_random_walk(self):
+def test_move_south_out_of_bounds():
 
-        agent = SimAgent(position=(10, 10))
-        environment = Environment()
+    agent = SimAgent(position=(10, 0))
+    entities = [agent]
+    environment = Environment()
 
-        agent = behaviors.random_walk(agent, environment)
+    agent = behaviors.move_south(agent=agent, entities=entities, environment=environment)
 
-        assert True
+    assert agent.body.top_left.position[1] == 0 and agent.body.bottom_right.position[1] == -1
+
+
+def test_move_west():
+
+    agent = SimAgent(position=(10, 10))
+    entities = [agent]
+    environment = Environment()
+
+    agent = behaviors.move_west(agent=agent, entities=entities, environment=environment)
+
+    assert agent.body.top_left.position[0] == 9 and agent.body.bottom_right.position[0] == 10
+
+
+def test_move_west_out_of_bounds():
+
+    agent = SimAgent(position=(0, 10))
+    entities = [agent]
+    environment = Environment()
+
+    agent = behaviors.move_west(agent=agent, entities=entities, environment=environment)
+
+    assert agent.body.top_left.position[0] == 0 and agent.body.bottom_right.position[0] == 1
+
+
+def test_pickup_food():
+
+    agent1 = SimAgent(position=(7, 7))
+    agent2 = SimAgent(position=(8, 8))
+    food = Food(position=(7, 7))
+
+    entities = [agent1, agent2, food]
+
+    agent1 = behaviors.pickup_food(agent1, entities, None)
+    agent2 = behaviors.pickup_food(agent2, entities, None)
+
+    assert agent1.holding_food is True
+    assert agent2.holding_food is False
+
+
+def test_drop_food():
+
+    agent1 = SimAgent(holding_food=True, position=(12, 8))
+    agent2 = SimAgent(holding_food=True, position=(5, 5))
+    nest = Nest(position=(10, 10), size=(4, 4))
+
+    entities = [agent1, agent2, nest]
+
+    agent1 = behaviors.drop_food(agent1, entities, None)
+    agent2 = behaviors.drop_food(agent2, entities, None)
+
+    assert agent1.holding_food is False
+    assert agent2.holding_food is True
+
+
+def test_random_walk():
+
+    agent = SimAgent(position=(10, 10))
+
+    entities = [agent]
+    environment = Environment()
+
+    agent = behaviors.random_walk(agent, entities, environment)
+
+    assert agent.body.top_left.position[0] == 9 or agent.body.top_left.position[1] == 9 or agent.body.top_left.position[0] == 11 or agent.body.top_left.position[1] == 11
