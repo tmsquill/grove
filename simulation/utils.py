@@ -54,33 +54,68 @@ class Point:
 
     def length(self):
 
+        """
+        Calculates the distance from the origin to the current point.
+        """
+
         return math.sqrt(self.position[0] ** 2 + self.position[1] ** 2)
 
     def distance_to(self, point):
+
+        """
+        Calculates the distance from the given point to the current point.
+        :param point: The point to compare to.
+        """
 
         return (self - point).length()
 
     def as_tuple(self):
 
+        """
+        Returns a tuple representation of the point.
+        """
+
         return (self.position[0], self.position[1])
 
     def clone(self):
+
+        """
+        Clones the point, creating a new point at the same position.
+        """
 
         return Point(position=[self.position[0], self.position[1]])
 
     def integerize(self):
 
+        """
+        Converts the position to integer values.
+        """
+
         self.position = [int(self.position[0]), int(self.position[1])]
 
     def floatize(self):
+
+        """
+        Converts the position to float values.
+        """
 
         self.position = [float(self.position[0]), float(self.position[1])]
 
     def move(self, position=None):
 
+        """
+        Moves the point to a new position.
+        :param position: The new position of the point.
+        """
+
         self.position = position
 
     def shift(self, delta=None):
+
+        """
+        Shifts a point by some delta.
+        :param delta: The amount in each direction to shift the point. Must be a list or tuple.
+        """
 
         self.position[0] = self.position[0] + delta[0]
         self.position[1] = self.position[1] + delta[1]
@@ -117,6 +152,8 @@ class Rectangle:
 
         """
         Resets the rectangle coordinates.
+        :param top_left: The new top-left point to assign to the rectangle.
+        :param bottom_right: The new bottom-right point to assign to the rectangle.
         """
 
         self.top_left = top_left
@@ -126,6 +163,7 @@ class Rectangle:
 
         """
         Returns a boolean indicating if the given point is contained in the rectangle.
+        :param point: The point to compare against the current rectangle.
         """
 
         return (self.top_left.position[0] <= point.position[0] <= self.bottom_right.position[0] and
@@ -135,6 +173,7 @@ class Rectangle:
 
         """
         Returns a boolean indicating if the given rectangle is contained in the current rectangle.
+        :param rectangle: The rectangle to compare agianst the current rectangle.
         """
 
         return self.contains_point(rectangle.top_left) and self.contains_point(rectangle.bottom_right)
