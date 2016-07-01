@@ -30,19 +30,19 @@ class Point:
 
     def __add__(self, point=None):
 
-        return Point(position=(self.position[0] + point.position[0], self.position[1] + point.position[1]))
+        return Point(self.position[0] + point.position[0], self.position[1] + point.position[1])
 
     def __sub__(self, point):
 
-        return Point(position=(self.position[0] - point.position[0], self.position[1] - point.position[1]))
+        return Point(self.position[0] - point.position[0], self.position[1] - point.position[1])
 
     def __mul__(self, scalar):
 
-        return Point(position=(self.position[0] * scalar, self.position[1] * scalar))
+        return Point(self.position[0] * scalar, self.position[1] * scalar)
 
     def __div__(self, scalar):
 
-        return Point(position=(self.position[0] / scalar, self.position[1] / scalar))
+        return Point(self.position[0] / scalar, self.position[1] / scalar)
 
     def __str__(self):
 
@@ -231,7 +231,7 @@ def generate_csv(simulation=None):
     """
 
     name = str(hash(simulation))
-    header = ['Timestamp', 'Type', 'ID', 'Direction', 'Behavior', 'Left', 'Top', 'Right', 'Bottom']
+    header = ['Type', 'Timestamp', 'ID', 'Direction', 'Behavior', 'Left', 'Top', 'Right', 'Bottom']
     data = [state for state in simulation.state_archive]
 
     with open(name + ".csv", "w") as csv_file:

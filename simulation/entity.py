@@ -20,6 +20,8 @@ class Entity:
         self.body = Rectangle(Point(position[0], position[1]), Point(position[0] + size[0], position[1] - size[1]))
         self.direction = direction
         self.behavior = None
+        self.time = 0
+        self.done = False
 
     def __str__(self):
 
@@ -28,6 +30,7 @@ class Entity:
     def to_csv(self):
 
         return [self.__class__.__name__,
+                self.time,
                 self.id,
                 str(self.direction),
                 str(self.behavior),

@@ -1,11 +1,12 @@
-import constraint
-import evolution.config
-import evolution.ga
 import inspect
-import utils
 
 from thriftpy.protocol import TBinaryProtocol
 from thriftpy.transport import TMemoryBuffer
+
+import constraint
+import evolution.ga
+import grove.config
+import utils
 
 
 class TreeNode(object):
@@ -37,17 +38,14 @@ class ParseTree:
 
         if grammar.representation == 'bnf':
 
-            # TODO - Change to parse tree node.
-            self.root = []
+            self.root = ParseTreeNode(None, [])
 
         elif grammar.representation == 'proto':
 
-            # TODO - Change to parse tree node.
-            self.root = None
+            self.root = ParseTreeNode(None, grammar.rules.Root())
 
         elif grammar.representation == 'thrift':
 
-            # TODO - Change to parse tree node.
             self.root = ParseTreeNode(None, grammar.rules.Root())
 
     def generate(self):
@@ -67,7 +65,7 @@ class ParseTree:
         :return: An parse tree represented as a list.
         """
 
-        log = evolution.config.grove_config['logging']['grammar']
+        log = grove.config.grove_config['logging']['grammar']
 
         if log:
 
@@ -141,12 +139,9 @@ class ParseTree:
         """
 
         import google.protobuf.descriptor as des
-        import google.protobuf.text_format as tf
-        from google.protobuf.descriptor import FieldDescriptor
-        from google.protobuf.internal.containers import RepeatedCompositeFieldContainer
         import random
 
-        log = evolution.config.grove_config['logging']['grammar']
+        log = grove.config.grove_config['logging']['grammar']
 
         if log:
 
@@ -267,7 +262,7 @@ class ParseTree:
         :return: A parse tree represented as an instance of a Apache Thrift class.
         """
 
-        log = evolution.config.grove_config['logging']['grammar']
+        log = grove.config.grove_config['logging']['grammar']
 
         if log:
 
@@ -413,7 +408,9 @@ class ParseTree:
                 setattr(current_symbol[4], current_symbol[1], getattr(current_symbol[2], attrs[int(self.genome[self.used_genes % len(self.genome)] % len(attrs))]))
                 self.used_genes += 1
 
-            evolution.ga.log.debug('Output             -> ' + str(self.root))
+            if log:
+
+                evolution.ga.log.debug('Output             -> ' + str(self.root))
 
     def serialize(self):
 

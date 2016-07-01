@@ -9,7 +9,9 @@ from grove import config
 
 class GESAgent(Agent):
 
-    """ An agent targeted for GES. """
+    """
+    An agent targeted for GES.
+    """
 
     grammar = None
 
@@ -34,6 +36,13 @@ class GESAgent(Agent):
 
 def pre_evaluation(agents=None):
 
+    """
+    Pre-evaluation function prepares agents for evaluation. In this case, a genome is used to generate a parse tree,
+    which is used during evaluation.
+    :param agents: The population of agents to map the generation of parse trees over.
+    :return: The updated agents with generated parse trees.
+    """
+
     for agent in agents:
 
         agent.parse_tree.generate()
@@ -45,8 +54,9 @@ def pre_evaluation(agents=None):
 def evaluation(payload=None):
 
     """
-    Evaluation function that executes a simulation with the specified payload.
-    :param payload: The payload to evaluate.
+    Evaluation function that executes a simulation with the specified payload. In this case the payload is a serialized
+    parse tree that defines the legal transformation that can take place in the dynamic state machine.
+    :param payload: The payload (serialized parse tree) to evaluate.
     :return: The evaluation value determined by executing the evaluation function with the payload.
     """
 
@@ -63,7 +73,7 @@ def evaluation(payload=None):
         from simulation.entity import SimAgent, Food, Nest
         from simulation.environment import Environment
         from simulation.simulation import Simulation
-        from simulation.utils import generate_mongo
+        from simulation.utils import generate_csv
 
         import thriftpy.transport as tp
         import thriftpy.protocol as pc
@@ -95,7 +105,7 @@ def evaluation(payload=None):
         sim = Simulation(environment=env, entities=entities, parse_tree=root)
         sim.execute()
 
-        generate_mongo(sim)
+        generate_csv(sim)
 
         # Get the food tags collected, and return as the evaluation score.
         nest = filter(lambda x: isinstance(x, Nest), sim.entities)
@@ -104,10 +114,18 @@ def evaluation(payload=None):
 
     except Exception:
 
+        print traceback.format_exc()
         return traceback.format_exc()
 
 
 def post_evaluation(agents=None):
+
+    """
+    Post-evaluation function performs data collection and/or alters agents after evaluation. In this case, no action
+    is needed, so the agents are simply returned.
+    :param agents: The population of agents.
+    :return: The population of agents.
+    """
 
     return agents
 
@@ -135,7 +153,7 @@ if __name__ == "__main__":
     # Load the grove configuration.
     config.load_config(args.config)
 
-    # Change the current directory to ARGoS (required by the simulator).
+    # Change the current directory, for logging purposes.
     os.chdir(os.path.expanduser('~') + '/lyssa')
 
     # Run the genetic algorithm.

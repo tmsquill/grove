@@ -98,7 +98,7 @@ def serial(population, generations, agents, pre_evaluation, evaluation, post_eva
 
         for agent in agents:
 
-            agent = evaluation(agent)
+            agent = evaluation(agent.payload)
 
         agents = post_evaluation(agents)
 

@@ -1,7 +1,6 @@
 import lookup
 import random
 
-# TODO - Currently only the need to evaluate agents (not all entities).
 import entity as e
 
 
@@ -16,16 +15,14 @@ class Simulation:
         self.produce_output = produce_output
         self.state_archive = []
 
-    def save_state(self, timestamp=None):
+    def save_state(self, entity=None):
 
         """
         Saves the current state of all entities to the state archive.
         :param timestamp: The time step (current time step).
         """
 
-        for entity in self.entities:
-
-            self.state_archive.append([timestamp] + entity.to_csv())
+        self.state_archive.append(entity.to_csv())
 
     def execute(self):
 
@@ -34,35 +31,50 @@ class Simulation:
         time step.
         """
 
+        agents = filter(lambda x: isinstance(x, e.SimAgent), self.entities)
+
         # Initial behavioral state for each entity.
-        for entity in self.entities:
+        for agent in agents:
 
-            entity.behavior[0] = lookup.b[self.parse_tree.default_behavior.id_behavior]
+            agent.behavior = lookup.b[self.parse_tree.default_behavior.id_behavior]
 
-        for timestamp in xrange(self.duration):
+        while not all([agent.done for agent in agents]):
 
-            for entity in self.entities:
+            for agent in agents:
 
-                # TODO - Currently only the need to evaluate agents (not all entities).
-                if not isinstance(entity, e.SimAgent):
+                if agent.time > self.duration:
 
+                    agent.done = True
                     continue
 
-                # New behavior needs selected.
-                if entity.behavior[1] == 0:
+                agent = self.process_rules(agent)
 
-                    entity = self.process_rules(entity)
+                agent.time += 1
 
-                # Continue with current behavior.
-                else:
 
-                    entity = entity.behavior[0](entity, self.entities, self.environment)
-
-                entity.behavior[1] -= 1
-
-            if self.produce_output:
-
-                self.save_state(timestamp)
+        # for timestamp in xrange(self.duration):
+        #
+        #     for entity in self.entities:
+        #
+        #         # TODO - May include all entities in the future.
+        #         if not isinstance(entity, e.SimAgent):
+        #
+        #             continue
+        #
+        #         # New behavior needs selected.
+        #         if entity.behavior[1] == 0:
+        #
+        #             entity = self.process_rules(entity)
+        #
+        #         # Execute the current behavior.
+        #         else:
+        #
+        #             # entity = entity.behavior[0](entity, self.entities, self.environment)
+        #             entity.behavior[1] -= 1
+        #
+        #     if self.produce_output:
+        #
+        #         self.save_state(timestamp)
 
     def process_rules(self, entity):
 
@@ -76,19 +88,20 @@ class Simulation:
 
             # TODO - Consider using thrift services to avoid lookup tables.
             # Gather all precondition functions contained in the current rule.
-            preconditions = [lookup.pc[precondition.id_precondition] for precondition in rule.preconditions]
-            behaviors = [lookup.b[behavior.id_behavior] for behavior in rule.behaviors]
+            preconditions = [lookup.pc[precondition.id_precondition] for precondition in rule.preconditions if precondition]
+            behaviors = [lookup.b[behavior.id_behavior] for behavior in rule.behaviors if behavior]
 
             # Evaluate the current entity.
             pc_check = all([precondition(entity, self.entities, self.environment) for precondition in preconditions])
-            b_check = any([entity.behavior[0] is behavior for behavior in behaviors])
+            b_check = any([entity.behavior is behavior for behavior in behaviors])
 
             if pc_check and b_check:
 
                 for action in rule.actions:
 
-                    if random.uniform(0.0, 1.0) <= lookup.a[action.prob]:
+                    if random.uniform(0.0, 1.0) <= action.prob:
 
-                        entity = lookup.a[action.id_action](entity, self.entities, self.environment)
+                        entity = lookup.b[action.id_action](entity, self.entities, self.environment, self)
+                        entity.behavior = lookup.b[action.id_action]
 
         return entity
