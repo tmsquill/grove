@@ -1,0 +1,72 @@
+name: grove
+dependencies:
+- cloog=0.18.0=0
+- etetoolkit::argtable2=2.13=0
+- etetoolkit::ete3=3.0.0b35=py_0
+- etetoolkit::ete3_external_apps=2.0.3=py27_0
+- freetype=2.5.5=1
+- gcc=4.8.5=3
+- gmp=5.1.2=6
+- isl=0.12.2=1
+- libpng=1.6.22=0
+- libxml2=2.9.2=0
+- libxslt=1.1.28=2
+- lxml=3.6.0=py27_0
+- mkl=11.3.3=0
+- mpc=1.0.1=0
+- mpfr=3.1.2=0
+- numpy=1.11.1=py27_0
+- openssl=1.0.2h=1
+- pip=8.1.2=py27_0
+- pyqt=4.11.4=py27_3
+- python=2.7.12=1
+- qt=4.8.7=3
+- readline=6.2=2
+- setuptools=23.0.0=py27_0
+- sip=4.16.9=py27_0
+- six=1.10.0=py27_0
+- sqlite=3.13.0=0
+- tk=8.5.18=0
+- wheel=0.29.0=py27_0
+- zlib=1.2.8=3
+- pip:
+  - alabaster==0.7.8
+  - asyncoro==3.6.7
+  - babel==2.3.4
+  - click==6.6
+  - cycler==0.10.0
+  - dispy==4.6.3
+  - docutils==0.12
+  - enum34==1.1.2
+  - ete3==3.0.0b35
+  - flake8==2.6.0
+  - fuzzywuzzy==0.10.0
+  - imagesize==0.7.1
+  - itsdangerous==0.24
+  - jinja2==2.8
+  - logbook==0.12.5
+  - markupsafe==0.23
+  - mccabe==0.5.0
+  - pep8==1.7.0
+  - ply==3.8
+  - protobuf==2.6.1
+  - py==1.4.30
+  - pycallgraph==1.0.1
+  - pycodestyle==2.0.0
+  - pyflakes==1.2.3
+  - pygments==2.1.3
+  - pymongo==3.2.2
+  - pyparsing==2.1.0
+  - pytest==2.8.0
+  - python-dateutil==2.4.2
+  - pytz==2015.6
+  - requests==2.7.0
+  - scipy==0.17.0
+  - simplejson==3.8.0
+  - snowballstemmer==1.2.1
+  - sphinx==1.4.4
+  - thriftpy==0.3.7
+  - werkzeug==0.11.10
+  - xdot==0.6
+prefix: /Users/Zivia/miniconda2/envs/grove
+
