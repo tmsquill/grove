@@ -3,13 +3,10 @@ import time
 import utils
 
 from generation import Generation
-from grove import config
-from logbook import FileHandler, Logger
-
-log = None
+from grove import config, logger
 
 
-def evolve(population, generations, agent_type, pre_evaluation, evaluation, post_evaluation, selection, crossover, mutation, evaluation_type, nodes, depends, log_path):
+def evolve(population, generations, agent_type, pre_evaluation, evaluation, post_evaluation, selection, crossover, mutation, evaluation_type, nodes, depends):
 
     """
     Performs evolution on a set of agents over a number of generations. The desired evolutionary functions must be
@@ -26,28 +23,12 @@ def evolve(population, generations, agent_type, pre_evaluation, evaluation, post
     :param evaluation_type: The type of execution for evaluation. Either serial or distributed.
     :param nodes: The nodes in the cluster used for computing the evaluation function.
     :param depends: The list of dependencies needed by dispynodes to perform computation of the evaluation function.
-    :param log_path: The directory that Grove will produce log files. If not specified logs will be saved to the
-    current working directory.
     """
 
-    # Initialize logging.
-    if log_path:
-
-        log_handler = FileHandler(log_path + '/log/grove-' + time.strftime("%I:%M-M%mD%dY%Y" + '.log'))
-
-    else:
-
-        log_handler = FileHandler('./log/grove-' + time.strftime("%I:%M-M%mD%dY%Y" + '.log'))
-
-    log_handler.format_string = '{record.message}'
-
-    global log
-    log = Logger('Grove Logger')
-
-    with log_handler.applicationbound():
+    with logger.log_handler.applicationbound():
 
         # Log Configuration
-        log.info(config.pretty_config())
+        logger.log.info(config.pretty_config())
 
         # Validate pre and post evaluation functions.
         if not hasattr(pre_evaluation, '__call__'):
@@ -64,8 +45,8 @@ def evolve(population, generations, agent_type, pre_evaluation, evaluation, post
         # Initialize agents.
         ga_agents = agent_type.init_agents(population)
 
-        log.info('\n' + ' Agent Initialization '.center(180, '=') + '\n')
-        log.info('\n'.join(map(str, ga_agents)))
+        logger.log.info('\n' + ' Agent Initialization '.center(180, '=') + '\n')
+        logger.log.info('\n'.join(map(str, ga_agents)))
 
         if evaluation_type == 'serial':
 
@@ -84,14 +65,14 @@ def evolve(population, generations, agent_type, pre_evaluation, evaluation, post
 
 def serial(population, generations, agents, pre_evaluation, evaluation, post_evaluation, selection, crossover, mutation):
 
-    log.info('\n' + ' Evolution (Serial) '.center(180, '=') + '\n')
+    logger.log.info('\n' + ' Evolution (Serial) '.center(180, '=') + '\n')
     print ' Evolution (Serial) '.center(180, '=') + '\n'
 
     start_time = time.time()
 
     for generation in generations:
 
-        log.info(" Generation %s ".center(180, '*') % str(generation.id))
+        logger.log.info(" Generation %s ".center(180, '*') % str(generation.id))
         print 'Generation ' + str(generation.id)
 
         agents = pre_evaluation(agents)
@@ -103,14 +84,14 @@ def serial(population, generations, agents, pre_evaluation, evaluation, post_eva
         agents = post_evaluation(agents)
 
         generation.bind_agents(agents)
-        log.info('\n' + str(generation))
+        logger.log.info('\n' + str(generation))
 
         agents = selection(agents)
         agents = crossover(agents, population)
         agents = mutation(agents)
 
     total_time = time.time() - start_time
-    log.info("Evolution finished in %s seconds " % total_time)
+    logger.log.info("Evolution finished in %s seconds " % total_time)
     print "Evolution finished in %s seconds " % total_time
 
     if config.grove_config['data']['collection_type']:
@@ -120,7 +101,7 @@ def serial(population, generations, agents, pre_evaluation, evaluation, post_eva
 
 def distributed(population, generations, agents, pre_evaluation, evaluation, post_evaluation, selection, crossover, mutation, nodes, depends):
 
-    log.info('\n' + ' Evolution (Distributed) '.center(180, '=') + '\n')
+    logger.log.info('\n' + ' Evolution (Distributed) '.center(180, '=') + '\n')
     print ' Evolution (Distributed) '.center(180, '=') + '\n'
 
     # TODO - Remove logging when able.
@@ -139,7 +120,7 @@ def distributed(population, generations, agents, pre_evaluation, evaluation, pos
 
     for generation in generations:
 
-        log.info(" Generation %s ".center(180, '*') % str(generation.id))
+        logger.log.info(" Generation %s ".center(180, '*') % str(generation.id))
         print 'Generation ' + str(generation.id)
 
         agents = pre_evaluation(agents)
@@ -165,7 +146,7 @@ def distributed(population, generations, agents, pre_evaluation, evaluation, pos
         agents = post_evaluation(agents)
 
         generation.bind_agents(agents)
-        log.info('\n' + str(generation))
+        logger.log.info('\n' + str(generation))
 
         agents = selection(agents)
         agents = crossover(agents, population)
@@ -174,7 +155,7 @@ def distributed(population, generations, agents, pre_evaluation, evaluation, pos
     cluster.stats()
 
     total_time = time.time() - start_time
-    log.info("Evolution finished in %s seconds " % total_time)
+    logger.log.info("Evolution finished in %s seconds " % total_time)
     print "Evolution finished in %s seconds " % total_time
 
     if config.grove_config['data']['collection_type']:

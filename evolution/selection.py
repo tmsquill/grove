@@ -1,7 +1,6 @@
-import ga
 import random
 
-from grove import config
+from grove import config, logger
 from operator import attrgetter
 
 
@@ -27,19 +26,19 @@ def truncation(elite_proportion=None):
 
         if log:
 
-            ga.log.info(' Truncation Selection '.center(180, '=') + '\n')
-            ga.log.info(
+            logger.log.info(' Truncation Selection '.center(180, '=') + '\n')
+            logger.log.info(
                 " (Before) {0} Population Size {1} ".center(180, '-').format(agents[0].__class__.__name__, len(agents)))
-            ga.log.info('\n' + '\n'.join(map(str, agents)) + '\n')
+            logger.log.info('\n' + '\n'.join(map(str, agents)) + '\n')
 
         # Use slicing to remove the non-elite.
         agents = agents[:int(elite_proportion * len(agents))]
 
         if log:
 
-            ga.log.info(
+            logger.log.info(
                 " (After) {0} Population Size {1} ".center(180, '-').format(agents[0].__class__.__name__, len(agents)))
-            ga.log.info('\n' + '\n'.join(map(str, agents)) + '\n')
+            logger.log.info('\n' + '\n'.join(map(str, agents)) + '\n')
 
         return agents
 
@@ -71,10 +70,10 @@ def tournament(agents_ret=None, tournament_size=None):
 
         if log:
 
-            ga.log.info(' Tournament Selection '.center(180, '=') + '\n')
-            ga.log.info(
+            logger.log.info(' Tournament Selection '.center(180, '=') + '\n')
+            logger.log.info(
                 " (Before) {0} Population Size {1} ".center(180, '-').format(agents[0].__class__.__name__, len(agents)))
-            ga.log.info('\n' + '\n'.join(map(str, agents)) + '\n')
+            logger.log.info('\n' + '\n'.join(map(str, agents)) + '\n')
 
         chosen = []
 
@@ -85,9 +84,9 @@ def tournament(agents_ret=None, tournament_size=None):
 
         if log:
 
-            ga.log.info(
+            logger.log.info(
                 " (After) {0} Population Size {1} ".center(180, '-').format(agents[0].__class__.__name__, len(agents)))
-            ga.log.info('\n' + '\n'.join(map(str, agents)) + '\n')
+            logger.log.info('\n' + '\n'.join(map(str, agents)) + '\n')
 
         return chosen
 
@@ -121,10 +120,10 @@ def roulette(sample=None, size=None):
 
         if log:
 
-            ga.log.info(' Roulette Selection '.center(180, '=') + '\n')
-            ga.log.info(
+            logger.log.info(' Roulette Selection '.center(180, '=') + '\n')
+            logger.log.info(
                 " (Before) {0} Population Size {1} ".center(180, '-').format(agents[0].__class__.__name__, len(agents)))
-            ga.log.info('\n' + '\n'.join(map(str, agents)) + '\n')
+            logger.log.info('\n' + '\n'.join(map(str, agents)) + '\n')
 
         agents_len = len(agents)
         hits = {_: 0 for _ in xrange(agents_len)}
@@ -150,9 +149,9 @@ def roulette(sample=None, size=None):
 
         if log:
 
-            ga.log.info(
+            logger.log.info(
                 " (After) {0} Population Size {1} ".center(180, '-').format(agents[0].__class__.__name__, len(agents)))
-            ga.log.info('\n' + '\n'.join(map(str, agents)) + '\n')
+            logger.log.info('\n' + '\n'.join(map(str, agents)) + '\n')
 
         return agents
 

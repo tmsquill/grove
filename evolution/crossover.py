@@ -1,7 +1,6 @@
-import ga
 import random
 
-from grove import config
+from grove import config, logger
 
 
 def one_point():
@@ -21,7 +20,7 @@ def one_point():
 
         if log:
 
-            ga.log.info(' One-Point Crossover '.center(180, '=') + '\n')
+            logger.log.info(' One-Point Crossover '.center(180, '=') + '\n')
 
         offspring = []
 
@@ -32,8 +31,8 @@ def one_point():
 
             if log:
 
-                ga.log.info('Parent 1: ' + str(parent1))
-                ga.log.info('Parent 2: ' + str(parent2))
+                logger.log.info('Parent 1: ' + str(parent1))
+                logger.log.info('Parent 2: ' + str(parent2))
 
             child1 = parent1.__class__()
             child2 = parent2.__class__()
@@ -42,7 +41,7 @@ def one_point():
 
             if log:
 
-                ga.log.info('Split: ' + str(split))
+                logger.log.info('Split: ' + str(split))
 
             child1.genotype[0:split] = parent1.genotype[0:split]
             child1.genotype[split:parent1.genotype_len] = parent2.genotype[split:parent1.genotype_len]
@@ -52,8 +51,8 @@ def one_point():
 
             if log:
 
-                ga.log.info('Child 1: ' + str(child1))
-                ga.log.info('Child 2: ' + str(child2) + '\n')
+                logger.log.info('Child 1: ' + str(child1))
+                logger.log.info('Child 2: ' + str(child2) + '\n')
 
             offspring.append(child1)
             offspring.append(child2)
@@ -81,7 +80,7 @@ def two_point():
 
         if log:
 
-            ga.log.info(' Two-Point Crossover '.center(180, '=') + '\n')
+            logger.log.info(' Two-Point Crossover '.center(180, '=') + '\n')
 
         offspring = []
 
@@ -92,8 +91,8 @@ def two_point():
 
             if log:
 
-                ga.log.info('Parent 1: ' + str(parent1))
-                ga.log.info('Parent 2: ' + str(parent2))
+                logger.log.info('Parent 1: ' + str(parent1))
+                logger.log.info('Parent 2: ' + str(parent2))
 
             child1 = parent1.__class__()
             child2 = parent2.__class__()
@@ -103,8 +102,8 @@ def two_point():
 
             if log:
 
-                ga.log.info('(1) Split: ' + str(split1))
-                ga.log.info('(2) Split: ' + str(split2))
+                logger.log.info('(1) Split: ' + str(split1))
+                logger.log.info('(2) Split: ' + str(split2))
 
             child1.genotype[1:split1] = parent1.genotype[1:split1]
             child1.genotype[split1:split2] = parent2.genotype[split1:split2]
@@ -116,8 +115,8 @@ def two_point():
 
             if log:
 
-                ga.log.info('Child 1: ' + str(child1))
-                ga.log.info('Child 2: ' + str(child2) + '\n')
+                logger.log.info('Child 1: ' + str(child1))
+                logger.log.info('Child 2: ' + str(child2) + '\n')
 
             offspring.append(child1)
             offspring.append(child2)
@@ -144,7 +143,7 @@ def uniform():
 
         if log:
 
-            ga.log.info(' Uniform Crossover '.center(180, '=') + '\n')
+            logger.log.info(' Uniform Crossover '.center(180, '=') + '\n')
 
         offspring = []
 
@@ -155,8 +154,8 @@ def uniform():
 
             if log:
 
-                ga.log.info('Parent 1: ' + str(parent1))
-                ga.log.info('Parent 2: ' + str(parent2))
+                logger.log.info('Parent 1: ' + str(parent1))
+                logger.log.info('Parent 2: ' + str(parent2))
 
             child1 = parent1.__class__()
             child2 = parent1.__class__()
@@ -175,8 +174,8 @@ def uniform():
 
             if log:
 
-                ga.log.info('Child 1: ' + str(child1))
-                ga.log.info('Child 2: ' + str(child2) + '\n')
+                logger.log.info('Child 1: ' + str(child1))
+                logger.log.info('Child 2: ' + str(child2) + '\n')
 
             offspring.append(child1)
             offspring.append(child2)

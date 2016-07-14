@@ -1,7 +1,6 @@
-import ga
 import random
 
-from grove import config
+from grove import config, logger
 import numpy as np
 
 
@@ -20,13 +19,13 @@ def boundary():
 
         if log:
 
-            ga.log.info(' Boundary Mutation '.center(180, '=') + '\n')
+            logger.log.info(' Boundary Mutation '.center(180, '=') + '\n')
 
         for agent in agents:
 
             if log:
 
-                ga.log.info('(Before) ' + str(agent))
+                logger.log.info('(Before) ' + str(agent))
 
             for idx, param in enumerate(agent.genotype):
 
@@ -36,7 +35,7 @@ def boundary():
 
             if log:
 
-                ga.log.info('(After) ' + str(agent) + '\n')
+                logger.log.info('(After) ' + str(agent) + '\n')
 
         return agents
 
@@ -58,13 +57,13 @@ def uniform():
 
         if log:
 
-            ga.log.info(' Uniform Mutation '.center(180, '=') + '\n')
+            logger.log.info(' Uniform Mutation '.center(180, '=') + '\n')
 
         for agent in agents:
 
             if log:
 
-                ga.log.info('(Before) ' + str(agent))
+                logger.log.info('(Before) ' + str(agent))
 
             for idx, param in enumerate(agent.genotype):
 
@@ -74,7 +73,7 @@ def uniform():
 
             if log:
 
-                ga.log.info('(After) ' + str(agent) + '\n')
+                logger.log.info('(After) ' + str(agent) + '\n')
 
         return agents
 
@@ -96,13 +95,13 @@ def gaussian():
 
         if log:
 
-            ga.log.info(' Gaussian Mutation '.center(180, '=') + '\n')
+            logger.log.info(' Gaussian Mutation '.center(180, '=') + '\n')
 
         for agent in agents:
 
             if log:
 
-                ga.log.info('(Before) ' + str(agent))
+                logger.log.info('(Before) ' + str(agent))
 
             for idx, param in enumerate(agent.genotype):
 
@@ -122,13 +121,13 @@ def gaussian():
 
                     if log:
 
-                        ga.log.info('Mutating Parameter ' + str(idx) + ': ' + str(param) + ' -> ' + str(val))
+                        logger.log.info('Mutating Parameter ' + str(idx) + ': ' + str(param) + ' -> ' + str(val))
 
                     agent.genotype[idx] = val
 
             if log:
 
-                ga.log.info('(After) ' + str(agent) + '\n')
+                logger.log.info('(After) ' + str(agent) + '\n')
 
         return agents
 
