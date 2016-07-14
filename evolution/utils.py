@@ -1,4 +1,5 @@
 import csv
+import hashlib
 import itertools
 import os
 
@@ -18,12 +19,13 @@ def generate_mongo(generations=None, host='localhost', port=27017):
     evolutions = connection['grove']['evolutions']
 
     data = [[(generation.id, agent.genotype, agent.value) for agent in generation.agents] for generation in generations]
-    hashed = str(hash(tuple(generations)))
+    checksum = hashlib.md5(str(data)).hexdigest()
 
-    evolutions.insert({hashed: str(data)})
+    _id = evolutions.insert({checksum: data})
     connection.close()
 
-    print 'Saved evolution data to MongoDB instance at ' + host + ':' + str(port) + ' -> db.grove.evolutions.' + hashed
+    print 'Saved evolution data to MongoDB instance at ' + host + ':' + str(port) + \
+          ' -> db.grove.evolutions with ObjectId: ' + str(_id)
 
 
 def generate_csv(generations=None):
@@ -35,12 +37,12 @@ def generate_csv(generations=None):
 
     header = ['GID', 'Genotype', 'Value']
     data = [[(generation.id, agent.genotype, agent.value) for agent in generation.agents] for generation in generations]
-    hashed = str(hash(tuple(generations)))
+    checksum = hashlib.md5(str(data)).hexdigest()
 
-    with open(hashed + ".csv", "w") as csv_file:
+    with open(checksum + ".csv", "w") as csv_file:
 
         writer = csv.writer(csv_file)
         writer.writerow(header)
         writer.writerows(itertools.chain.from_iterable(data))
 
-    print 'Saved evolution data to CSV at ' + os.getcwd() + '/' + hashed + '.csv'
+    print 'Saved evolution data to CSV at ' + os.getcwd() + '/' + checksum + '.csv'

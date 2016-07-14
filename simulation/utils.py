@@ -1,4 +1,5 @@
 import csv
+import hashlib
 import math
 import os
 
@@ -216,11 +217,13 @@ def generate_mongo(simulation=None, host='localhost', port=27017):
     simulations = connection['grove']['simulations']
 
     data = [state for state in simulation.state_archive]
+    checksum = hashlib.md5(str(data)).hexdigest()
 
-    simulations.insert({str(hash(simulation)): data})
+    _id = simulations.insert({checksum: data})
     connection.close()
 
-    print 'Saved simulation data to MongoDB instance at ' + host + ':' + str(port)
+    print 'Saved simulation data to MongoDB instance at ' + host + ':' + str(port) + \
+          ' -> db.grove.simulations with ObjectId ' + str(_id)
 
 
 def generate_csv(simulation=None):
@@ -230,13 +233,13 @@ def generate_csv(simulation=None):
     :param simulation: Simulation containing a state archive.
     """
 
-    name = str(hash(simulation))
     header = ['Type', 'Timestamp', 'ID', 'Direction', 'Behavior', 'Left', 'Top', 'Right', 'Bottom']
     data = [state for state in simulation.state_archive]
+    checksum = hashlib.md5(str(data)).hexdigest()
 
-    with open(name + ".csv", "w") as csv_file:
+    with open(checksum + ".csv", "w") as csv_file:
         writer = csv.writer(csv_file)
         writer.writerow(header)
         writer.writerows(data)
 
-    print 'Created CSV file at ' + os.getcwd() + '/' + name + '.csv'
+    print 'Created CSV file at ' + os.getcwd() + '/' + checksum + '.csv'
