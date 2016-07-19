@@ -4,7 +4,7 @@ import random
 from utils import Direction, Point
 
 
-def move_north(agent=None, entities=None, environment=None, simulation=None):
+def move_north(agent=None, entities=None, environment=None):
 
     """
     Behavior that causes an agent to move north one unit.
@@ -21,14 +21,10 @@ def move_north(agent=None, entities=None, environment=None, simulation=None):
 
     agent.time += 1
 
-    if simulation.produce_output:
-
-        simulation.save_state(agent)
-
     return agent
 
 
-def move_east(agent=None, entities=None, environment=None, simulation=None):
+def move_east(agent=None, entities=None, environment=None):
 
     """
     Behavior that causes an agent to move east one unit.
@@ -45,14 +41,10 @@ def move_east(agent=None, entities=None, environment=None, simulation=None):
 
     agent.time += 1
 
-    if simulation.produce_output:
-
-        simulation.save_state(agent)
-
     return agent
 
 
-def move_south(agent=None, entities=None, environment=None, simulation=None):
+def move_south(agent=None, entities=None, environment=None):
 
     """
     Behavior that causes an agent to move south one unit.
@@ -69,14 +61,10 @@ def move_south(agent=None, entities=None, environment=None, simulation=None):
 
     agent.time += 1
 
-    if simulation.produce_output:
-
-        simulation.save_state(agent)
-
     return agent
 
 
-def move_west(agent=None, entities=None, environment=None, simulation=None):
+def move_west(agent=None, entities=None, environment=None):
 
     """
     Behavior that causes an agent to move west one unit.
@@ -93,14 +81,10 @@ def move_west(agent=None, entities=None, environment=None, simulation=None):
 
     agent.time += 1
 
-    if simulation.produce_output:
-
-        simulation.save_state(agent)
-
     return agent
 
 
-def pickup_food(agent=None, entities=None, environment=None, simulation=None):
+def pickup_food(agent=None, entities=None, environment=None):
 
     """
     Behavior that causes an agent to pickup food.
@@ -120,14 +104,10 @@ def pickup_food(agent=None, entities=None, environment=None, simulation=None):
 
     agent.time += 1
 
-    if simulation.produce_output:
-
-        simulation.save_state(agent)
-
     return agent
 
 
-def drop_food(agent=None, entities=None, environment=None, simulation=None):
+def drop_food(agent=None, entities=None, environment=None):
 
     """
     Behavior that causes an agent to drop food.
@@ -148,14 +128,10 @@ def drop_food(agent=None, entities=None, environment=None, simulation=None):
 
     agent.time += 1
 
-    if simulation.produce_output:
-
-        simulation.save_state(agent)
-
     return agent
 
 
-def random_walk(agent=None, entities=None, environment=None, simulation=None):
+def random_walk(agent=None, entities=None, environment=None):
 
     """
     Behavior that causes an agent to walk in a random direction for one time step.
@@ -169,24 +145,24 @@ def random_walk(agent=None, entities=None, environment=None, simulation=None):
 
     if random_direction == Direction.North:
 
-        return move_north(agent, entities, environment, simulation)
+        return move_north(agent, entities, environment)
 
     elif random_direction == Direction.East:
 
-        return move_east(agent, entities, environment, simulation)
+        return move_east(agent, entities, environment)
 
     elif random_direction == Direction.South:
 
-        return move_south(agent, entities, environment, simulation)
+        return move_south(agent, entities, environment)
 
     elif random_direction == Direction.West:
 
-        return move_west(agent, entities, environment, simulation)
+        return move_west(agent, entities, environment)
 
     return agent
 
 
-def return_home(agent=None, entities=None, environment=None, simulation=None):
+def return_home(agent=None, entities=None, environment=None):
 
     """
     Behavior (naive) that causes an agent to return to the nest.
@@ -204,9 +180,5 @@ def return_home(agent=None, entities=None, environment=None, simulation=None):
     agent.body.bottom_right.position[0] = (nest.body.top_left.position[0] + nest.body.bottom_right.position[0]) / 2
     agent.body.bottom_right.position[1] = (nest.body.top_left.position[1] + nest.body.bottom_right.position[1]) / 2
     agent.body.top_left.position[0] = (nest.body.top_left.position[0] + nest.body.bottom_right.position[0]) / 2
-
-    if simulation.produce_output:
-
-        simulation.save_state(agent)
 
     return agent

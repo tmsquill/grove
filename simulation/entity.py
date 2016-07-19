@@ -21,7 +21,6 @@ class Entity:
         self.direction = direction
         self.behavior = None
         self.time = 0
-        self.done = False
 
     def __str__(self):
 
@@ -51,7 +50,7 @@ class SimAgent(Entity):
 
     def __str__(self):
 
-        return self.__class__.__name__ + str(self.id) + ' ' + str(self.behavior) + str(self.body)
+        return self.__class__.__name__ + str(self.id) + ' ' + str(self.behavior) + ' ' + str(self.body)
 
 
 class Food(Entity):

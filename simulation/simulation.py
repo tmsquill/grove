@@ -72,8 +72,8 @@ class Simulation:
         for rule in self.parse_tree.rules:
 
             # Gather all precondition functions contained in the current rule.
-            preconditions = [lookup.pc[precondition.id_precondition] for precondition in rule.preconditions if precondition]
-            behaviors = [lookup.b[behavior.id_behavior] for behavior in rule.behaviors if behavior]
+            preconditions = [lookup.pc[pc.id_precondition] for pc in rule.preconditions if pc]
+            behaviors = [lookup.b[b.id_behavior] for b in rule.behaviors if b]
 
             # Evaluate the current entity.
             pc_check = all([precondition(agent, self.entities, self.environment) for precondition in preconditions])
@@ -89,7 +89,6 @@ class Simulation:
 
                         agent = lookup.b[action.id_action](agent, self.entities, self.environment)
                         agent.behavior = lookup.b[action.id_action]
-                        agent.time += 1
 
                         if self.produce_output:
 

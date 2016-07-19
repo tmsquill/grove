@@ -207,8 +207,8 @@ class Rectangle:
 def generate_mongo(simulation=None, host='localhost', port=27017):
 
     """
-    Adds a simulation to a MongoDB for further data analysis.
-    :param simulation: Simulation containing a state archive.
+    Adds a simulation to a MongoDB instance for further data analysis.
+    :param simulation: The simulation containing a valid state archive.
     :param host: The host to reach the MongoDB instance.
     :param port: The port to reach the MongoDB instance.
     """
@@ -217,29 +217,31 @@ def generate_mongo(simulation=None, host='localhost', port=27017):
     simulations = connection['grove']['simulations']
 
     data = [state for state in simulation.state_archive]
-    checksum = hashlib.md5(str(data)).hexdigest()
+    hashed = hashlib.md5(str(data)).hexdigest()
 
-    _id = simulations.insert({checksum: data})
+    _id = simulations.insert({hashed: data})
     connection.close()
 
     print 'Saved simulation data to MongoDB instance at ' + host + ':' + str(port) + \
           ' -> db.grove.simulations with ObjectId ' + str(_id)
 
+    return _id
+
 
 def generate_csv(simulation=None):
 
     """
-    Generates a CSV file from a set of simulation entities for further data analysis.
-    :param simulation: Simulation containing a state archive.
+    Generates a CSV file from a simulation for further data analysis.
+    :param simulation: The simulation containing a valid state archive.
     """
 
     header = ['Type', 'Timestamp', 'ID', 'Direction', 'Behavior', 'Left', 'Top', 'Right', 'Bottom']
     data = [state for state in simulation.state_archive]
-    checksum = hashlib.md5(str(data)).hexdigest()
+    hashed = hashlib.md5(str(data)).hexdigest()
 
-    with open(checksum + ".csv", "w") as csv_file:
+    with open(hashed + ".csv", "w") as csv_file:
         writer = csv.writer(csv_file)
         writer.writerow(header)
         writer.writerows(data)
 
-    print 'Created CSV file at ' + os.getcwd() + '/' + checksum + '.csv'
+    print 'Created CSV file at ' + os.getcwd() + '/' + hashed + '.csv'
