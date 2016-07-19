@@ -1,52 +1,40 @@
-import inspect
-
-from thriftpy.protocol import TBinaryProtocol
-from thriftpy.transport import TMemoryBuffer
-
 import constraint
-import evolution.ga
-import grove.config
+import inspect
 import utils
 
-
-class TreeNode(object):
-
-    def __init__(self, parent, data):
-
-        self.parent = parent
-        self.data = data
-
-
-class ParseTreeNode(TreeNode):
-
-    def __init__(self, parent, data):
-
-        self.codon_index = None
-        self.codon_pick = None
-
-        super(self.__class__, self).__init__(parent, data)
+from ete3 import Tree, TreeNode
+from grove import config, logger
+from thriftpy.protocol import TBinaryProtocol
+from thriftpy.transport import TMemoryBuffer
 
 
 class ParseTree:
 
-    def __init__(self, grammar, genome):
+    def __init__(self, grammar=None, genotype=None, *args, **kwargs):
 
         self.grammar = grammar
-        self.genome = genome
+        self.genotype = genotype
         self.used_genes = 0
         self.wraps = 2
+        self.base = Tree()
 
         if grammar.representation == 'bnf':
 
-            self.root = ParseTreeNode(None, [])
+            self.root = self.base.add_child(child=TreeNode(name='Root'))
 
         elif grammar.representation == 'proto':
 
-            self.root = ParseTreeNode(None, grammar.rules.Root())
+            self.root = self.base.add_child(TreeNode(name=grammar.rules.Root.__name__))
+            self.root.add_features(obj=grammar.rules.Root(), codon_index=None, codon_pick=None)
 
         elif grammar.representation == 'thrift':
 
-            self.root = ParseTreeNode(None, grammar.rules.Root())
+            self.root = self.base.add_child(TreeNode(name=grammar.rules.Root.__name__))
+            self.root.add_features(obj=grammar.rules.Root(), codon_index=None, codon_pick=None)
+
+    def __str__(self):
+
+        return self.root.get_ascii(show_internal=True)
 
     def generate(self):
 
@@ -61,15 +49,15 @@ class ParseTree:
     def generate_from_bnf(self):
 
         """
-        Forms a parse tree from a Backus-Naur Form grammar and genome.
+        Forms a parse tree from a Backus-Naur Form grammar and a genotype.
         :return: An parse tree represented as a list.
         """
 
-        log = grove.config.grove_config['logging']['grammar']
+        log = config.grove_config['logging']['grammar']
 
         if log:
 
-            evolution.ga.log.debug('Input Sequence     -> ' + str(self.genome))
+            logger.log.debug('Input Sequence     -> ' + str(self.genotype))
 
         production_choices = []
         unexpanded_symbols = [self.start_rule]
@@ -77,27 +65,27 @@ class ParseTree:
         while 0 < self.wraps and len(unexpanded_symbols) > 0:
 
             # Wrap around the input.
-            if self.used_genes % len(self.genome) == 0 and self.used_genes > 0 and len(production_choices) > 1:
+            if self.used_genes % len(self.genotype) == 0 and self.used_genes > 0 and len(production_choices) > 1:
 
                 self.wraps -= 1
 
             if log:
 
-                evolution.ga.log.debug('\nUnexpanded Symbols -> ' + str(unexpanded_symbols))
+                logger.log.debug('\nUnexpanded Symbols -> ' + str(unexpanded_symbols))
 
             # Expand a production.
             current_symbol = unexpanded_symbols.pop(0)
 
             if log:
 
-                evolution.ga.log.debug('Current Symbol     -> ' + str(current_symbol))
+                logger.log.debug('Current Symbol     -> ' + str(current_symbol))
 
             # If the current symbol maps to a terminal, append the symbol.
             if current_symbol[1] != self.NT:
 
                 if log:
 
-                    evolution.ga.log.debug('<-- Terminal Symbol -->')
+                    logger.log.debug('<-- Terminal Symbol -->')
 
                 self.root.append(current_symbol[0])
 
@@ -106,20 +94,20 @@ class ParseTree:
 
                 if log:
 
-                    evolution.ga.log.debug('<-- Non-Terminal Symbol -->')
+                    logger.log.debug('<-- Non-Terminal Symbol -->')
 
                 production_choices = self.rules[current_symbol[0]]
 
                 if log:
 
-                    evolution.ga.log.debug('Production Choices -> ' + str(production_choices))
+                    logger.log.debug('Production Choices -> ' + str(production_choices))
 
                 # Select a production.
-                current_production = int(self.genome[self.used_genes % len(self.genome)] % len(production_choices))
+                current_production = int(self.genotype[self.used_genes % len(self.genotype)] % len(production_choices))
 
                 if log:
 
-                    evolution.ga.log.debug('Current Production -> ' + str(production_choices[current_production]))
+                    logger.log.debug('Current Production -> ' + str(production_choices[current_production]))
 
                 # Use an input if there was more then 1 choice.
                 if len(production_choices) > 1:
@@ -129,23 +117,23 @@ class ParseTree:
                 # Derivation order is left to right (depth-first).
                 unexpanded_symbols = production_choices[current_production] + unexpanded_symbols
 
-            evolution.ga.log.debug('Output             -> ' + str(self.root))
+            logger.log.debug('Output             -> ' + str(self.root))
 
     def generate_from_proto(self):
 
         """
-        Uses reflection to form a parse tree with a Google Protocol Buffer auto-generated class and genome.
+        Uses reflection to form a parse tree with a Google Protocol Buffer auto-generated class and genotype.
         :return: A parse tree represented as an instance of a Google Protocol Buffer class.
         """
 
         import google.protobuf.descriptor as des
         import random
 
-        log = grove.config.grove_config['logging']['grammar']
+        log = config.grove_config['logging']['grammar']
 
         if log:
 
-            evolution.ga.log.debug('Input Sequence     -> ' + str(self.genome))
+            logger.log.debug('Input Sequence     -> ' + str(self.genotype))
 
         production_choices = []
         unexpanded_symbols = [(self.root, field) for field in self.root.DESCRIPTOR.fields]
@@ -153,27 +141,27 @@ class ParseTree:
         while 0 < self.wraps and len(unexpanded_symbols) > 0:
 
             # Wrap around the input.
-            if self.used_genes % len(self.genome) == 0 and self.used_genes > 0 and len(production_choices) > 1:
+            if self.used_genes % len(self.genotype) == 0 and self.used_genes > 0 and len(production_choices) > 1:
 
                 self.wraps += 1
 
             if log:
 
-                evolution.ga.log.debug('\nUnexpanded Symbols -> ' + str(unexpanded_symbols))
+                logger.log.debug('\nUnexpanded Symbols -> ' + str(unexpanded_symbols))
 
             # Expand a production.
             current_symbol = unexpanded_symbols.pop(0)
 
             if log:
 
-                evolution.ga.log.debug('Current Symbol     -> ' + str(current_symbol))
+                logger.log.debug('Current Symbol     -> ' + str(current_symbol))
 
             # If the current symbol maps to a terminal, append the symbol.
             if current_symbol == des.FieldDescriptor.TYPE_ENUM:
 
                 if log:
 
-                    evolution.ga.log.debug('<-- Terminal Symbol -->')
+                    logger.log.debug('<-- Terminal Symbol -->')
 
                 setattr(current_symbol[0], current_symbol[1].name, random.choice(current_symbol[1].enum_type.values).number)
 
@@ -182,13 +170,13 @@ class ParseTree:
 
                 if log:
 
-                    evolution.ga.log.debug('<-- Non-Terminal Symbol (List) -->')
+                    logger.log.debug('<-- Non-Terminal Symbol (List) -->')
 
                 from google.protobuf.internal.containers import RepeatedCompositeFieldContainer
 
                 if log:
 
-                    evolution.ga.log.debug('getattr(' + str(type(current_symbol[0])) + ', ' + current_symbol[1].name + ')')
+                    logger.log.debug('getattr(' + str(type(current_symbol[0])) + ', ' + current_symbol[1].name + ')')
 
                 # Required field.
                 if current_symbol[1].label == des.FieldDescriptor.LABEL_REQUIRED:
@@ -211,7 +199,7 @@ class ParseTree:
 
                 if log:
 
-                    evolution.ga.log.debug('Production Choices -> ' + str(production_choices))
+                    logger.log.debug('Production Choices -> ' + str(production_choices))
 
                 # Gather all required productions.
                 repeated = [(getattr(current_symbol[0], current_symbol[1].name), _) for _ in production_choices if _.label == des.FieldDescriptor.LABEL_REPEATED]
@@ -219,7 +207,7 @@ class ParseTree:
 
                 if log:
 
-                    evolution.ga.log.debug('Repeated Productions -> ' + str(repeated))
+                    logger.log.debug('Repeated Productions -> ' + str(repeated))
 
                 # Gather all required productions.
                 if isinstance(current_symbol[0], RepeatedCompositeFieldContainer):
@@ -233,10 +221,10 @@ class ParseTree:
 
                 if log:
 
-                    evolution.ga.log.debug('(Required Productions) -> ' + str(required))
+                    logger.log.debug('(Required Productions) -> ' + str(required))
 
                 # Select a production.
-                current_production = int(self.genome[self.used_genes % len(self.genome)] % len(production_choices))
+                current_production = int(self.genotype[self.used_genes % len(self.genotype)] % len(production_choices))
                 print 'Current Production -> ' + str(production_choices[current_production])
 
                 # Use an input if there was more then 1 choice.
@@ -258,75 +246,73 @@ class ParseTree:
     def generate_from_thrift(self):
 
         """
-        Uses reflection to form a parse tree with an Apache Thrift auto-generated class and genome.
+        Uses reflection to form a parse tree with an Apache Thrift auto-generated class and genotype.
         :return: A parse tree represented as an instance of a Apache Thrift class.
         """
 
-        log = grove.config.grove_config['logging']['grammar']
+        log = config.grove_config['logging']['grammar']
 
         if log:
 
-            evolution.ga.log.debug('Input Sequence     -> ' + str(self.genome))
+            logger.log.debug('Input Sequence     -> ' + str(self.genotype))
 
         production_choices = []
-        unexpanded_symbols = utils.wrap_thrift_spec(self.root.data).values()
+        unexpanded_symbols = utils.discover_children(self.root)
 
         # Find the blacklists and whitelists for terminal symbols.
         blacklists = constraint.find_blacklists(self.grammar.rules)
         whitelists = constraint.find_whitelists(self.grammar.rules)
 
-        while 0 < self.wraps and len(unexpanded_symbols) > 0:
+        while self.wraps > 0 and len(unexpanded_symbols) > 0:
 
             # Wrap around the input.
-            if self.used_genes % len(self.genome) == 0 and self.used_genes > 0 and len(production_choices) > 1:
+            if self.used_genes % len(self.genotype) == 0 and self.used_genes > 0 and len(production_choices) > 1:
 
                 self.wraps -= 1
 
             if log:
 
-                evolution.ga.log.debug('\nUnexpanded Symbols -> ' + str(unexpanded_symbols))
+                logger.log.debug('\nUnexpanded Symbols -> ' + str(unexpanded_symbols))
 
             # Expand a production.
             current_symbol = unexpanded_symbols.pop(0)
 
             # Instantiate current symbol, if able.
-            if inspect.isclass(current_symbol[2]):
+            if inspect.isclass(current_symbol.t_type):
 
-                instance = current_symbol[2]()
+                current_symbol.add_features(obj=current_symbol.t_type())
 
-                if getattr(current_symbol[4], current_symbol[1]) is None:
+                if getattr(current_symbol.t_parent, current_symbol.t_name) is None:
 
-                    setattr(current_symbol[4], current_symbol[1], instance)
-
-                current_symbol = (current_symbol[0], current_symbol[1], instance, current_symbol[3], current_symbol[4])
+                    setattr(current_symbol.t_parent, current_symbol.t_name, current_symbol.obj)
 
             if log:
 
-                evolution.ga.log.debug('Current Symbol     -> ' + str(current_symbol))
-                evolution.ga.log.debug(type(getattr(current_symbol[4], current_symbol[1])))
+                logger.log.debug('Current Symbol     -> ' + str(current_symbol))
+                logger.log.debug(type(getattr(current_symbol.t_parent, current_symbol.t_name)))
 
             # Non-terminal symbol (List).
-            if isinstance(current_symbol[2], tuple):
+            if isinstance(current_symbol.t_type, tuple):
 
                 if log:
 
-                    evolution.ga.log.debug('<-- Non-Terminal Symbol (List) -->')
+                    logger.log.debug('<-- Non-Terminal Symbol (List) -->')
 
-                if getattr(current_symbol[4], current_symbol[1]) is None:
+                if getattr(current_symbol.t_parent, current_symbol.t_name) is None:
 
-                    setattr(current_symbol[4], current_symbol[1], list())
+                    setattr(current_symbol.t_parent, current_symbol.t_name, list())
 
                 production_choices = utils.extract_list_productions(current_symbol)
 
                 if log:
 
-                    evolution.ga.log.debug('Production Choices -> ' + str(production_choices))
+                    logger.log.debug('Production Choices -> ' + str(production_choices))
 
-                amount = int(self.genome[self.used_genes % len(self.genome)] % 10)
+                amount = int(self.genotype[self.used_genes % len(self.genotype)] % 10)
 
                 if log:
 
-                    evolution.ga.log.debug('Amount             -> ' + str(amount))
+                    logger.log.debug('Amount             -> ' + str(amount))
 
                 self.used_genes += 1
 
@@ -335,40 +321,40 @@ class ParseTree:
                     unexpanded_symbols.insert(0, production_choices)
 
             # Non-terminal symbol (List Element)
-            elif isinstance(getattr(current_symbol[4], current_symbol[1]), list):
+            elif isinstance(getattr(current_symbol.t_parent, current_symbol.t_name), list):
 
                 if log:
 
-                    evolution.ga.log.debug('<-- Non-Terminal Symbol (List Element) -->')
-                    evolution.ga.log.debug(getattr(current_symbol[4], current_symbol[1]))
+                    logger.log.debug('<-- Non-Terminal Symbol (List Element) -->')
+                    logger.log.debug(getattr(current_symbol.t_parent, current_symbol.t_name))
 
-                setattr(current_symbol[4], current_symbol[1], getattr(current_symbol[4], current_symbol[1]) + [current_symbol[2]])
-
-                if log:
-
-                    evolution.ga.log.debug(getattr(current_symbol[4], current_symbol[1]))
-
-                production_choices = utils.wrap_thrift_spec(current_symbol[2]).values()
+                setattr(current_symbol.t_parent, current_symbol.t_name, getattr(current_symbol.t_parent, current_symbol.t_name) + [current_symbol.obj])
 
                 if log:
 
-                    evolution.ga.log.debug('Production Choices -> ' + str(production_choices))
+                    logger.log.debug(getattr(current_symbol.t_parent, current_symbol.t_name))
+
+                production_choices = utils.discover_children(current_symbol)
+
+                if log:
+
+                    logger.log.debug('Production Choices -> ' + str(production_choices))
 
                 # Required fields.
                 unexpanded_symbols = production_choices + unexpanded_symbols
 
             # Non-terminal symbol.
-            elif hasattr(current_symbol[2], 'thrift_spec') and not isinstance(getattr(current_symbol[4], current_symbol[1]), list):
+            elif hasattr(current_symbol.obj, 'thrift_spec') and not isinstance(getattr(current_symbol.t_parent, current_symbol.t_name), list):
 
                 if log:
 
-                    evolution.ga.log.debug('<-- Non-Terminal Symbol -->')
+                    logger.log.debug('<-- Non-Terminal Symbol -->')
 
-                production_choices = utils.wrap_thrift_spec(current_symbol[2]).values()
+                production_choices = utils.discover_children(current_symbol)
 
                 if log:
 
-                    evolution.ga.log.debug('Production Choices -> ' + str(production_choices))
+                    logger.log.debug('Production Choices -> ' + str(production_choices))
 
                 # Required fields.
                 unexpanded_symbols = production_choices + unexpanded_symbols
@@ -376,7 +362,7 @@ class ParseTree:
             # Terminal symbol.
             else:
 
-                name = current_symbol[2].__class__.__name__.lower()
+                name = current_symbol.obj.__class__.__name__.lower()
 
                 blacklist_name = name + '_blacklist'
                 blacklist = None
@@ -393,24 +379,24 @@ class ParseTree:
                 # Verify the blacklist and whitelist.
                 constraint.verify_lists(blacklist, whitelist)
 
-                #print current_symbol[2], blacklist, whitelist
+                if log:
+
+                    logger.log.debug('<-- Terminal Symbol -->')
+
+                attrs = [attr for attr in dir(current_symbol.obj) if not callable(attr) and not attr.startswith('_')]
 
                 if log:
 
-                    evolution.ga.log.debug('<-- Terminal Symbol -->')
+                    logger.log.debug('Choices            -> ' + str(attrs))
 
-                attrs = [attr for attr in dir(current_symbol[2]) if not callable(attr) and not attr.startswith('_')]
-
-                if log:
-
-                    evolution.ga.log.debug('Choices            -> ' + str(attrs))
-
-                setattr(current_symbol[4], current_symbol[1], getattr(current_symbol[2], attrs[int(self.genome[self.used_genes % len(self.genome)] % len(attrs))]))
+                chosen = getattr(current_symbol.obj, attrs[int(self.genotype[self.used_genes % len(self.genotype)] % len(attrs))])
+                current_symbol.add_child(TreeNode(name=chosen))
+                setattr(current_symbol.t_parent, current_symbol.t_name, chosen)
                 self.used_genes += 1
 
             if log:
 
-                evolution.ga.log.debug('Output             -> ' + str(self.root))
+                logger.log.debug('Output             -> ' + str(self.root.get_ascii(show_internal=True)))
 
     def serialize(self):
 
@@ -422,5 +408,5 @@ class ParseTree:
 
         transport = TMemoryBuffer()
         protocol = TBinaryProtocol(transport)
-        self.root.data.write(protocol)
+        self.root.obj.write(protocol)
         return transport.getvalue()
