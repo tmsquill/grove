@@ -1,13 +1,12 @@
 import os
 import random
 
-from evolution.agent import Agent
-from evolution import ga, selection, crossover, mutation
+from evolution import agent, ga, selection, crossover, mutation
 from grammar.parse_tree import ParseTree
-from grove import config
+from grove import config, logger
 
 
-class GESAgent(Agent):
+class GESAgent(agent.Agent):
 
     """
     An agent targeted for GES.
@@ -46,6 +45,20 @@ def pre_evaluation(agents=None):
     for agent in agents:
 
         agent.parse_tree.generate()
+
+        # print agent.parse_tree
+        # print agent.parse_tree.root.obj
+        #
+        # from ete3 import TreeStyle
+        #
+        # ts = TreeStyle()
+        # ts.show_leaf_name = True
+        # ts.mode = "c"
+        # ts.arc_start = -180 # 0 degrees = 3 o'clock
+        # ts.arc_span = 180
+        # # agent.parse_tree.root.show(tree_style=ts)
+        # exit()
+
         agent.payload = agent.parse_tree.serialize()
 
     return agents
@@ -73,7 +86,7 @@ def evaluation(payload=None):
         from simulation.entity import SimAgent, Food, Nest
         from simulation.environment import Environment
         from simulation.simulation import Simulation
-        from simulation.utils import generate_csv
+        from simulation.utils import generate_mongo
 
         import thriftpy.transport as tp
         import thriftpy.protocol as pc
@@ -94,7 +107,7 @@ def evaluation(payload=None):
         # Create the entities for the simulation.
         agents = [SimAgent(position=(random.randint(0, 20), random.randint(0, 20))) for _ in xrange(5)]
         nest = Nest(position=(8, 8), size=(4, 4))
-        food = [Food(position=(random.randint(0, 20), random.randint(0, 20))) for _ in xrange(10)]
+        food = [Food(position=(random.randint(0, 20), random.randint(0, 20))) for _ in xrange(80)]
 
         entities = agents + [nest] + food
 
@@ -105,12 +118,12 @@ def evaluation(payload=None):
         sim = Simulation(environment=env, entities=entities, parse_tree=root)
         sim.execute()
 
-        generate_csv(sim)
+        _id = generate_mongo(sim)
 
         # Get the food tags collected, and return as the evaluation score.
         nest = filter(lambda x: isinstance(x, Nest), sim.entities)
 
-        return nest[0].food_count
+        return (nest[0].food_count, _id)
 
     except Exception:
 
@@ -143,6 +156,7 @@ if __name__ == "__main__":
     parser.add_argument('-m', '--mutation_function', action='store', type=str, default='one_point')
     parser.add_argument('-s', '--selection_function', action='store', type=str, default='gaussian')
     parser.add_argument('-b', '--grammar', action='store', type=str)
+    parser.add_argument('-l', '--log_path', action='store', type=str)
     args = parser.parse_args()
 
     # Load the grammar file.
@@ -153,6 +167,9 @@ if __name__ == "__main__":
     # Load the grove configuration.
     config.load_config(args.config)
 
+    # Initialize the grove logger.
+    logger.init_logger(args.log_path)
+
     # Change the current directory, for logging purposes.
     os.chdir(os.path.expanduser('~') + '/lyssa')
 
@@ -160,6 +177,7 @@ if __name__ == "__main__":
     ga.evolve(
         population=args.population or config.grove_config['ga']['parameters']['population'],
         generations=args.generations or config.grove_config['ga']['parameters']['generations'],
+        repeats=config.grove_config['ga']['parameters']['repeats'],
         agent_type=GESAgent,
         pre_evaluation=pre_evaluation,
         evaluation=evaluation,
@@ -170,5 +188,5 @@ if __name__ == "__main__":
         evaluation_type='distributed',
         nodes=[],
         depends=[],
-        log_path=None
+        debug=config.grove_config['debug']
     )

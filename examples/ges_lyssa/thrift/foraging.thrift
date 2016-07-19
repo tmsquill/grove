@@ -20,10 +20,10 @@ enum IdPrecondition {
 }
 
 enum IdBehavior {
-  BEHAVIOR_0 = 0,
-  BEHAVIOR_1 = 1,
-  BEHAVIOR_2 = 2,
-  BEHAVIOR_3 = 3,
+  // BEHAVIOR_0 = 0,
+  // BEHAVIOR_1 = 1,
+  // BEHAVIOR_2 = 2,
+  // BEHAVIOR_3 = 3,
   BEHAVIOR_4 = 4,
   BEHAVIOR_5 = 5,
   BEHAVIOR_6 = 6,
@@ -31,10 +31,10 @@ enum IdBehavior {
 }
 
 enum IdAction {
-  ACTION_0 = 0,
-  ACTION_1 = 1,
-  ACTION_2 = 2,
-  ACTION_3 = 3,
+  // ACTION_0 = 0,
+  // ACTION_1 = 1,
+  // ACTION_2 = 2,
+  // ACTION_3 = 3,
   ACTION_4 = 4,
   ACTION_5 = 5,
   ACTION_6 = 6,
