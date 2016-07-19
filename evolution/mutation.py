@@ -71,6 +71,10 @@ def uniform():
 
                     agent.genotype[idx] = random.uniform(agent.genotype_lb[idx], agent.genotype_ub[idx])
 
+                    if isinstance(param, int):
+
+                        agent.genotype[idx] = int(round(agent.genotype[idx]))
+
             if log:
 
                 logger.log.info('(After) ' + str(agent) + '\n')
@@ -107,17 +111,19 @@ def gaussian():
 
                 if random.uniform(0.0, 1.0) <= agent.genotype_mp[idx]:
 
-                    val = np.random.normal(
-                        loc=param,
-                        scale=(0.05 * agent.genotype_ub[idx])
-                    )
+                    val = np.random.normal(loc=param, scale=(0.05 * agent.genotype_ub[idx]))
+
+                    if isinstance(param, int):
+
+                        val = int(round(val))
 
                     while val < agent.genotype_lb[idx] or val > agent.genotype_ub[idx]:
 
-                        val = np.random.normal(
-                            loc=param,
-                            scale=(0.05 * agent.genotype_ub[idx])
-                        )
+                        val = np.random.normal(loc=param, scale=(0.05 * agent.genotype_ub[idx]))
+
+                        if isinstance(param, int):
+
+                            val = int(round(val))
 
                     if log:
 

@@ -1,4 +1,5 @@
 import dispy
+import numpy
 import time
 import utils
 
@@ -6,13 +7,14 @@ from generation import Generation
 from grove import config, logger
 
 
-def evolve(population, generations, agent_type, pre_evaluation, evaluation, post_evaluation, selection, crossover, mutation, evaluation_type, nodes, depends):
+def evolve(population, generations, repeats, agent_type, pre_evaluation, evaluation, post_evaluation, selection, crossover, mutation, evaluation_type, nodes, depends, debug):
 
     """
     Performs evolution on a set of agents over a number of generations. The desired evolutionary functions must be
     specified by the caller. Logging is optional.
     :param population: The desired population size.
     :param generations: The number of generation to evolve.
+    :param repeats: The number of evaluations to perform on an individual agent.
     :param agent_type: The type of agent used to initialize the population.
     :param pre_evaluation: The pre-evaluation function. Intended to prepare agents for evaluation.
     :param evaluation: The evaluation function.
@@ -23,6 +25,7 @@ def evolve(population, generations, agent_type, pre_evaluation, evaluation, post
     :param evaluation_type: The type of execution for evaluation. Either serial or distributed.
     :param nodes: The nodes in the cluster used for computing the evaluation function.
     :param depends: The list of dependencies needed by dispynodes to perform computation of the evaluation function.
+    :param debug: Boolean for toggling debugging for distributed computation.
     """
 
     with logger.log_handler.applicationbound():
@@ -50,20 +53,20 @@ def evolve(population, generations, agent_type, pre_evaluation, evaluation, post
 
         if evaluation_type == 'serial':
 
-            serial(population, ga_generations, ga_agents, pre_evaluation, evaluation, post_evaluation, selection,
-                   crossover, mutation)
+            serial(population, ga_generations, ga_agents, repeats, pre_evaluation, evaluation, post_evaluation,
+                   selection, crossover, mutation)
 
         elif evaluation_type == 'distributed':
 
-            distributed(population, ga_generations, ga_agents, pre_evaluation, evaluation, post_evaluation, selection,
-                        crossover, mutation, nodes, depends)
+            distributed(population, ga_generations, repeats, ga_agents, pre_evaluation, evaluation, post_evaluation,
+                        selection, crossover, mutation, nodes, depends, debug)
 
         else:
 
             raise ValueError('evaluation_type is invalid', evaluation_type)
 
 
-def serial(population, generations, agents, pre_evaluation, evaluation, post_evaluation, selection, crossover, mutation):
+def serial(population, generations, repeats, agents, pre_evaluation, evaluation, post_evaluation, selection, crossover, mutation):
 
     logger.log.info('\n' + ' Evolution (Serial) '.center(180, '=') + '\n')
     print ' Evolution (Serial) '.center(180, '=') + '\n'
@@ -99,7 +102,7 @@ def serial(population, generations, agents, pre_evaluation, evaluation, post_eva
         getattr(utils, 'generate_' + config.grove_config['data']['collection_type'])(generations)
 
 
-def distributed(population, generations, agents, pre_evaluation, evaluation, post_evaluation, selection, crossover, mutation, nodes, depends):
+def distributed(population, generations, repeats, agents, pre_evaluation, evaluation, post_evaluation, selection, crossover, mutation, nodes, depends, debug):
 
     logger.log.info('\n' + ' Evolution (Distributed) '.center(180, '=') + '\n')
     print ' Evolution (Distributed) '.center(180, '=') + '\n'
@@ -110,7 +113,13 @@ def distributed(population, generations, agents, pre_evaluation, evaluation, pos
     # Configure the cluster.
     if isinstance(evaluation, basestring) or hasattr(evaluation, '__call__'):
 
-        cluster = dispy.JobCluster(evaluation, nodes=nodes, depends=depends, loglevel=logging.DEBUG)
+        if debug:
+
+            cluster = dispy.JobCluster(evaluation, nodes=nodes, depends=depends, loglevel=logging.DEBUG)
+
+        else:
+
+            cluster = dispy.JobCluster(evaluation, nodes=nodes, depends=depends)
 
     else:
 
@@ -129,19 +138,35 @@ def distributed(population, generations, agents, pre_evaluation, evaluation, pos
 
         for agent in agents:
 
-            job = cluster.submit(agent.payload)
-            job.id = agent.id
-            jobs.append(job)
+            for repeat in xrange(repeats):
+
+                job = cluster.submit(agent.payload)
+                job.id = (agent.id, repeat)
+                jobs.append(job)
 
         cluster.wait()
+
+        for agent in agents:
+
+            agent.value = []
 
         for job in jobs:
 
             job()
-            print("Result of program %s with job ID %s starting at %s is %s with stdout %s" % (
-                evaluation, job.id, job.start_time, job.result, job.stdout))
-            agent = filter(lambda x: x.id == job.id, agents)[0]
-            agent.value = job.result
+
+            if debug:
+
+                print("Result of program %s with job ID %s starting at %s is %s with stdout %s" % (
+                    evaluation, job.id, job.start_time, job.result, job.stdout))
+
+            agent = filter(lambda x: x.id == job.id[0], agents)[0]
+            agent.value.append(job.result[0])
+
+            print job.result
+
+        for agent in agents:
+
+            agent.value = numpy.mean(agent.value)
 
         agents = post_evaluation(agents)
 
@@ -149,6 +174,9 @@ def distributed(population, generations, agents, pre_evaluation, evaluation, pos
         logger.log.info('\n' + str(generation))
 
         agents = selection(agents)
+
+        print [agent.value for agent in agents]
+
         agents = crossover(agents, population)
         agents = mutation(agents)
 
