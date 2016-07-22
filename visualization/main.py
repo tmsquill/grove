@@ -129,17 +129,14 @@ class LyssaApp(App):
 
                 if entity[0] == u'SimAgent':
 
-                    print 'SimAgent'
                     Color(float(209) / 256, float(73) / 256, float(5) / 256)
 
                 elif entity[0] == u'Food':
 
-                    print 'Food'
                     Color(float(125) / 256, float(140) / 256, float(31) / 256)
 
                 elif entity[0] == u'Nest':
 
-                    print 'Nest'
                     Color(float(66) / 256, float(126) / 256, float(147) / 256)
 
                 else:
@@ -191,8 +188,6 @@ class LyssaApp(App):
 if __name__ == '__main__':
 
     objectid = raw_input('Enter the ObjectId of the simulation: ')
-
-    # 5787fee8816b6b3e1920e1b2
 
     global simulation
     simulation = simulations.find_one({"_id": ObjectId(objectid)})
