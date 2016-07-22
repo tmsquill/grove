@@ -56,7 +56,7 @@ def pre_evaluation(agents=None):
         # ts.mode = "c"
         # ts.arc_start = -180 # 0 degrees = 3 o'clock
         # ts.arc_span = 180
-        # # agent.parse_tree.root.show(tree_style=ts)
+        # agent.parse_tree.root.show(tree_style=ts)
         # exit()
 
         agent.payload = agent.parse_tree.serialize()
@@ -105,9 +105,9 @@ def evaluation(payload=None):
         root.read(protocolIn)
 
         # Create the entities for the simulation.
-        agents = [SimAgent(position=(random.randint(0, 20), random.randint(0, 20))) for _ in xrange(5)]
+        agents = [SimAgent(position=(random.randint(8, 11), random.randint(8, 11))) for _ in xrange(5)]
         nest = Nest(position=(8, 8), size=(4, 4))
-        food = [Food(position=(random.randint(0, 20), random.randint(0, 20))) for _ in xrange(80)]
+        food = [Food(position=(random.choice([random.randint(0, 7), random.randint(12, 20)]), random.choice([random.randint(0, 7), random.randint(12, 20)]))) for _ in xrange(80)]
 
         entities = agents + [nest] + food
 
@@ -183,6 +183,7 @@ if __name__ == "__main__":
         evaluation=evaluation,
         post_evaluation=post_evaluation,
         selection=selection.tournament(4, 5),
+        # selection=selection.truncation(0.2),
         crossover=crossover.one_point(),
         mutation=mutation.gaussian(),
         evaluation_type='distributed',
