@@ -2,11 +2,13 @@ import random
 
 from grammar.grammar import Grammar
 from grammar.parse_tree import ParseTree
+# TODO - Determine proper import for ObjectId
+from pymongo import MongoClient
 
 
 def inspect_parse_tree(genotype=None, grammar_file=None):
 
-    if genotype is None:
+    if not isinstance(genotype, list):
 
         genotype = [raw_input('Enter a genotype (i.e. 34, 1, 93, ...): ').replace(",", "").split()]
 
@@ -16,14 +18,22 @@ def inspect_parse_tree(genotype=None, grammar_file=None):
     print parse_tree
 
 
-def inspect_simulation(genotype=None, grammar_file=None):
+def inspect_simulation(genotype=None, grammar_file=None, host='localhost', port=27017):
 
     from simulation.entity import SimAgent, Food, Nest
     from simulation.environment import Environment
     from simulation.simulation import Simulation
     from simulation.utils import generate_mongo
 
-    if genotype is None:
+    if isinstance(genotype, ObjectId)
+
+        connection = MongoClient(host, port)
+        simulations = connection['grove']['simulations']
+
+        # TODO - Determine how to access record. Its probably...
+        simulation = simulations[genotype]
+
+    elif not isinstance(genotype, list):
 
         genotype = [raw_input('Enter a genotype (i.e. 34, 1, 93, ...): ').replace(",", "").split()]
 
