@@ -8,7 +8,7 @@ from grove import config, logger
 from tabulate import tabulate
 
 
-def evolve(population, generations, repeats, agent_type, pre_evaluation, evaluation, post_evaluation, selection, crossover, mutation, evaluation_type, nodes, depends, debug):
+def evolve(population, generations, repeats, agent_type, pre_evaluation, evaluation, post_evaluation, selection, crossover, mutation, nodes, depends, debug):
 
     """
     Performs evolution on a set of agents over a number of generations. The desired evolutionary functions must be
@@ -23,7 +23,6 @@ def evolve(population, generations, repeats, agent_type, pre_evaluation, evaluat
     :param selection: The selection function.
     :param crossover: The crossover function.
     :param mutation: The mutation function.
-    :param evaluation_type: The type of execution for evaluation. Either serial or distributed.
     :param nodes: The nodes in the cluster used for computing the evaluation function.
     :param depends: The list of dependencies needed by dispynodes to perform computation of the evaluation function.
     :param debug: Boolean for toggling debugging for distributed computation.
@@ -44,136 +43,81 @@ def evolve(population, generations, repeats, agent_type, pre_evaluation, evaluat
             raise ValueError('post_evaluation_func is not callable', post_evaluation)
 
         # Initialize generations.
-        ga_generations = [Generation() for _ in xrange(generations)]
+        generations = [Generation() for _ in xrange(generations)]
 
         # Initialize agents.
-        ga_agents = agent_type.init_agents(population)
+        agents = agent_type.init_agents(population)
 
         logger.log.info('\n' + ' Agent Initialization '.center(180, '=') + '\n')
-        logger.log.info('\n'.join(map(str, ga_agents)))
+        logger.log.info('\n'.join(map(str, agents)))
 
-        if evaluation_type == 'serial':
+        # Start Distributed Evolution
+        logger.log.info('\n' + ' Evolution '.center(180, '=') + '\n')
+        print ' Evolution '.center(180, '=') + '\n'
 
-            serial(population, ga_generations, ga_agents, repeats, pre_evaluation, evaluation, post_evaluation,
-                   selection, crossover, mutation)
+        # Configure the cluster.
+        if isinstance(evaluation, basestring) or hasattr(evaluation, '__call__'):
 
-        elif evaluation_type == 'distributed':
+            if debug:
 
-            distributed(population, ga_generations, repeats, ga_agents, pre_evaluation, evaluation, post_evaluation,
-                        selection, crossover, mutation, nodes, depends, debug)
+                cluster = dispy.JobCluster(evaluation, nodes=nodes, depends=depends, loglevel=10)
 
-        else:
+            else:
 
-            raise ValueError('evaluation_type is invalid', evaluation_type)
-
-
-def serial(population, generations, repeats, agents, pre_evaluation, evaluation, post_evaluation, selection, crossover, mutation):
-
-    logger.log.info('\n' + ' Evolution (Serial) '.center(180, '=') + '\n')
-    print ' Evolution (Serial) '.center(180, '=') + '\n'
-
-    start_time = time.time()
-
-    for generation in generations:
-
-        logger.log.info(" Generation %s ".center(180, '*') % str(generation.id))
-        print 'Generation ' + str(generation.id)
-
-        agents = pre_evaluation(agents)
-
-        for agent in agents:
-
-            agent = evaluation(agent.payload)
-
-        agents = post_evaluation(agents)
-
-        generation.bind_agents(agents)
-        logger.log.info('\n' + str(generation))
-
-        agents = selection(agents)
-        agents = crossover(agents, population)
-        agents = mutation(agents)
-
-    total_time = time.time() - start_time
-    logger.log.info("Evolution finished in %s seconds " % total_time)
-    print "Evolution finished in %s seconds " % total_time
-
-    if config.grove_config['data']['collection_type']:
-
-        getattr(utils, 'generate_' + config.grove_config['data']['collection_type'])(generations)
-
-
-def distributed(population, generations, repeats, agents, pre_evaluation, evaluation, post_evaluation, selection, crossover, mutation, nodes, depends, debug):
-
-    logger.log.info('\n' + ' Evolution (Distributed) '.center(180, '=') + '\n')
-    print ' Evolution (Distributed) '.center(180, '=') + '\n'
-
-    # Configure the cluster.
-    if isinstance(evaluation, basestring) or hasattr(evaluation, '__call__'):
-
-        if debug:
-
-            cluster = dispy.JobCluster(evaluation, nodes=nodes, depends=depends, loglevel=10)
+                cluster = dispy.JobCluster(evaluation, nodes=nodes, depends=depends)
 
         else:
 
-            cluster = dispy.JobCluster(evaluation, nodes=nodes, depends=depends)
+            raise TypeError('evaluation is not a callable or a string to an executable', evaluation)
 
-    else:
+        start_time = time.time()
 
-        raise TypeError('evaluation is not a callable or a string to an executable', evaluation)
+        for generation in generations:
 
-    start_time = time.time()
+            logger.log.info(" Generation %s ".center(180, '*') % str(generation.id))
+            print 'Generation ' + str(generation.id)
 
-    for generation in generations:
+            agents = pre_evaluation(agents)
 
-        logger.log.info(" Generation %s ".center(180, '*') % str(generation.id))
-        print 'Generation ' + str(generation.id)
+            for agent in agents:
 
-        agents = pre_evaluation(agents)
+                agent.jobs = []
 
-        for agent in agents:
+                for repeat in xrange(repeats):
 
-            agent.jobs = []
+                    job = cluster.submit(agent.payload)
+                    job.id = str(agent.id) + '-' + str(repeat)
+                    agent.jobs.append(job)
 
-            for repeat in xrange(repeats):
+            cluster.wait()
 
-                job = cluster.submit(agent.payload)
-                job.id = str(agent.id) + '-' + str(repeat)
-                agent.jobs.append(job)
+            for agent in agents:
 
-        cluster.wait()
+                for job in agent.jobs:
 
-        for agent in agents:
+                    job()
+                    agent.value = numpy.mean([job.result['value'] for job in agent.jobs])
 
-            for job in agent.jobs:
+            headers = ['Job ID', 'Job Time', 'IP Address', 'Job Result', 'Job Exception', 'Job Stderr', 'Job Stdout']
+            table = [[job.id, job.end_time - job.start_time, job.ip_addr, job.result, job.exception, job.stderr, job.stdout] for agent in agents for job in agent.jobs]
 
-                job()
-                agent.value = numpy.mean([job.result['value'] for job in agent.jobs])
+            print tabulate(table, headers, tablefmt="orgtbl")
 
-        headers = ['Job ID', 'Job Time', 'IP Address', 'Job Result', 'Job Exception', 'Job Stderr', 'Job Stdout']
-        table = [[job.id, job.end_time - job.start_time, job.ip_addr, job.result, job.exception, job.stderr, job.stdout] for agent in agents for job in agent.jobs]
+            agents = post_evaluation(agents)
 
-        print tabulate(table, headers, tablefmt="orgtbl")
+            generation.bind_agents(agents)
+            logger.log.info('\n' + str(generation))
 
-        agents = post_evaluation(agents)
+            agents = selection(agents)
+            agents = crossover(agents, population)
+            agents = mutation(agents)
 
-        generation.bind_agents(agents)
-        logger.log.info('\n' + str(generation))
+        cluster.stats()
 
-        agents = selection(agents)
+        total_time = time.time() - start_time
+        logger.log.info("Evolution finished in %s seconds " % total_time)
+        print "Evolution finished in %s seconds " % total_time
 
-        print [agent.value for agent in agents]
+        if config.grove_config['data']['collection_type']:
 
-        agents = crossover(agents, population)
-        agents = mutation(agents)
-
-    cluster.stats()
-
-    total_time = time.time() - start_time
-    logger.log.info("Evolution finished in %s seconds " % total_time)
-    print "Evolution finished in %s seconds " % total_time
-
-    if config.grove_config['data']['collection_type']:
-
-        getattr(utils, 'generate_' + config.grove_config['data']['collection_type'])(generations)
+            getattr(utils, 'generate_' + config.grove_config['data']['collection_type'])(generations)
