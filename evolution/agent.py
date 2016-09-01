@@ -19,6 +19,7 @@ class Agent(object):
     def __init__(self):
 
         self.id = Agent.aid()
+        self.jobs = None
         self.value = -1
 
         self.genotype_len = config.grove_config['agent'][self.__class__.__name__]['genotype_len']

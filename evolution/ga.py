@@ -5,6 +5,7 @@ import utils
 
 from generation import Generation
 from grove import config, logger
+from tabulate import tabulate
 
 
 def evolve(population, generations, repeats, agent_type, pre_evaluation, evaluation, post_evaluation, selection, crossover, mutation, evaluation_type, nodes, depends, debug):
@@ -107,15 +108,12 @@ def distributed(population, generations, repeats, agents, pre_evaluation, evalua
     logger.log.info('\n' + ' Evolution (Distributed) '.center(180, '=') + '\n')
     print ' Evolution (Distributed) '.center(180, '=') + '\n'
 
-    # TODO - Remove logging when able.
-    import logging
-
     # Configure the cluster.
     if isinstance(evaluation, basestring) or hasattr(evaluation, '__call__'):
 
         if debug:
 
-            cluster = dispy.JobCluster(evaluation, nodes=nodes, depends=depends, loglevel=logging.DEBUG)
+            cluster = dispy.JobCluster(evaluation, nodes=nodes, depends=depends, loglevel=10)
 
         else:
 
@@ -123,7 +121,7 @@ def distributed(population, generations, repeats, agents, pre_evaluation, evalua
 
     else:
 
-        raise TypeError('evaluation is not a string or callable', evaluation)
+        raise TypeError('evaluation is not a callable or a string to an executable', evaluation)
 
     start_time = time.time()
 
@@ -134,39 +132,29 @@ def distributed(population, generations, repeats, agents, pre_evaluation, evalua
 
         agents = pre_evaluation(agents)
 
-        jobs = []
-
         for agent in agents:
+
+            agent.jobs = []
 
             for repeat in xrange(repeats):
 
                 job = cluster.submit(agent.payload)
-                job.id = (agent.id, repeat)
-                jobs.append(job)
+                job.id = str(agent.id) + '-' + str(repeat)
+                agent.jobs.append(job)
 
         cluster.wait()
 
         for agent in agents:
 
-            agent.value = []
+            for job in agent.jobs:
 
-        for job in jobs:
+                job()
+                agent.value = numpy.mean([job.result['value'] for job in agent.jobs])
 
-            job()
+        headers = ['Job ID', 'Job Time', 'IP Address', 'Job Result', 'Job Exception', 'Job Stderr', 'Job Stdout']
+        table = [[job.id, job.end_time - job.start_time, job.ip_addr, job.result, job.exception, job.stderr, job.stdout] for agent in agents for job in agent.jobs]
 
-            if debug:
-
-                print("Result of program %s with job ID %s starting at %s is %s with stdout %s" % (
-                    evaluation, job.id, job.start_time, job.result, job.stdout))
-
-            agent = filter(lambda x: x.id == job.id[0], agents)[0]
-            agent.value.append(job.result[0])
-
-            print job.result
-
-        for agent in agents:
-
-            agent.value = numpy.mean(agent.value)
+        print tabulate(table, headers, tablefmt="orgtbl")
 
         agents = post_evaluation(agents)
 
