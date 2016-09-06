@@ -96,6 +96,7 @@ def evolve(population, generations, repeats, agent_type, pre_evaluation, evaluat
                 for job in agent.jobs:
 
                     job()
+                    agent.random_seed = job.result['random_seed']
                     agent.value = numpy.mean([job.result['value'] for job in agent.jobs])
 
             headers = ['Job ID', 'Job Time', 'IP Address', 'Job Result', 'Job Exception', 'Job Stderr', 'Job Stdout']

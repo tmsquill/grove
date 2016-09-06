@@ -18,7 +18,7 @@ def generate_mongo(generations=None, host='localhost', port=27017):
     connection = MongoClient(host, port)
     evolutions = connection['grove']['evolutions']
 
-    data = [[(generation.id, agent.genotype, agent.value) for agent in generation.agents] for generation in generations]
+    data = [[(generation.id, agent.genotype, agent.value, agent.random_seed) for agent in generation.agents] for generation in generations]
     checksum = hashlib.md5(str(data)).hexdigest()
 
     _id = evolutions.insert({checksum: data})
