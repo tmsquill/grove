@@ -6,10 +6,6 @@ from utils import Direction, Point, Rectangle
 
 class Entity:
 
-    """
-    Abstract representation of an entity.
-    """
-
     __metaclass__ = abc.ABCMeta
 
     eid = itertools.count().next
@@ -21,6 +17,8 @@ class Entity:
         self.direction = direction
         self.behavior = None
         self.time = 0
+        self.inventory = []
+        self.interactable = True
 
     def __str__(self):
 
@@ -41,12 +39,12 @@ class Entity:
 
 class SimAgent(Entity):
 
-    def __init__(self, holding_food=False, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
 
         super(SimAgent, self).__init__(*args, **kwargs)
 
         # State machine variables.
-        self.holding_food = holding_food
+        self.holding_food = False
 
     def __str__(self):
 

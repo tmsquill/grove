@@ -31,8 +31,6 @@ class Simulation:
         time step.
         """
 
-        print self.parse_tree
-
         agents = filter(lambda x: isinstance(x, e.SimAgent), self.entities)
         other = filter(lambda x: not isinstance(x, e.SimAgent), self.entities)
 

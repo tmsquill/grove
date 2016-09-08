@@ -16,6 +16,11 @@ def move_north(agent=None, entities=None, environment=None):
 
     if environment.body.contains_point(Point(agent.body.top_left.position[0], agent.body.top_left.position[1] + 1)):
 
+        for item in agent.inventory:
+
+            item.body.top_left.position[1] += 1
+            item.body.bottom_right.position[1] += 1
+
         agent.body.top_left.position[1] += 1
         agent.body.bottom_right.position[1] += 1
 
@@ -35,6 +40,11 @@ def move_east(agent=None, entities=None, environment=None):
     """
 
     if environment.body.contains_point(Point(agent.body.bottom_right.position[0] + 1, agent.body.bottom_right.position[1])):
+
+        for item in agent.inventory:
+
+            item.body.top_left.position[0] += 1
+            item.body.bottom_right.position[0] += 1
 
         agent.body.top_left.position[0] += 1
         agent.body.bottom_right.position[0] += 1
@@ -56,6 +66,11 @@ def move_south(agent=None, entities=None, environment=None):
 
     if environment.body.contains_point(Point(agent.body.bottom_right.position[0], agent.body.bottom_right.position[1] - 1)):
 
+        for item in agent.inventory:
+
+            item.body.top_left.position[1] -= 1
+            item.body.bottom_right.position[1] -= 1
+
         agent.body.top_left.position[1] -= 1
         agent.body.bottom_right.position[1] -= 1
 
@@ -75,6 +90,11 @@ def move_west(agent=None, entities=None, environment=None):
     """
 
     if environment.body.contains_point(Point(agent.body.top_left.position[0] - 1, agent.body.top_left.position[1])):
+
+        for item in agent.inventory:
+
+            item.body.top_left.position[0] -= 1
+            item.body.bottom_right.position[0] -= 1
 
         agent.body.top_left.position[0] -= 1
         agent.body.bottom_right.position[0] -= 1
@@ -98,9 +118,14 @@ def pickup_food(agent=None, entities=None, environment=None):
 
     if not agent.holding_food:
 
-        if any([agent.body.contains_rectangle(food.body) for food in foods]):
+        for food in foods:
 
-            agent.holding_food = True
+            if agent.body.contains_rectangle(food.body) and food.interactable:
+
+                agent.inventory.append(food)
+                food.interactable = False
+                agent.holding_food = True
+                break
 
     agent.time += 1
 
@@ -121,10 +146,19 @@ def drop_food(agent=None, entities=None, environment=None):
 
     if agent.holding_food:
 
-        if nest.body.contains_rectangle(agent.body):
+        for item in agent.inventory:
 
-            nest.food_count += 1
-            agent.holding_food = False
+            agent.inventory.remove(item)
+
+            if nest.body.contains_rectangle(agent.body):
+
+                nest.food_count += 1
+
+            else:
+
+                item.interactable = True
+
+        agent.holding_food = False
 
     agent.time += 1
 
