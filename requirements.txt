@@ -6,15 +6,17 @@ cycler==0.10.0
 dispy==4.6.3
 docutils==0.12
 enum34==1.1.2
+ete3==3.0.0b35
 flake8==2.6.0
 fuzzywuzzy==0.10.0
 imagesize==0.7.1
 itsdangerous==0.24
 Jinja2==2.8
 Logbook==0.12.5
+lxml==3.6.0
 MarkupSafe==0.23
 mccabe==0.5.0
-numpy==1.9.2
+numpy==1.11.1
 pep8==1.7.0
 ply==3.8
 protobuf==2.6.1
@@ -31,7 +33,7 @@ pytz==2015.6
 requests==2.7.0
 scipy==0.17.0
 simplejson==3.8.0
-six==1.9.0
+six==1.10.0
 snowballstemmer==1.2.1
 Sphinx==1.4.4
 thriftpy==0.3.7
