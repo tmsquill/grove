@@ -2,6 +2,7 @@ language: python
 python:
   - "2.7"
 before_install:
+  - sudo apt-get install -y libblas-dev liblapack-dev libatlas-base-dev gfortran
   - pip install -r requirements.txt
 script:
   - py.test -m pytest simulation/test
