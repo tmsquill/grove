@@ -1,5 +1,7 @@
 # grove #
 
+[![Build Status](https://travis-ci.org/zivia/grove.svg?branch=master)](https://travis-ci.org/zivia/grove)
+
 Grove is a genetic algorithm and grammatical evolution library.
 
 ### Features ###
