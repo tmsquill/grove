@@ -11,17 +11,34 @@ Grove is a genetic algorithm and grammatical evolution library.
 * Distributed execution of evaluation functions and grammar-related procedures.
 * Extensive logging and output files for data analysis.
 
-### Downloads ###
+### Installation ###
 
-`cd <directory of your choice>`
+The preferred method for installing Grove is [easy_install](https://pypi.python.org/pypi/setuptools) or
+[pip](http://www.pip-installer.org/en/latest/).
 
-`git clone git@github.com:zivia/grove.git`
+```bash
+easy_install grove
+```
 
-`mkvirtualenv grove`
+or
 
-`workon grove`
+```bash
+pip install grove
+```
 
-`pip install -r requirements.txt`
+Alternatively, you can [download](https://pypi.python.org/pypi/grove/) or [clone](https://github.com/zivia/grove.git)
+the repository and build from sources.
+
+```bash
+python setup.py install
+```
+
+Grove also optionally uses the [ETE Toolkit](http://etetoolkit.org/) for graphing parse trees generated during
+grammatical evolution. Installation through [conda](http://conda.pydata.org/docs/) is required to use this feature.
+
+```bash
+conda install grove
+```
 
 ### Documentation ###
 
