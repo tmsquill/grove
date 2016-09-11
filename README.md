@@ -1,4 +1,4 @@
-# grove #
+# Grove #
 
 [![Build Status](https://travis-ci.org/zivia/grove.svg?branch=master)](https://travis-ci.org/zivia/grove)
 
