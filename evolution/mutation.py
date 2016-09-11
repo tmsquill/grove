@@ -27,11 +27,11 @@ def boundary():
 
                 logger.log.info('(Before) ' + str(agent))
 
-            for idx, param in enumerate(agent.genotype):
+            for idx, param in enumerate(agent.genome):
 
-                if random.uniform(0.0, 1.0) <= agent.genotype_mp[idx]:
+                if random.uniform(0.0, 1.0) <= agent.genome_mp[idx]:
 
-                    agent.genotype[idx] = random.choice([agent.genotype_lb[idx], agent.genotype_ub[idx]])
+                    agent.genome[idx] = random.choice([agent.genome_lb[idx], agent.genome_ub[idx]])
 
             if log:
 
@@ -65,15 +65,15 @@ def uniform():
 
                 logger.log.info('(Before) ' + str(agent))
 
-            for idx, param in enumerate(agent.genotype):
+            for idx, param in enumerate(agent.genome):
 
-                if random.uniform(0.0, 1.0) <= agent.genotype_mp[idx]:
+                if random.uniform(0.0, 1.0) <= agent.genome_mp[idx]:
 
-                    agent.genotype[idx] = random.uniform(agent.genotype_lb[idx], agent.genotype_ub[idx])
+                    agent.genome[idx] = random.uniform(agent.genome_lb[idx], agent.genome_ub[idx])
 
                     if isinstance(param, int):
 
-                        agent.genotype[idx] = int(round(agent.genotype[idx]))
+                        agent.genome[idx] = int(round(agent.genome[idx]))
 
             if log:
 
@@ -107,19 +107,19 @@ def gaussian():
 
                 logger.log.info('(Before) ' + str(agent))
 
-            for idx, param in enumerate(agent.genotype):
+            for idx, param in enumerate(agent.genome):
 
-                if random.uniform(0.0, 1.0) <= agent.genotype_mp[idx]:
+                if random.uniform(0.0, 1.0) <= agent.genome_mp[idx]:
 
-                    val = np.random.normal(loc=param, scale=(0.05 * agent.genotype_ub[idx]))
+                    val = np.random.normal(loc=param, scale=(0.05 * agent.genome_ub[idx]))
 
                     if isinstance(param, int):
 
                         val = int(round(val))
 
-                    while val < agent.genotype_lb[idx] or val > agent.genotype_ub[idx]:
+                    while val < agent.genome_lb[idx] or val > agent.genome_ub[idx]:
 
-                        val = np.random.normal(loc=param, scale=(0.05 * agent.genotype_ub[idx]))
+                        val = np.random.normal(loc=param, scale=(0.05 * agent.genome_ub[idx]))
 
                         if isinstance(param, int):
 
@@ -129,7 +129,7 @@ def gaussian():
 
                         logger.log.info('Mutating Parameter ' + str(idx) + ': ' + str(param) + ' -> ' + str(val))
 
-                    agent.genotype[idx] = val
+                    agent.genome[idx] = val
 
             if log:
 

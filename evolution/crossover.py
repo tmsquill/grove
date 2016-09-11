@@ -37,17 +37,17 @@ def one_point():
             child1 = parent1.__class__()
             child2 = parent2.__class__()
 
-            split = random.randint(0, parent1.genotype_len - 1)
+            split = random.randint(0, parent1.genome_len - 1)
 
             if log:
 
                 logger.log.info('Split: ' + str(split))
 
-            child1.genotype[0:split] = parent1.genotype[0:split]
-            child1.genotype[split:parent1.genotype_len] = parent2.genotype[split:parent1.genotype_len]
+            child1.genome[0:split] = parent1.genome[0:split]
+            child1.genome[split:parent1.genome_len] = parent2.genome[split:parent1.genome_len]
 
-            child2.genotype[0:split] = parent2.genotype[0:split]
-            child2.genotype[split:parent1.genotype_len] = parent1.genotype[split:parent1.genotype_len]
+            child2.genome[0:split] = parent2.genome[0:split]
+            child2.genome[split:parent1.genome_len] = parent1.genome[split:parent1.genome_len]
 
             if log:
 
@@ -97,21 +97,21 @@ def two_point():
             child1 = parent1.__class__()
             child2 = parent2.__class__()
 
-            split1 = random.randint(0, parent1.genotype_len - 1)
-            split2 = random.randint(0, parent1.genotype_len - 1)
+            split1 = random.randint(0, parent1.genome_len - 1)
+            split2 = random.randint(0, parent1.genome_len - 1)
 
             if log:
 
                 logger.log.info('(1) Split: ' + str(split1))
                 logger.log.info('(2) Split: ' + str(split2))
 
-            child1.genotype[1:split1] = parent1.genotype[1:split1]
-            child1.genotype[split1:split2] = parent2.genotype[split1:split2]
-            child1.genotype[split2:len(agents[0].genotype)] = parent1.genotype[split2:parent1.genotype_len - 1]
+            child1.genome[1:split1] = parent1.genome[1:split1]
+            child1.genome[split1:split2] = parent2.genome[split1:split2]
+            child1.genome[split2:len(agents[0].genome)] = parent1.genome[split2:parent1.genome_len - 1]
 
-            child2.genotype[1:split1] = parent2.genotype[1:split1]
-            child2.genotype[split1:split2] = parent1.genotype[split1:split2]
-            child2.genotype[split2:len(agents[0].genotype)] = parent2.genotype[split2:parent1.genotype_len - 1]
+            child2.genome[1:split1] = parent2.genome[1:split1]
+            child2.genome[split1:split2] = parent1.genome[split1:split2]
+            child2.genome[split2:len(agents[0].genome)] = parent2.genome[split2:parent1.genome_len - 1]
 
             if log:
 
@@ -160,17 +160,17 @@ def uniform():
             child1 = parent1.__class__()
             child2 = parent1.__class__()
 
-            for i in xrange(parent1.genotype_len):
+            for i in xrange(parent1.genome_len):
 
                 if bool(random.getrandbits(1)):
 
-                    child1.genotype[i] = parent1.genotype[i]
-                    child2.genotype[i] = parent2.genotype[i]
+                    child1.genome[i] = parent1.genome[i]
+                    child2.genome[i] = parent2.genome[i]
 
                 else:
 
-                    child1.genotype[i] = parent2.genotype[i]
-                    child2.genotype[i] = parent1.genotype[i]
+                    child1.genome[i] = parent2.genome[i]
+                    child2.genome[i] = parent1.genome[i]
 
             if log:
 

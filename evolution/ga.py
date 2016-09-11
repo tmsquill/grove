@@ -8,15 +8,15 @@ from grove import config, logger
 from tabulate import tabulate
 
 
-def evolve(population, generations, repeats, agent_type, pre_evaluation, evaluation, post_evaluation, selection, crossover, mutation, nodes, depends, debug):
+def evolve(population_size, generations, repeats, agent_func, pre_evaluation, evaluation, post_evaluation, selection, crossover, mutation, nodes, depends, debug):
 
     """
     Performs evolution on a set of agents over a number of generations. The desired evolutionary functions must be
     specified by the caller. Logging is optional.
-    :param population: The desired population size.
+    :param population_size: The desired population size.
     :param generations: The number of generation to evolve.
     :param repeats: The number of evaluations to perform on an individual agent.
-    :param agent_type: The type of agent used to initialize the population.
+    :param agent_func: Function used to initialize a population of agents.
     :param pre_evaluation: The pre-evaluation function. Intended to prepare agents for evaluation.
     :param evaluation: The evaluation function.
     :param post_evaluation: The post-evaluation function. Intended to gather data or alter agents after evaluation.
@@ -46,7 +46,7 @@ def evolve(population, generations, repeats, agent_type, pre_evaluation, evaluat
         generations = [Generation() for _ in xrange(generations)]
 
         # Initialize agents.
-        agents = agent_type.init_agents(population)
+        agents = agent_func(population_size)
 
         logger.log.info('\n' + ' Agent Initialization '.center(180, '=') + '\n')
         logger.log.info('\n'.join(map(str, agents)))
@@ -110,7 +110,7 @@ def evolve(population, generations, repeats, agent_type, pre_evaluation, evaluat
             logger.log.info('\n' + str(generation))
 
             agents = selection(agents)
-            agents = crossover(agents, population)
+            agents = crossover(agents, population_size)
             agents = mutation(agents)
 
         cluster.stats()
