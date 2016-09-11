@@ -7,9 +7,10 @@ from grove import config
 class Agent(object):
 
     """
-    An abstract representation of an agent. All agents have a unique ID, an evaluation value, and information regarding
-    their genome. The factory and init_agents methods are abstract and must be implemented as static methods in the
-    concrete class.
+    A standard representation of an agent. All agents have the following attributes; a unique ID, an evaluation value,
+    a genome (along with other genome-specific attributes used by the GA), a list of jobs used for evaluating the agent
+    with distributed computation, a random seed that can be used by the evaluation functionm, and a payload that can be
+    used to transport arbitrary data to the evaluation function.
     """
 
     aid = itertools.count().next

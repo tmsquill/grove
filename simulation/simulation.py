@@ -6,6 +6,14 @@ import entity as e
 
 class Simulation:
 
+    """
+    A simple simulator designed to be used with GESwarm (Grammatical Evolution Swarm). Parse trees containing a set of
+    rules dictate the control flow of the simulation. Rules contain a list of preconditions, behaviors, and actions.
+    Together these rules may lead to interesting behaviors.
+
+    For more information about GESwarm, see the article (http://dl.acm.org/citation.cfm?id=2463385).
+    """
+
     def __init__(self, duration=500, environment=None, entities=None, parse_tree=None, produce_output=True):
 
         self.duration = duration

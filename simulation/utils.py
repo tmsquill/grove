@@ -1,10 +1,6 @@
-import csv
-import hashlib
 import math
-import os
 
 from enum import Enum
-from pymongo import MongoClient
 
 
 class Direction(Enum):
@@ -213,13 +209,14 @@ def generate_mongo(simulation=None, host='localhost', port=27017):
     :param port: The port to reach the MongoDB instance.
     """
 
+    from pymongo import MongoClient
+
     connection = MongoClient(host, port)
     simulations = connection['grove']['simulations']
 
     data = [state for state in simulation.state_archive]
-    hashed = hashlib.md5(str(data)).hexdigest()
 
-    _id = simulations.insert({hashed: data})
+    _id = simulations.insert({'simulations': data})
     connection.close()
 
     print 'Saved simulation data to MongoDB instance at ' + host + ':' + str(port) + \
@@ -234,6 +231,10 @@ def generate_csv(simulation=None):
     Generates a CSV file from a simulation for further data analysis.
     :param simulation: The simulation containing a valid state archive.
     """
+
+    import csv
+    import hashlib
+    import os
 
     header = ['Type', 'Timestamp', 'ID', 'Direction', 'Behavior', 'Left', 'Top', 'Right', 'Bottom']
     data = [state for state in simulation.state_archive]
