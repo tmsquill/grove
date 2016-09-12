@@ -7,7 +7,7 @@ Grove is a genetic algorithm and grammatical evolution library.
 ### Features ###
 
 * Generic template for evolving agent based models.
-* [Grammatical Evolution](https://en.wikipedia.org/wiki/Grammatical_evolution) supporting popular formal grammar representations such as BNF, Google Protocol Buffers, and Apache Thrift.
+* [Grammatical Evolution](https://en.wikipedia.org/wiki/Grammatical_evolution) supporting popular formal grammar representations such as BNF, and Apache Thrift.
 * Distributed execution of evaluation functions and grammar-related procedures.
 * Extensive logging and output files for data analysis.
 
