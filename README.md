@@ -7,7 +7,7 @@ Grove is a genetic algorithm and grammatical evolution library.
 ### Features ###
 
 * Generic template for evolving agent based models.
-* [Grammatical Evolution](https://en.wikipedia.org/wiki/Grammatical_evolution) supporting popular formal grammar representations such as BNF, and Apache Thrift.
+* [Grammatical Evolution](https://en.wikipedia.org/wiki/Grammatical_evolution) supporting popular formal grammar representations such as BNF, FlatBuffers, and Apache Thrift.
 * Distributed execution of evaluation functions and grammar-related procedures.
 * Extensive logging and output files for data analysis.
 
@@ -42,7 +42,7 @@ conda install grove
 
 ### Documentation ###
 
-Check the Grove User's Guide for documentation and examples.
+Check the Grove User's Guide for documentation and [examples](https://github.com/zivia/grove-examples).
 
 ### Contribution ###
 

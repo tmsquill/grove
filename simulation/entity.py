@@ -20,12 +20,12 @@ class Entity:
     def __init__(self, position=(0, 0), size=(1, 1), direction=Direction.North):
 
         self.id = Entity.eid()
+        self.behavior = None
         self.body = Rectangle(Point(position[0], position[1]), Point(position[0] + size[0], position[1] - size[1]))
         self.direction = direction
-        self.behavior = None
-        self.time = 0
-        self.inventory = []
         self.interactable = True
+        self.inventory = []
+        self.time = 0
 
     def __str__(self):
 

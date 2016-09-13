@@ -27,7 +27,7 @@ Alternatively, you can download_ or clone_ the repository and build from sources
 .. _easy_install: https://pypi.python.org/pypi/setuptools
 .. _pip: http://www.pip-installer.org/en/latest/
 
-Grove also optionally uses the ETE Toolkit for graphing parse trees. This dependency cannot be installed
-via pip because it is not pure Python. Installation through conda is required. ::
+Grove also optionally uses the ETE Toolkit for graphing parse trees generated during grammatical evolution.
+Installation through conda is required to use this feature. ::
 
   conda install grove

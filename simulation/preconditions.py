@@ -12,9 +12,9 @@ def on_border(agent=None, entities=None, environment=None):
     """
 
     return agent.body.top_left.position[0] == environment.body.top_left.position[0] or \
-           agent.body.top_left.position[1] == environment.body.top_left.position[1] or \
-           agent.body.bottom_right.position[0] == environment.body.bottom_right.position[0] or \
-           agent.body.bottom_right.position[1] == environment.body.bottom_right.position[1]
+        agent.body.top_left.position[1] == environment.body.top_left.position[1] or \
+        agent.body.bottom_right.position[0] == environment.body.bottom_right.position[0] or \
+        agent.body.bottom_right.position[1] == environment.body.bottom_right.position[1]
 
 
 def on_nest(agent=None, entities=None, environment=None):
