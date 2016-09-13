@@ -27,11 +27,11 @@ class Grammar:
             self.rules = load_bnf(grammar_file)
             self.representation = 'bnf'
 
-        # The context-free grammar is a Google Protocol Buffer module.
-        elif grammar_file.endswith('.proto'):
+        # The context-free grammar is a FlatBuffers file.
+        elif grammar_file.endswith('.fbs'):
 
-            self.rules = load_proto(grammar_file)
-            self.representation = 'proto'
+            self.rules = load_fbs(grammar_file)
+            self.representation = 'fbs'
 
         # The context-free grammar is a Apache Thrift file.
         elif grammar_file.endswith('.thrift'):
@@ -119,7 +119,7 @@ def load_bnf(self, grammar_file):
                 raise ValueError("Each rule must be on one line")
 
 
-def load_proto(grammar_file=None):
+def load_fbs(grammar_file=None):
 
     """
     Loads and compiles a Google Protocol Buffers file into a module.
@@ -127,6 +127,15 @@ def load_proto(grammar_file=None):
     :return: The compiled module.
     """
 
+    import os
+    import subprocess
+
+    output = subprocess.check_output(['flatc', '--python', grammar_file])
+
+    if not output == '':
+
+        raise IOError('incorrect file path to formal grammar')
+        
 
 def load_thrift(grammar_file=None):
 
