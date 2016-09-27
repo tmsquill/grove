@@ -130,10 +130,6 @@ class ParseTree:
         production_choices = []
         unexpanded_symbols = utils.discover_children(self.root)
 
-        # Find the blacklists and whitelists for terminal symbols.
-        blacklists = constraint.find_blacklists(self.grammar.rules)
-        whitelists = constraint.find_whitelists(self.grammar.rules)
-
         while self.wraps > 0 and len(unexpanded_symbols) > 0:
 
             # Wrap around the input.
@@ -233,23 +229,6 @@ class ParseTree:
             # Terminal symbol.
             else:
 
-                name = current_symbol.obj.__class__.__name__.lower()
-
-                blacklist_name = name + '_blacklist'
-                blacklist = None
-
-                if blacklist_name in blacklists:
-                    blacklist = blacklists[blacklist_name]
-
-                whitelist_name = name + '_whitelist'
-                whitelist = None
-
-                if whitelist_name in whitelists:
-                    whitelist = whitelists[whitelist_name]
-
-                # Verify the blacklist and whitelist.
-                constraint.verify_lists(blacklist, whitelist)
-
                 if log:
 
                     logger.log.debug('<-- Terminal Symbol -->')
@@ -260,14 +239,20 @@ class ParseTree:
 
                     logger.log.debug('Choices            -> ' + str(attrs))
 
-                chosen = getattr(current_symbol.obj, attrs[int(self.genotype[self.used_genes % len(self.genotype)] % len(attrs))])
-                current_symbol.add_child(TreeNode(name=chosen))
-                setattr(current_symbol.t_parent, current_symbol.t_name, chosen)
+                chosen_name = attrs[int(self.genotype[self.used_genes % len(self.genotype)] % len(attrs))]
+                chosen_value = getattr(current_symbol.obj, chosen_name)
+
+                current_symbol.add_child(TreeNode(name=chosen_name))
+                setattr(current_symbol.t_parent, current_symbol.t_name, chosen_value)
                 self.used_genes += 1
 
             if log:
 
                 logger.log.debug('Output             -> ' + str(self.root.get_ascii(show_internal=True)))
+
+        # print self.root.get_ascii(show_internal=True)
+        # exit()
+
 
     def serialize(self):
 

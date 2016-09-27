@@ -1,3 +1,4 @@
+import constraint
 import re
 import thriftpy
 
@@ -42,6 +43,10 @@ class Grammar:
         else:
 
             raise ValueError('grammar file is invalid', grammar_file)
+
+        # Find the blacklists and whitelists for terminal symbols.
+        constraint.find_blacklists(self.rules)
+        constraint.find_whitelists(self.rules)
 
 
 def load_bnf(self, grammar_file):
@@ -127,15 +132,17 @@ def load_fbs(grammar_file=None):
     :return: The compiled module.
     """
 
-    import os
     import subprocess
+    import sys
 
     output = subprocess.check_output(['flatc', '--python', grammar_file])
 
     if not output == '':
 
         raise IOError('incorrect file path to formal grammar')
-        
+
+    sys.path.append('')
+
 
 def load_thrift(grammar_file=None):
 
