@@ -1,5 +1,5 @@
-import preconditions as pc
 import behaviors as b
+import preconditions as pc
 
 pc = {
     0: pc.on_border,
@@ -9,14 +9,10 @@ pc = {
 }
 
 b = {
-    0: b.move_north,
-    1: b.move_east,
-    2: b.move_south,
-    3: b.move_west,
-    4: b.pickup_food,
-    5: b.drop_food,
-    6: b.random_walk,
-    7: b.return_home
+    0: b.pickup_food,
+    1: b.drop_food,
+    2: b.random_walk,
+    3: b.return_home
 }
 
 prob = {

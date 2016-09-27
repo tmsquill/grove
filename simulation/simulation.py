@@ -1,3 +1,4 @@
+import constraint
 import lookup
 import random
 
@@ -89,16 +90,20 @@ class Simulation:
 
                 for action in rule.actions:
 
+                    action_b = lookup.b[action.id_action]
+
                     if random.uniform(0.0, 1.0) <= action.prob:
 
-                        hit = True
+                        if (agent.behavior in constraint.blacklist and action_b not in constraint.blacklist[agent.behavior]) or agent.behavior not in constraint.blacklist:
 
-                        agent = lookup.b[action.id_action](agent, self.entities, self.environment)
-                        agent.behavior = lookup.b[action.id_action]
+                            hit = True
 
-                        if self.produce_output:
+                            agent = lookup.b[action.id_action](agent, self.entities, self.environment)
+                            agent.behavior = lookup.b[action.id_action]
 
-                            self.save_state(agent)
+                            if self.produce_output:
+
+                                self.save_state(agent)
 
         if not hit:
 
