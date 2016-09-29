@@ -1,8 +1,8 @@
 import constraint
 import lookup
-import random
-
 import entity as e
+
+from utils import rand
 
 
 class Simulation:
@@ -41,14 +41,6 @@ class Simulation:
         """
 
         agents = filter(lambda x: isinstance(x, e.SimAgent), self.entities)
-        other = filter(lambda x: not isinstance(x, e.SimAgent), self.entities)
-
-        for timestamp in xrange(self.duration):
-
-            for entity in other:
-
-                entity.time = timestamp
-                self.save_state(entity)
 
         # Initial behavioral state for each entity.
         for agent in agents:
@@ -92,7 +84,7 @@ class Simulation:
 
                     action_b = lookup.b[action.id_action]
 
-                    if random.uniform(0.0, 1.0) <= action.prob:
+                    if rand.uniform(0.0, 1.0) <= action.prob:
 
                         if (agent.behavior in constraint.blacklist and action_b not in constraint.blacklist[agent.behavior]) or agent.behavior not in constraint.blacklist:
 

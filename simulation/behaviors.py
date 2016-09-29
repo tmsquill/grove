@@ -1,7 +1,6 @@
 import entity
-import random
 
-from utils import Direction, Point
+from utils import Direction, Point, rand
 
 
 def move_north(agent=None, entities=None, environment=None):
@@ -175,7 +174,7 @@ def random_walk(agent=None, entities=None, environment=None):
     :return: The updated agent.
     """
 
-    random_direction = random.choice(list(Direction))
+    random_direction = rand.choice(list(Direction))
 
     if random_direction == Direction.North:
 

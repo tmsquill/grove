@@ -1,6 +1,11 @@
 import math
+import random
+import sys
 
 from enum import Enum
+
+seed = random.randint(0, sys.maxint)
+rand = random.Random(seed)
 
 
 class Direction(Enum):
