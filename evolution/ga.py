@@ -18,7 +18,6 @@ def exit_handler():
 
     if dispynode:
 
-        global dispynode
         dispynode.kill()
         dispynode.wait()
 
@@ -67,12 +66,12 @@ def evolve(population_size, generations, repeats, agent_func, pre_evaluation, ev
         # Initialize agents.
         agents = agent_func(population_size)
 
-        logger.log.info('\n' + ' Agent Initialization '.center(180, '=') + '\n')
+        logger.log.info('\n' + ' Agent Initialization '.center(120, '=') + '\n')
         logger.log.info('\n'.join(map(str, agents)))
 
         # Start Distributed Evolution
-        logger.log.info('\n' + ' Evolution '.center(180, '=') + '\n')
-        print ' Evolution '.center(180, '=') + '\n'
+        logger.log.info('\n' + ' Evolution '.center(120, '=') + '\n')
+        print ' Evolution '.center(120, '=') + '\n'
 
         # Start the dispynode.py workers.
         if not nodes or '127.0.0.1' in nodes:
@@ -101,7 +100,7 @@ def evolve(population_size, generations, repeats, agent_func, pre_evaluation, ev
         # Begin evolution.
         for generation in generations:
 
-            logger.log.info(" Generation %s ".center(180, '*') % str(generation.id))
+            logger.log.info(" Generation %s ".center(120, '*') % str(generation.id))
             print 'Generation ' + str(generation.id)
 
             agents = pre_evaluation(agents)
@@ -126,14 +125,15 @@ def evolve(population_size, generations, repeats, agent_func, pre_evaluation, ev
 
                     if job.exception:
 
+                        print ' Traceback in Evaluation Function '.center(120, '=')
                         print job.exception
                         exit()
 
                     agent.random_seed = job.result['random_seed']
                     agent.value = numpy.mean([job.result['value'] for job in agent.jobs])
 
-            headers = ['Job ID', 'Job Time', 'IP Address', 'Job Result', 'Job Exception', 'Job Stderr', 'Job Stdout']
-            table = [[job.id, job.end_time - job.start_time, job.ip_addr, job.result, job.exception, job.stderr, job.stdout] for agent in agents for job in agent.jobs]
+            headers = ['Job ID', 'Job Time', 'IP Address', 'Job Result', 'Job Stderr', 'Job Stdout']
+            table = [[job.id, job.end_time - job.start_time, job.ip_addr, job.result, job.stderr, job.stdout] for agent in agents for job in agent.jobs]
 
             print tabulate(table, headers, tablefmt="orgtbl")
 

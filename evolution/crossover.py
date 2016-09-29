@@ -20,7 +20,7 @@ def one_point():
 
         if log:
 
-            logger.log.info(' One-Point Crossover '.center(180, '=') + '\n')
+            logger.log.info(' One-Point Crossover '.center(120, '=') + '\n')
 
         offspring = []
 
@@ -80,7 +80,7 @@ def two_point():
 
         if log:
 
-            logger.log.info(' Two-Point Crossover '.center(180, '=') + '\n')
+            logger.log.info(' Two-Point Crossover '.center(120, '=') + '\n')
 
         offspring = []
 
@@ -143,7 +143,7 @@ def uniform():
 
         if log:
 
-            logger.log.info(' Uniform Crossover '.center(180, '=') + '\n')
+            logger.log.info(' Uniform Crossover '.center(120, '=') + '\n')
 
         offspring = []
 

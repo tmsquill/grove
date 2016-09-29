@@ -26,9 +26,9 @@ def truncation(elite_proportion=None):
 
         if log:
 
-            logger.log.info(' Truncation Selection '.center(180, '=') + '\n')
+            logger.log.info(' Truncation Selection '.center(120, '=') + '\n')
             logger.log.info(
-                " (Before) {0} Population Size {1} ".center(180, '-').format(agents[0].__class__.__name__, len(agents)))
+                " (Before) {0} Population Size {1} ".center(120, '-').format(agents[0].__class__.__name__, len(agents)))
             logger.log.info('\n' + '\n'.join(map(str, agents)) + '\n')
 
         # Use slicing to remove the non-elite.
@@ -37,7 +37,7 @@ def truncation(elite_proportion=None):
         if log:
 
             logger.log.info(
-                " (After) {0} Population Size {1} ".center(180, '-').format(agents[0].__class__.__name__, len(agents)))
+                " (After) {0} Population Size {1} ".center(120, '-').format(agents[0].__class__.__name__, len(agents)))
             logger.log.info('\n' + '\n'.join(map(str, agents)) + '\n')
 
         return agents
@@ -70,9 +70,9 @@ def tournament(agents_ret=None, tournament_size=None):
 
         if log:
 
-            logger.log.info(' Tournament Selection '.center(180, '=') + '\n')
+            logger.log.info(' Tournament Selection '.center(120, '=') + '\n')
             logger.log.info(
-                " (Before) {0} Population Size {1} ".center(180, '-').format(agents[0].__class__.__name__, len(agents)))
+                " (Before) {0} Population Size {1} ".center(120, '-').format(agents[0].__class__.__name__, len(agents)))
             logger.log.info('\n' + '\n'.join(map(str, agents)) + '\n')
 
         chosen = []
@@ -85,7 +85,7 @@ def tournament(agents_ret=None, tournament_size=None):
         if log:
 
             logger.log.info(
-                " (After) {0} Population Size {1} ".center(180, '-').format(agents[0].__class__.__name__, len(agents)))
+                " (After) {0} Population Size {1} ".center(120, '-').format(agents[0].__class__.__name__, len(agents)))
             logger.log.info('\n' + '\n'.join(map(str, agents)) + '\n')
 
         return chosen
@@ -120,9 +120,9 @@ def roulette(sample=None, size=None):
 
         if log:
 
-            logger.log.info(' Roulette Selection '.center(180, '=') + '\n')
+            logger.log.info(' Roulette Selection '.center(120, '=') + '\n')
             logger.log.info(
-                " (Before) {0} Population Size {1} ".center(180, '-').format(agents[0].__class__.__name__, len(agents)))
+                " (Before) {0} Population Size {1} ".center(120, '-').format(agents[0].__class__.__name__, len(agents)))
             logger.log.info('\n' + '\n'.join(map(str, agents)) + '\n')
 
         agents_len = len(agents)
@@ -150,7 +150,7 @@ def roulette(sample=None, size=None):
         if log:
 
             logger.log.info(
-                " (After) {0} Population Size {1} ".center(180, '-').format(agents[0].__class__.__name__, len(agents)))
+                " (After) {0} Population Size {1} ".center(120, '-').format(agents[0].__class__.__name__, len(agents)))
             logger.log.info('\n' + '\n'.join(map(str, agents)) + '\n')
 
         return agents

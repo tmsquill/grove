@@ -19,7 +19,7 @@ def boundary():
 
         if log:
 
-            logger.log.info(' Boundary Mutation '.center(180, '=') + '\n')
+            logger.log.info(' Boundary Mutation '.center(120, '=') + '\n')
 
         for agent in agents:
 
@@ -57,7 +57,7 @@ def uniform():
 
         if log:
 
-            logger.log.info(' Uniform Mutation '.center(180, '=') + '\n')
+            logger.log.info(' Uniform Mutation '.center(120, '=') + '\n')
 
         for agent in agents:
 
@@ -99,7 +99,7 @@ def gaussian():
 
         if log:
 
-            logger.log.info(' Gaussian Mutation '.center(180, '=') + '\n')
+            logger.log.info(' Gaussian Mutation '.center(120, '=') + '\n')
 
         for agent in agents:
 
