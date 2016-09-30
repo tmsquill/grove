@@ -250,10 +250,6 @@ class ParseTree:
 
                 logger.log.debug('Output             -> ' + str(self.root.get_ascii(show_internal=True)))
 
-        # print self.root.get_ascii(show_internal=True)
-        # exit()
-
-
     def serialize(self):
 
         """

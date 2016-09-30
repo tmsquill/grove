@@ -26,7 +26,7 @@ def exit_handler():
 atexit.register(exit_handler)
 
 
-def evolve(population_size, generations, repeats, agent_func, pre_evaluation, evaluation, post_evaluation, selection, crossover, mutation, nodes, depends, debug):
+def evolve(population_size, generations, repeats, depends, dest_path, setup, agent_func, pre_evaluation, evaluation, post_evaluation, selection, crossover, mutation, nodes, debug):
 
     """
     Performs evolution on a set of agents over a number of generations. The desired evolutionary functions must be
@@ -34,6 +34,9 @@ def evolve(population_size, generations, repeats, agent_func, pre_evaluation, ev
     :param population_size: The desired population size.
     :param generations: The number of generation to evolve.
     :param repeats: The number of evaluations to perform on an individual agent.
+    :param depends: The dependencies needed by nodes for computation.
+    :param dest_path: The path to the directory that will contain files needed for the computation on nodes.
+    :param setup: The setup function that is executed on the nodes prior to evolution.
     :param agent_func: Function used to initialize a population of agents.
     :param pre_evaluation: The pre-evaluation function. Intended to prepare agents for evaluation.
     :param evaluation: The evaluation function.
@@ -42,7 +45,6 @@ def evolve(population_size, generations, repeats, agent_func, pre_evaluation, ev
     :param crossover: The crossover function.
     :param mutation: The mutation function.
     :param nodes: The nodes in the cluster used for computing the evaluation function.
-    :param depends: The list of dependencies needed by dispynodes to perform computation of the evaluation function.
     :param debug: Boolean for toggling debugging for distributed computation.
     """
 
@@ -85,11 +87,11 @@ def evolve(population_size, generations, repeats, agent_func, pre_evaluation, ev
 
             if debug:
 
-                cluster = dispy.JobCluster(evaluation, nodes=nodes, depends=depends, loglevel=10)
+                cluster = dispy.JobCluster(evaluation, nodes=nodes, depends=depends, loglevel=10, setup=setup, dest_path=dest_path)
 
             else:
 
-                cluster = dispy.JobCluster(evaluation, nodes=nodes, depends=depends)
+                cluster = dispy.JobCluster(evaluation, nodes=nodes, depends=depends, setup=setup, dest_path=dest_path)
 
         else:
 
