@@ -15,7 +15,7 @@ class Simulation:
     For more information about GESwarm, see the article (http://dl.acm.org/citation.cfm?id=2463385).
     """
 
-    def __init__(self, duration=500, environment=None, entities=None, parse_tree=None, produce_output=True):
+    def __init__(self, duration=1000, environment=None, entities=None, parse_tree=None, produce_output=True):
 
         self.duration = duration
         self.environment = environment
@@ -23,6 +23,13 @@ class Simulation:
         self.parse_tree = parse_tree
         self.produce_output = produce_output
         self.state_archive = []
+
+        self.agents = filter(lambda x: isinstance(x, e.SimAgent), self.entities)
+
+        # Initial behavioral state for each entity.
+        for agent in self.agents:
+
+            agent.behavior = lookup.b[self.parse_tree.default_behavior.id_behavior]
 
     def save_state(self, entity=None):
 
@@ -33,23 +40,38 @@ class Simulation:
 
         self.state_archive.append(entity.to_csv())
 
-    def execute(self):
+    def execute_step(self):
 
         """
-        Executes the simulation, updating entities and saving their states at each
-        time step.
+        Executes a single step of the simulation.
         """
 
-        agents = filter(lambda x: isinstance(x, e.SimAgent), self.entities)
+        if all([agent.time < self.duration for agent in self.agents]):
 
-        # Initial behavioral state for each entity.
-        for agent in agents:
+            for agent in self.agents:
 
-            agent.behavior = lookup.b[self.parse_tree.default_behavior.id_behavior]
+                if agent.time >= self.duration:
 
-        while all([agent.time < self.duration for agent in agents]):
+                    agent.done = True
+                    continue
 
-            for agent in agents:
+                agent = self.process_rules(agent)
+
+            return True
+
+        else:
+
+            return False
+
+    def execute_all(self):
+
+        """
+        Executes the simulation.
+        """
+
+        while all([agent.time < self.duration for agent in self.agents]):
+
+            for agent in self.agents:
 
                 if agent.time >= self.duration:
 
@@ -82,20 +104,22 @@ class Simulation:
 
                 for action in rule.actions:
 
-                    action_b = lookup.b[action.id_action]
+                    if action.id_action:
 
-                    if rand.uniform(0.0, 1.0) <= action.prob:
+                        action_b = lookup.b[action.id_action]
 
-                        if (agent.behavior in constraint.blacklist and action_b not in constraint.blacklist[agent.behavior]) or agent.behavior not in constraint.blacklist:
+                        if rand.uniform(0.0, 1.0) <= action.prob:
 
-                            hit = True
+                            if (agent.behavior in constraint.blacklist and action_b not in constraint.blacklist[agent.behavior]) or agent.behavior not in constraint.blacklist:
 
-                            agent = lookup.b[action.id_action](agent, self.entities, self.environment)
-                            agent.behavior = lookup.b[action.id_action]
+                                hit = True
 
-                            if self.produce_output:
+                                agent = lookup.b[action.id_action](agent, self.entities, self.environment)
+                                agent.behavior = lookup.b[action.id_action]
 
-                                self.save_state(agent)
+                                if self.produce_output:
+
+                                    self.save_state(agent)
 
         if not hit:
 
