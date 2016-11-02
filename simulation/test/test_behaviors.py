@@ -185,6 +185,49 @@ def test_pickup_and_drop_food():
     assert nest.food_count == 1
 
 
+def test_collect_multiple():
+
+    agent = SimAgent(position=(12, 8))
+
+    food1 = Food(position=(12, 8))
+    food2 = Food(position=(12, 7))
+    nest = Nest(position=(10, 10), size=(4, 4))
+
+    entities = [agent, food1, food2, nest]
+
+    environment = Environment()
+
+    assert agent.holding_food is False
+    assert all([food1.interactable for food in [food1, food2]])
+
+    agent = behaviors.pickup_food(agent, entities, environment)
+
+    assert agent.holding_food is True
+    assert food1.interactable is False
+    assert food2.interactable is True
+
+    agent = behaviors.drop_food(agent, entities, environment)
+
+    assert agent.holding_food is False
+    assert food1.interactable is False
+    assert food2.interactable is True
+
+    agent = behaviors.move_south(agent=agent, entities=entities, environment=environment)
+    agent = behaviors.pickup_food(agent, entities, environment)
+
+    assert agent.holding_food is True
+    assert food1.interactable is False
+    assert food2.interactable is False
+
+    agent = behaviors.drop_food(agent, entities, environment)
+
+    assert agent.holding_food is False
+    assert food1.interactable is False
+    assert food2.interactable is False
+
+    assert nest.food_count == 2
+
+
 def test_random_walk():
 
     agent = SimAgent(position=(10, 10))

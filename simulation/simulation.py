@@ -104,7 +104,7 @@ class Simulation:
 
                 for action in rule.actions:
 
-                    if action.id_action:
+                    if action.id_action in lookup.b:
 
                         action_b = lookup.b[action.id_action]
 
@@ -120,6 +120,10 @@ class Simulation:
                                 if self.produce_output:
 
                                     self.save_state(agent)
+
+                    else:
+
+                        print self.parse_tree
 
         if not hit:
 
