@@ -1,0 +1,313 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Fuzzy String Matching &mdash; Grove 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="top" title="Grove 0.1.0 documentation" href="../index.html" />
+    <link rel="up" title="Examples" href="index.html" />
+    <link rel="next" title="GESwarm - Recreating a Generic CPFA" href="geswarm.html" />
+    <link rel="prev" title="Examples" href="index.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="fuzzy-string-matching">
+<h1>Fuzzy String Matching<a class="headerlink" href="#fuzzy-string-matching" title="Permalink to this headline">¶</a></h1>
+<p>This example demonstrates the core usage of Grove through a simple genetic algorithm optimizing strings to match a
+target string. This is done with a fuzzy approach that provides the means necessary to determine partial success, which
+is needed by the genetic algorithm to optimize.</p>
+<div class="section" id="grove-configuration">
+<h2>Grove Configuration<a class="headerlink" href="#grove-configuration" title="Permalink to this headline">¶</a></h2>
+<p>The next step is to specify the grove-config.json file loaded by Grove for determining specific
+configuration options.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="s2">&quot;agent&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Agent&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;FuzzyAgent&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;genome_len&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="s2">&quot;genome_lb&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;genome_ub&quot;</span><span class="p">:</span> <span class="mi">122</span><span class="p">,</span>
+        <span class="s2">&quot;genome_mp&quot;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+        <span class="s2">&quot;genome_type&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;genome_names&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s2">&quot;Genome&quot;</span>
+        <span class="p">],</span>
+        <span class="s2">&quot;genome_abbr_names&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s2">&quot;Genome&quot;</span>
+        <span class="p">]</span>
+    <span class="p">}</span>
+  <span class="p">},</span>
+  <span class="s2">&quot;ga&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;nodes&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;10.0.0.30&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;10.0.0.31&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;10.0.0.32&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;10.0.0.33&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;10.0.0.34&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;10.0.0.35&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;10.0.0.36&quot;</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;parameters&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;population&quot;</span><span class="p">:</span> <span class="mi">40</span><span class="p">,</span>
+        <span class="s2">&quot;generations&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="s2">&quot;repeats&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="s2">&quot;agent_type&quot;</span><span class="p">:</span> <span class="s2">&quot;FuzzyAgent&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;evaluation_func&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;selection_func&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;crossover_func&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;mutation_func&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span>
+    <span class="p">}</span>
+  <span class="p">},</span>
+  <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="s2">&quot;collection_type&quot;</span><span class="p">:</span> <span class="s2">&quot;mongo&quot;</span>
+  <span class="p">},</span>
+  <span class="s2">&quot;logging&quot;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="s2">&quot;grammar&quot;</span><span class="p">:</span> <span class="n">false</span><span class="p">,</span>
+      <span class="s2">&quot;evolution&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span>
+      <span class="s2">&quot;selection&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span>
+      <span class="s2">&quot;crossover&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span>
+      <span class="s2">&quot;mutation&quot;</span><span class="p">:</span> <span class="n">true</span>
+  <span class="p">},</span>
+  <span class="s2">&quot;debug&quot;</span><span class="p">:</span> <span class="n">false</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="main">
+<h2>Main<a class="headerlink" href="#main" title="Permalink to this headline">¶</a></h2>
+<p>We finally are able to put all of the pieces together and directly interface with Grove. In the main.py file we:</p>
+<ul class="simple">
+<li>Extend the <code class="xref py py-class docutils literal"><span class="pre">Agent</span></code> class to provide functionality for parse trees.</li>
+<li>Define an initialization method for the population.</li>
+<li>Define pre-evaluation, evaluation, and post-evaluation function. In this case, pre-evaluation will generate parse
+trees for all agents, serialize them, and place the result in the payload attribute of the agent. Evaluation runs
+the simulation. Note that post-evaluation is not needed for this example.</li>
+</ul>
+<p>Lastly, we perform all necessary setup, then call Grove to start evolution.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">random</span>
+
+<span class="c1"># If testing with local files, then include the following two lines. Otherwise ensure grove has been installed</span>
+<span class="c1"># by pip so that importing the following modules is possible.</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;/Users/Zivia/Research/grove&#39;</span><span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">evolution.agent</span> <span class="k">import</span> <span class="n">Agent</span>
+<span class="kn">from</span> <span class="nn">evolution.ga</span> <span class="k">import</span> <span class="n">evolve</span>
+<span class="kn">from</span> <span class="nn">evolution.crossover</span> <span class="k">import</span> <span class="n">one_point</span>
+<span class="kn">from</span> <span class="nn">evolution.selection</span> <span class="k">import</span> <span class="n">truncation</span>
+<span class="kn">from</span> <span class="nn">evolution.mutation</span> <span class="k">import</span> <span class="n">gaussian</span>
+<span class="kn">from</span> <span class="nn">grove</span> <span class="k">import</span> <span class="n">config</span><span class="p">,</span> <span class="n">logger</span>
+
+
+<span class="n">target_string</span> <span class="o">=</span> <span class="s1">&#39;Troy Squillaci&#39;</span>
+
+
+<span class="k">class</span> <span class="nc">FuzzyAgent</span><span class="p">(</span><span class="n">Agent</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An agent targeting GESwarm simulations. Such agents include a parse tree that represents a set of rules that are</span>
+<span class="sd">    used by the simulator to (hopefully) produce interesting collective behaviors.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">grammar</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">FuzzyAgent</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">genome</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">genome</span> <span class="o">=</span> <span class="p">[</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">)</span> <span class="k">for</span> <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">genome_lb</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">genome_ub</span><span class="p">)]</span>
+
+
+<span class="k">def</span> <span class="nf">agent_init</span><span class="p">(</span><span class="n">population_size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A function used by the genetic algorithm that initializes a population of agents.</span>
+<span class="sd">    :param population_size: The size of the population.</span>
+<span class="sd">    :return: A list of initialized agents, length equal to the population size.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="p">[</span><span class="n">FuzzyAgent</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">population_size</span><span class="p">)]</span>
+
+
+<span class="k">def</span> <span class="nf">pre_evaluation</span><span class="p">(</span><span class="n">agents</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Pre-evaluation function prepares agents for evaluation. In this case, a genome is used to generate a parse tree,</span>
+<span class="sd">    which is used during evaluation.</span>
+<span class="sd">    :param agents: The list of agents to map the generation of parse trees over.</span>
+<span class="sd">    :return: The updated list of agents with generated parse trees.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">for</span> <span class="n">agent</span> <span class="ow">in</span> <span class="n">agents</span><span class="p">:</span>
+
+        <span class="n">agent</span><span class="o">.</span><span class="n">payload</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;genome&#39;</span><span class="p">:</span> <span class="n">agent</span><span class="o">.</span><span class="n">genome</span><span class="p">,</span> <span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="n">target_string</span><span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">agents</span>
+
+
+<span class="k">def</span> <span class="nf">evaluation</span><span class="p">(</span><span class="n">payload</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Evaluation function that performs fuzzy string matching on the given agent.</span>
+<span class="sd">    :param payload: The payload (agent genome and the target string) to evaluate.</span>
+<span class="sd">    :return: The evaluation value determined by executing the evaluation function with the payload.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="kn">from</span> <span class="nn">fuzzywuzzy</span> <span class="k">import</span> <span class="n">fuzz</span>
+
+    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;random_seed&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="n">fuzz</span><span class="o">.</span><span class="n">ratio</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">chr</span><span class="p">(</span><span class="n">char</span><span class="p">)</span> <span class="k">for</span> <span class="n">char</span> <span class="ow">in</span> <span class="n">payload</span><span class="p">[</span><span class="s1">&#39;genome&#39;</span><span class="p">]]),</span> <span class="n">payload</span><span class="p">[</span><span class="s1">&#39;target&#39;</span><span class="p">])}</span>
+
+
+<span class="k">def</span> <span class="nf">post_evaluation</span><span class="p">(</span><span class="n">agents</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Post-evaluation function performs data collection and/or alters agents after evaluation. In this case, no action</span>
+<span class="sd">    is needed, so the agents are simply returned.</span>
+<span class="sd">    :param agents: The list of agents.</span>
+<span class="sd">    :return: The list of agents.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">agents</span>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+
+    <span class="c1"># Parser for command line arguments.</span>
+    <span class="kn">import</span> <span class="nn">argparse</span>
+
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;grove&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-config&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;./fuzzy_string_matching/grove-config.json&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-p&#39;</span><span class="p">,</span> <span class="s1">&#39;--population&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-g&#39;</span><span class="p">,</span> <span class="s1">&#39;--generations&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-c&#39;</span><span class="p">,</span> <span class="s1">&#39;--crossover_function&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;truncation&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-m&#39;</span><span class="p">,</span> <span class="s1">&#39;--mutation_function&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;one_point&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-s&#39;</span><span class="p">,</span> <span class="s1">&#39;--selection_function&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;gaussian&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-b&#39;</span><span class="p">,</span> <span class="s1">&#39;--grammar&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-l&#39;</span><span class="p">,</span> <span class="s1">&#39;--log_path&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="c1"># Load the grove configuration.</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">load_config</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
+
+    <span class="c1"># Initialize the grove logger.</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">init_logger</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">log_path</span><span class="p">)</span>
+
+    <span class="c1"># Change the current directory, for logging purposes.</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">log_path</span><span class="p">)</span>
+
+    <span class="c1"># Run the genetic algorithm.</span>
+    <span class="n">evolve</span><span class="p">(</span>
+        <span class="n">population_size</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">population</span> <span class="ow">or</span> <span class="n">config</span><span class="o">.</span><span class="n">grove_config</span><span class="p">[</span><span class="s1">&#39;ga&#39;</span><span class="p">][</span><span class="s1">&#39;parameters&#39;</span><span class="p">][</span><span class="s1">&#39;population&#39;</span><span class="p">],</span>
+        <span class="n">generations</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">generations</span> <span class="ow">or</span> <span class="n">config</span><span class="o">.</span><span class="n">grove_config</span><span class="p">[</span><span class="s1">&#39;ga&#39;</span><span class="p">][</span><span class="s1">&#39;parameters&#39;</span><span class="p">][</span><span class="s1">&#39;generations&#39;</span><span class="p">],</span>
+        <span class="n">repeats</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">grove_config</span><span class="p">[</span><span class="s1">&#39;ga&#39;</span><span class="p">][</span><span class="s1">&#39;parameters&#39;</span><span class="p">][</span><span class="s1">&#39;repeats&#39;</span><span class="p">],</span>
+        <span class="n">agent_func</span><span class="o">=</span><span class="n">agent_init</span><span class="p">,</span>
+        <span class="n">pre_evaluation</span><span class="o">=</span><span class="n">pre_evaluation</span><span class="p">,</span>
+        <span class="n">evaluation</span><span class="o">=</span><span class="n">evaluation</span><span class="p">,</span>
+        <span class="n">post_evaluation</span><span class="o">=</span><span class="n">post_evaluation</span><span class="p">,</span>
+        <span class="n">selection</span><span class="o">=</span><span class="n">truncation</span><span class="p">(</span><span class="mf">0.2</span><span class="p">),</span>
+        <span class="n">crossover</span><span class="o">=</span><span class="n">one_point</span><span class="p">(),</span>
+        <span class="n">mutation</span><span class="o">=</span><span class="n">gaussian</span><span class="p">(),</span>
+        <span class="n">nodes</span><span class="o">=</span><span class="p">[],</span>
+        <span class="n">depends</span><span class="o">=</span><span class="p">[],</span>
+        <span class="n">debug</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">grove_config</span><span class="p">[</span><span class="s1">&#39;debug&#39;</span><span class="p">]</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Fuzzy String Matching</a><ul>
+<li><a class="reference internal" href="#grove-configuration">Grove Configuration</a></li>
+<li><a class="reference internal" href="#main">Main</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Examples</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Examples</a></li>
+      <li>Next: <a href="geswarm.html" title="next chapter">GESwarm - Recreating a Generic CPFA</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/examples/fuzzystringmatching.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Troy Squillaci.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      
+      |
+      <a href="../_sources/examples/fuzzystringmatching.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

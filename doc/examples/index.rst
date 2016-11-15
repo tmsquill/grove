@@ -8,11 +8,12 @@ Genetic Algorithms
 
 .. toctree::
 
-  fuzzy_string_matching
+  fuzzystringmatching
+
 
 Grammatical Evolution
 ---------------------
 
 .. toctree::
 
-  foraging_with_ges
+  geswarm

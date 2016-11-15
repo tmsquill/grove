@@ -1,0 +1,278 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>evolution package &mdash; Grove 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="top" title="Grove 0.1.0 documentation" href="../index.html" />
+    <link rel="up" title="grove" href="modules.html" />
+    <link rel="next" title="grammar package" href="grammar.html" />
+    <link rel="prev" title="grove" href="modules.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="evolution-package">
+<h1>evolution package<a class="headerlink" href="#evolution-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-evolution.agent">
+<span id="evolution-agent-module"></span><h2>evolution.agent module<a class="headerlink" href="#module-evolution.agent" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="evolution.agent.Agent">
+<em class="property">class </em><code class="descclassname">evolution.agent.</code><code class="descname">Agent</code><span class="sig-paren">(</span><em>genome=None</em><span class="sig-paren">)</span><a class="headerlink" href="#evolution.agent.Agent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>A standard representation of an agent. All agents have the following attributes; a unique ID, an evaluation value,
+a genome (along with other genome-specific attributes used by the GA), a list of jobs used for evaluating the agent
+with distributed computation, a random seed that can be used by the evaluation functionm, and a payload that can be
+used to transport arbitrary data to the evaluation function.</p>
+<dl class="attribute">
+<dt id="evolution.agent.Agent.aid">
+<code class="descname">aid</code><em class="property"> = &lt;method-wrapper 'next' of itertools.count object&gt;</em><a class="headerlink" href="#evolution.agent.Agent.aid" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-evolution.crossover">
+<span id="evolution-crossover-module"></span><h2>evolution.crossover module<a class="headerlink" href="#module-evolution.crossover" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="evolution.crossover.one_point">
+<code class="descclassname">evolution.crossover.</code><code class="descname">one_point</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#evolution.crossover.one_point" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="evolution.crossover.two_point">
+<code class="descclassname">evolution.crossover.</code><code class="descname">two_point</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#evolution.crossover.two_point" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="evolution.crossover.uniform">
+<code class="descclassname">evolution.crossover.</code><code class="descname">uniform</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#evolution.crossover.uniform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-evolution.ga">
+<span id="evolution-ga-module"></span><h2>evolution.ga module<a class="headerlink" href="#module-evolution.ga" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="evolution.ga.evolve">
+<code class="descclassname">evolution.ga.</code><code class="descname">evolve</code><span class="sig-paren">(</span><em>population_size</em>, <em>generations</em>, <em>repeats</em>, <em>agent_func</em>, <em>pre_evaluation</em>, <em>evaluation</em>, <em>post_evaluation</em>, <em>selection</em>, <em>crossover</em>, <em>mutation</em>, <em>nodes</em>, <em>depends</em>, <em>debug</em><span class="sig-paren">)</span><a class="headerlink" href="#evolution.ga.evolve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs evolution on a set of agents over a number of generations. The desired evolutionary functions must be
+specified by the caller. Logging is optional.
+:param population_size: The desired population size.
+:param generations: The number of generation to evolve.
+:param repeats: The number of evaluations to perform on an individual agent.
+:param agent_func: Function used to initialize a population of agents.
+:param pre_evaluation: The pre-evaluation function. Intended to prepare agents for evaluation.
+:param evaluation: The evaluation function.
+:param post_evaluation: The post-evaluation function. Intended to gather data or alter agents after evaluation.
+:param selection: The selection function.
+:param crossover: The crossover function.
+:param mutation: The mutation function.
+:param nodes: The nodes in the cluster used for computing the evaluation function.
+:param depends: The list of dependencies needed by dispynodes to perform computation of the evaluation function.
+:param debug: Boolean for toggling debugging for distributed computation.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-evolution.generation">
+<span id="evolution-generation-module"></span><h2>evolution.generation module<a class="headerlink" href="#module-evolution.generation" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="evolution.generation.Generation">
+<em class="property">class </em><code class="descclassname">evolution.generation.</code><code class="descname">Generation</code><a class="headerlink" href="#evolution.generation.Generation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a generation from the evolutionary process. Maintains a snapshot of the populations during that time.
+Particularly useful for logging and future data analysis.</p>
+<dl class="method">
+<dt id="evolution.generation.Generation.bind_agents">
+<code class="descname">bind_agents</code><span class="sig-paren">(</span><em>agents</em><span class="sig-paren">)</span><a class="headerlink" href="#evolution.generation.Generation.bind_agents" title="Permalink to this definition">¶</a></dt>
+<dd><p>Binds a set of agents to the generation.
+:param agents: The set of agents to bind to the generation.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="evolution.generation.Generation.csv">
+<code class="descname">csv</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#evolution.generation.Generation.csv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts the generation into a CSV friendly format which can be saved to CSV files.
+:return: CSV friendly format of the generation.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="evolution.generation.Generation.gid">
+<code class="descname">gid</code><em class="property"> = &lt;method-wrapper 'next' of itertools.count object&gt;</em><a class="headerlink" href="#evolution.generation.Generation.gid" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-evolution.mutation">
+<span id="evolution-mutation-module"></span><h2>evolution.mutation module<a class="headerlink" href="#module-evolution.mutation" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="evolution.mutation.boundary">
+<code class="descclassname">evolution.mutation.</code><code class="descname">boundary</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#evolution.mutation.boundary" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="evolution.mutation.gaussian">
+<code class="descclassname">evolution.mutation.</code><code class="descname">gaussian</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#evolution.mutation.gaussian" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="evolution.mutation.uniform">
+<code class="descclassname">evolution.mutation.</code><code class="descname">uniform</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#evolution.mutation.uniform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-evolution.selection">
+<span id="evolution-selection-module"></span><h2>evolution.selection module<a class="headerlink" href="#module-evolution.selection" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="evolution.selection.roulette">
+<code class="descclassname">evolution.selection.</code><code class="descname">roulette</code><span class="sig-paren">(</span><em>sample=None</em>, <em>size=None</em><span class="sig-paren">)</span><a class="headerlink" href="#evolution.selection.roulette" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="evolution.selection.tournament">
+<code class="descclassname">evolution.selection.</code><code class="descname">tournament</code><span class="sig-paren">(</span><em>agents_ret=None</em>, <em>tournament_size=None</em><span class="sig-paren">)</span><a class="headerlink" href="#evolution.selection.tournament" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="evolution.selection.truncation">
+<code class="descclassname">evolution.selection.</code><code class="descname">truncation</code><span class="sig-paren">(</span><em>elite_proportion=None</em><span class="sig-paren">)</span><a class="headerlink" href="#evolution.selection.truncation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-evolution.utils">
+<span id="evolution-utils-module"></span><h2>evolution.utils module<a class="headerlink" href="#module-evolution.utils" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="evolution.utils.generate_csv">
+<code class="descclassname">evolution.utils.</code><code class="descname">generate_csv</code><span class="sig-paren">(</span><em>generations=None</em><span class="sig-paren">)</span><a class="headerlink" href="#evolution.utils.generate_csv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds an evolutionary run to a CSV file for further data analysis.
+:param generations: The generations containing archives of the agents at each generation.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="evolution.utils.generate_mongo">
+<code class="descclassname">evolution.utils.</code><code class="descname">generate_mongo</code><span class="sig-paren">(</span><em>generations=None</em>, <em>host='localhost'</em>, <em>port=27017</em><span class="sig-paren">)</span><a class="headerlink" href="#evolution.utils.generate_mongo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds an evolutionary run to a MongoDB instance for further data analysis.
+:param generations: The generations containing archives of the agents at each generation.
+:param host: The host to reach the MongoDB instance.
+:param port: The port to reach the MongoDB instance.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="evolution.utils.load_mongo">
+<code class="descclassname">evolution.utils.</code><code class="descname">load_mongo</code><span class="sig-paren">(</span><em>object_id=None</em>, <em>host='localhost'</em>, <em>port=27017</em><span class="sig-paren">)</span><a class="headerlink" href="#evolution.utils.load_mongo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads an evolutionary run from a MongoDB instance for further data analysis.
+:param object_id: The ObjectId of the entry in the MongoDB.
+:param host: The host to reach the MongoDB instance.
+:param port: The port to reach the MongoDB instance.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-evolution">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-evolution" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">evolution package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-evolution.agent">evolution.agent module</a></li>
+<li><a class="reference internal" href="#module-evolution.crossover">evolution.crossover module</a></li>
+<li><a class="reference internal" href="#module-evolution.ga">evolution.ga module</a></li>
+<li><a class="reference internal" href="#module-evolution.generation">evolution.generation module</a></li>
+<li><a class="reference internal" href="#module-evolution.mutation">evolution.mutation module</a></li>
+<li><a class="reference internal" href="#module-evolution.selection">evolution.selection module</a></li>
+<li><a class="reference internal" href="#module-evolution.utils">evolution.utils module</a></li>
+<li><a class="reference internal" href="#module-evolution">Module contents</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Library Reference</a><ul>
+  <li><a href="modules.html">grove</a><ul>
+      <li>Previous: <a href="modules.html" title="previous chapter">grove</a></li>
+      <li>Next: <a href="grammar.html" title="next chapter">grammar package</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/api/evolution.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Troy Squillaci.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      
+      |
+      <a href="../_sources/api/evolution.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

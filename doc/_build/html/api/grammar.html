@@ -1,0 +1,251 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>grammar package &mdash; Grove 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="top" title="Grove 0.1.0 documentation" href="../index.html" />
+    <link rel="up" title="grove" href="modules.html" />
+    <link rel="next" title="grove package" href="grove.html" />
+    <link rel="prev" title="evolution package" href="evolution.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="grammar-package">
+<h1>grammar package<a class="headerlink" href="#grammar-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-grammar.constraint">
+<span id="grammar-constraint-module"></span><h2>grammar.constraint module<a class="headerlink" href="#module-grammar.constraint" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="grammar.constraint.find_blacklists">
+<code class="descclassname">grammar.constraint.</code><code class="descname">find_blacklists</code><span class="sig-paren">(</span><em>thrift</em><span class="sig-paren">)</span><a class="headerlink" href="#grammar.constraint.find_blacklists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds all blacklists in a Apache Thrift module.
+:param thrift: The Apache Thrift module to search.
+:return: The list of blacklists contained in the Apache Thrift module.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="grammar.constraint.find_whitelists">
+<code class="descclassname">grammar.constraint.</code><code class="descname">find_whitelists</code><span class="sig-paren">(</span><em>thrift</em><span class="sig-paren">)</span><a class="headerlink" href="#grammar.constraint.find_whitelists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds all whitelists in a Apache Thrift module.
+:param thrift: The Apache Thrift module to search.
+:return: The list of whitelists contained in the Apache Thrift module.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="grammar.constraint.verify_lists">
+<code class="descclassname">grammar.constraint.</code><code class="descname">verify_lists</code><span class="sig-paren">(</span><em>blacklist</em>, <em>whitelist</em><span class="sig-paren">)</span><a class="headerlink" href="#grammar.constraint.verify_lists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verifies that a given blacklist and whitelist do not contain an invalid mapping. An invalid mapping
+occurs if there exists a key in both lists such a non-empty intersection of the resulting sets is present.
+:param blacklist: The blacklist.
+:param whitelist: The whitelist.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-grammar.grammar">
+<span id="grammar-grammar-module"></span><h2>grammar.grammar module<a class="headerlink" href="#module-grammar.grammar" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="grammar.grammar.Grammar">
+<em class="property">class </em><code class="descclassname">grammar.grammar.</code><code class="descname">Grammar</code><span class="sig-paren">(</span><em>grammar_file</em><span class="sig-paren">)</span><a class="headerlink" href="#grammar.grammar.Grammar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Context free grammar that can be defined by:
+- Python functions.
+- Google Protocol Buffers.
+- Backus-Naur Form</p>
+<dl class="attribute">
+<dt id="grammar.grammar.Grammar.NT">
+<code class="descname">NT</code><em class="property"> = 'NT'</em><a class="headerlink" href="#grammar.grammar.Grammar.NT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="grammar.grammar.Grammar.T">
+<code class="descname">T</code><em class="property"> = 'T'</em><a class="headerlink" href="#grammar.grammar.Grammar.T" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="grammar.grammar.load_bnf">
+<code class="descclassname">grammar.grammar.</code><code class="descname">load_bnf</code><span class="sig-paren">(</span><em>self</em>, <em>grammar_file</em><span class="sig-paren">)</span><a class="headerlink" href="#grammar.grammar.load_bnf" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="grammar.grammar.load_fbs">
+<code class="descclassname">grammar.grammar.</code><code class="descname">load_fbs</code><span class="sig-paren">(</span><em>grammar_file=None</em><span class="sig-paren">)</span><a class="headerlink" href="#grammar.grammar.load_fbs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads and compiles a Google Protocol Buffers file into a module.
+:param grammar_file: The file path to the Google Protocol Buffers file.
+:return: The compiled module.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="grammar.grammar.load_thrift">
+<code class="descclassname">grammar.grammar.</code><code class="descname">load_thrift</code><span class="sig-paren">(</span><em>grammar_file=None</em><span class="sig-paren">)</span><a class="headerlink" href="#grammar.grammar.load_thrift" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads and compiles an Apache Thrift file into a module.
+:param grammar_file: The file path to the Apache Thrift file.
+:return: The compiled module.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-grammar.parse_tree">
+<span id="grammar-parse-tree-module"></span><h2>grammar.parse_tree module<a class="headerlink" href="#module-grammar.parse_tree" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="grammar.parse_tree.ParseTree">
+<em class="property">class </em><code class="descclassname">grammar.parse_tree.</code><code class="descname">ParseTree</code><span class="sig-paren">(</span><em>grammar=None</em>, <em>genotype=None</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#grammar.parse_tree.ParseTree" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="grammar.parse_tree.ParseTree.generate">
+<code class="descname">generate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#grammar.parse_tree.ParseTree.generate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a parse tree. The generation type depends on the representation of the grammar
+object (BNF, Proto, Thrift).
+:return: The generated parse tree built with the input sequence.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="grammar.parse_tree.ParseTree.generate_from_bnf">
+<code class="descname">generate_from_bnf</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#grammar.parse_tree.ParseTree.generate_from_bnf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forms a parse tree from a Backus-Naur Form grammar and a genotype.
+:return: An parse tree represented as a list.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="grammar.parse_tree.ParseTree.generate_from_thrift">
+<code class="descname">generate_from_thrift</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#grammar.parse_tree.ParseTree.generate_from_thrift" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uses reflection to form a parse tree with an Apache Thrift auto-generated class and genotype.
+:return: A parse tree represented as an instance of a Apache Thrift class.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="grammar.parse_tree.ParseTree.serialize">
+<code class="descname">serialize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#grammar.parse_tree.ParseTree.serialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serializes a parse tree into binary.
+:param parse_tree: The parse tree to serialize.
+:return: The serialized parse tree.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-grammar.utils">
+<span id="grammar-utils-module"></span><h2>grammar.utils module<a class="headerlink" href="#module-grammar.utils" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="grammar.utils.discover_children">
+<code class="descclassname">grammar.utils.</code><code class="descname">discover_children</code><span class="sig-paren">(</span><em>object=None</em><span class="sig-paren">)</span><a class="headerlink" href="#grammar.utils.discover_children" title="Permalink to this definition">¶</a></dt>
+<dd><p>Discovers all children defined in the thrift_spec of an instance of a thrift auto-generated class.
+:param object: The treenode object to search to discover the children.
+:return: The discovered children, wrapped in treenodes.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="grammar.utils.extract_list_productions">
+<code class="descclassname">grammar.utils.</code><code class="descname">extract_list_productions</code><span class="sig-paren">(</span><em>object</em><span class="sig-paren">)</span><a class="headerlink" href="#grammar.utils.extract_list_productions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extracts production choices from a list and returns them wrapped in treenodes.
+:param object: The list wrapped in a treenode to extract from.
+:return: Possible production choices from the list, wrapped in treenodes.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-grammar">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-grammar" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">grammar package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-grammar.constraint">grammar.constraint module</a></li>
+<li><a class="reference internal" href="#module-grammar.grammar">grammar.grammar module</a></li>
+<li><a class="reference internal" href="#module-grammar.parse_tree">grammar.parse_tree module</a></li>
+<li><a class="reference internal" href="#module-grammar.utils">grammar.utils module</a></li>
+<li><a class="reference internal" href="#module-grammar">Module contents</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Library Reference</a><ul>
+  <li><a href="modules.html">grove</a><ul>
+      <li>Previous: <a href="evolution.html" title="previous chapter">evolution package</a></li>
+      <li>Next: <a href="grove.html" title="next chapter">grove package</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/api/grammar.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Troy Squillaci.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      
+      |
+      <a href="../_sources/api/grammar.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -4,7 +4,7 @@ Installation
 Requirements
 ------------
 
-Grove is compatible with Python 2 and 3.
+Grove is compatible with Python 2.7.
 
 Install Grove
 -------------

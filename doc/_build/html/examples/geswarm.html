@@ -1,0 +1,493 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>GESwarm - Recreating a Generic CPFA &mdash; Grove 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="top" title="Grove 0.1.0 documentation" href="../index.html" />
+    <link rel="up" title="Examples" href="index.html" />
+    <link rel="next" title="Library Reference" href="../api/index.html" />
+    <link rel="prev" title="Fuzzy String Matching" href="fuzzystringmatching.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="geswarm-recreating-a-generic-cpfa">
+<h1>GESwarm - Recreating a Generic CPFA<a class="headerlink" href="#geswarm-recreating-a-generic-cpfa" title="Permalink to this headline">¶</a></h1>
+<p>GESwarm is a concrete use case of grammatical evolution. It uses a formal grammar
+to specify the set of all possible rules that dictate the collective behaviors
+manifested in a simulation. Derivations of the grammar are then evolved, which correlate
+directly with state machines used by the simulator. For this example, we will use an
+incredibly simple 2D simulator included with Grove.</p>
+<p>For more information about this problem, see <a class="reference internal" href="#refgeswarm"><span class="std std-ref">Reference</span></a>.</p>
+<div class="section" id="formal-grammar">
+<h2>Formal Grammar<a class="headerlink" href="#formal-grammar" title="Permalink to this headline">¶</a></h2>
+<p>To perform grammatical evolution, we need to specify a formal grammar. Currently, Grove supports
+three representations of formal grammars - Apache Thrift, BNF, and FlatBuffers. Here we choose
+Apache Thrift, although the other options would be just as usable.</p>
+<p>The specification provided by GESwarm concisely describes the formal grammar. At the top level,
+there exists an arbitrary list of rules. Each rule consists of an arbitrary list of preconditions,
+behaviors, and actions. Each precondition, behavior, and action contain a terminal symbol.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">//</span> <span class="n">Actions</span> <span class="n">Blacklists</span>
+<span class="n">const</span> <span class="nb">map</span><span class="o">&lt;</span><span class="n">string</span><span class="p">,</span> <span class="nb">set</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;&gt;</span> <span class="n">idaction_blacklist</span> <span class="o">=</span> <span class="p">{</span>
+	<span class="s1">&#39;BEHAVIOR_4&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;BEHAVIOR_0&#39;</span><span class="p">,</span> <span class="s1">&#39;BEHAVIOR_1&#39;</span><span class="p">,</span> <span class="s1">&#39;BEHAVIOR_2&#39;</span><span class="p">,</span> <span class="s1">&#39;BEHAVIOR_3&#39;</span><span class="p">,</span> <span class="s1">&#39;BEHAVIOR_5&#39;</span><span class="p">,</span> <span class="s1">&#39;BEHAVIOR_6&#39;</span><span class="p">],</span>
+	<span class="s1">&#39;BEHAVIOR_5&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;BEHAVIOR_4&#39;</span><span class="p">,</span> <span class="s1">&#39;BEHAVIOR_6&#39;</span><span class="p">],</span>
+	<span class="s1">&#39;BEHAVIOR_6&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;BEHAVIOR_5&#39;</span><span class="p">]</span>
+<span class="p">}</span>
+
+<span class="n">const</span> <span class="nb">map</span><span class="o">&lt;</span><span class="n">string</span><span class="p">,</span> <span class="nb">set</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;&gt;</span> <span class="n">idaction_whitelist</span> <span class="o">=</span> <span class="p">{</span>
+	<span class="s1">&#39;BEHAVIOR_6&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;BEHAVIOR_4&#39;</span><span class="p">]</span>
+<span class="p">}</span>
+
+
+
+<span class="o">//</span> <span class="n">Terminal</span> <span class="n">Expansions</span>
+<span class="n">enum</span> <span class="n">IdPrecondition</span> <span class="p">{</span>
+	<span class="n">PRECONDITION_0</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+	<span class="n">PRECONDITION_1</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+	<span class="n">PRECONDITION_2</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+	<span class="n">PRECONDITION_3</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="p">}</span>
+
+<span class="n">enum</span> <span class="n">IdBehavior</span> <span class="p">{</span>
+  <span class="o">//</span> <span class="n">BEHAVIOR_0</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+  <span class="o">//</span> <span class="n">BEHAVIOR_1</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="o">//</span> <span class="n">BEHAVIOR_2</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+  <span class="o">//</span> <span class="n">BEHAVIOR_3</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+  <span class="n">BEHAVIOR_4</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+  <span class="n">BEHAVIOR_5</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+  <span class="n">BEHAVIOR_6</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span>
+  <span class="n">BEHAVIOR_7</span> <span class="o">=</span> <span class="mi">7</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">enum</span> <span class="n">IdAction</span> <span class="p">{</span>
+  <span class="o">//</span> <span class="n">ACTION_0</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+  <span class="o">//</span> <span class="n">ACTION_1</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="o">//</span> <span class="n">ACTION_2</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+  <span class="o">//</span> <span class="n">ACTION_3</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+  <span class="n">ACTION_4</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+  <span class="n">ACTION_5</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+  <span class="n">ACTION_6</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span>
+  <span class="n">ACTION_7</span> <span class="o">=</span> <span class="mi">7</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">enum</span> <span class="n">Probability</span> <span class="p">{</span>
+	<span class="n">PROB_0</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+	<span class="n">PROB_1</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+	<span class="n">PROB_2</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+	<span class="n">PROB_3</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+	<span class="n">PROB_4</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+	<span class="n">PROB_5</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+	<span class="n">PROB_6</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span>
+	<span class="n">PROB_7</span> <span class="o">=</span> <span class="mi">7</span>
+<span class="p">}</span>
+
+<span class="n">enum</span> <span class="n">ProbInitState</span> <span class="p">{</span>
+	<span class="n">PROB_INIT_STATE_0</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+	<span class="n">PROB_INIT_STATE_1</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+	<span class="n">PROB_INIT_STATE_2</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+	<span class="n">PROB_INIT_STATE_3</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+	<span class="n">PROB_INIT_STATE_4</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+	<span class="n">PROB_INIT_STATE_5</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+	<span class="n">PROB_INIT_STATE_6</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span>
+	<span class="n">PROB_INIT_STATE_7</span> <span class="o">=</span> <span class="mi">7</span><span class="p">,</span>
+	<span class="n">PROB_INIT_STATE_8</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span>
+	<span class="n">PROB_INIT_STATE_9</span> <span class="o">=</span> <span class="mi">9</span>
+<span class="p">}</span>
+
+
+
+<span class="o">//</span> <span class="n">Non</span><span class="o">-</span><span class="n">terminal</span> <span class="n">Expansions</span>
+<span class="n">struct</span> <span class="n">Precondition</span> <span class="p">{</span>
+  <span class="mi">1</span><span class="p">:</span> <span class="n">IdPrecondition</span> <span class="n">id_precondition</span>
+<span class="p">}</span>
+
+<span class="n">struct</span> <span class="n">Behavior</span> <span class="p">{</span>
+  <span class="mi">1</span><span class="p">:</span> <span class="n">IdBehavior</span> <span class="n">id_behavior</span>
+<span class="p">}</span>
+
+<span class="n">struct</span> <span class="n">Action</span> <span class="p">{</span>
+  <span class="mi">1</span><span class="p">:</span> <span class="n">IdAction</span> <span class="n">id_action</span><span class="p">,</span>
+  <span class="mi">2</span><span class="p">:</span> <span class="n">Probability</span> <span class="n">prob</span>
+<span class="p">}</span>
+
+<span class="n">struct</span> <span class="n">Rule</span> <span class="p">{</span>
+  <span class="mi">1</span><span class="p">:</span> <span class="nb">list</span><span class="o">&lt;</span><span class="n">Precondition</span><span class="o">&gt;</span> <span class="n">preconditions</span> <span class="o">=</span> <span class="p">[],</span>
+  <span class="mi">2</span><span class="p">:</span> <span class="nb">list</span><span class="o">&lt;</span><span class="n">Behavior</span><span class="o">&gt;</span> <span class="n">behaviors</span> <span class="o">=</span> <span class="p">[],</span>
+  <span class="mi">3</span><span class="p">:</span> <span class="nb">list</span><span class="o">&lt;</span><span class="n">Action</span><span class="o">&gt;</span> <span class="n">actions</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="p">}</span>
+
+<span class="n">struct</span> <span class="n">Initialization</span> <span class="p">{</span>
+  <span class="mi">1</span><span class="p">:</span> <span class="n">ProbInitState</span> <span class="n">init_1</span><span class="p">,</span>
+  <span class="mi">2</span><span class="p">:</span> <span class="n">ProbInitState</span> <span class="n">init_2</span><span class="p">,</span>
+  <span class="mi">3</span><span class="p">:</span> <span class="n">ProbInitState</span> <span class="n">init_3</span>
+<span class="p">}</span>
+
+<span class="n">struct</span> <span class="n">Root</span> <span class="p">{</span>
+  <span class="mi">1</span><span class="p">:</span> <span class="n">Initialization</span> <span class="n">init</span><span class="p">,</span>
+	<span class="mi">2</span><span class="p">:</span> <span class="n">Behavior</span> <span class="n">default_behavior</span><span class="p">,</span>
+  <span class="mi">3</span><span class="p">:</span> <span class="nb">list</span><span class="o">&lt;</span><span class="n">Rule</span><span class="o">&gt;</span> <span class="n">rules</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="grove-configuration">
+<h2>Grove Configuration<a class="headerlink" href="#grove-configuration" title="Permalink to this headline">¶</a></h2>
+<p>The next step is to specify the grove-config.json file loaded by Grove for determining specific
+configuration options.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="s2">&quot;agent&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Agent&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;GESAgent&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;genome_len&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="s2">&quot;genome_lb&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;genome_ub&quot;</span><span class="p">:</span> <span class="mi">127</span><span class="p">,</span>
+        <span class="s2">&quot;genome_mp&quot;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+        <span class="s2">&quot;genome_type&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;genome_names&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s2">&quot;Genome&quot;</span>
+        <span class="p">],</span>
+        <span class="s2">&quot;genome_abbr_names&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s2">&quot;Genome&quot;</span>
+        <span class="p">]</span>
+    <span class="p">}</span>
+  <span class="p">},</span>
+  <span class="s2">&quot;ga&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;nodes&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;10.0.0.30&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;10.0.0.31&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;10.0.0.32&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;10.0.0.33&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;10.0.0.34&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;10.0.0.35&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;10.0.0.36&quot;</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;parameters&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;population&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+        <span class="s2">&quot;generations&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s2">&quot;repeats&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="s2">&quot;agent_type&quot;</span><span class="p">:</span> <span class="s2">&quot;GESAgent&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;evaluation_func&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;selection_func&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;crossover_func&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;mutation_func&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span>
+    <span class="p">}</span>
+  <span class="p">},</span>
+  <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="s2">&quot;collection_type&quot;</span><span class="p">:</span> <span class="s2">&quot;mongo&quot;</span>
+  <span class="p">},</span>
+  <span class="s2">&quot;logging&quot;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="s2">&quot;grammar&quot;</span><span class="p">:</span> <span class="n">false</span><span class="p">,</span>
+      <span class="s2">&quot;evolution&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span>
+      <span class="s2">&quot;selection&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span>
+      <span class="s2">&quot;crossover&quot;</span><span class="p">:</span> <span class="n">true</span><span class="p">,</span>
+      <span class="s2">&quot;mutation&quot;</span><span class="p">:</span> <span class="n">true</span>
+  <span class="p">},</span>
+  <span class="s2">&quot;debug&quot;</span><span class="p">:</span> <span class="n">false</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="main">
+<h2>Main<a class="headerlink" href="#main" title="Permalink to this headline">¶</a></h2>
+<p>We finally are able to put all of the pieces together and directly interface with Grove. In the main.py file we:</p>
+<ul class="simple">
+<li>Extend the <code class="xref py py-class docutils literal"><span class="pre">Agent</span></code> class to provide functionality for parse trees.</li>
+<li>Define an initialization method for the population.</li>
+<li>Define pre-evaluation, evaluation, and post-evaluation function. In this case, pre-evaluation will generate parse
+trees for all agents, serialize them, and place the result in the payload attribute of the agent. Evaluation runs
+the simulation. Note that post-evaluation is not needed for this example.</li>
+</ul>
+<p>Lastly, we perform all necessary setup, then call Grove to start evolution.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">random</span>
+
+<span class="c1"># If testing with local files, then include the following two lines. Otherwise ensure grove has been installed</span>
+<span class="c1"># by pip so that importing the following modules is possible.</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;/Users/Zivia/Research/grove&#39;</span><span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">evolution.agent</span> <span class="k">import</span> <span class="n">Agent</span>
+<span class="kn">from</span> <span class="nn">evolution.ga</span> <span class="k">import</span> <span class="n">evolve</span>
+<span class="kn">from</span> <span class="nn">evolution.crossover</span> <span class="k">import</span> <span class="n">one_point</span>
+<span class="kn">from</span> <span class="nn">evolution.selection</span> <span class="k">import</span> <span class="n">tournament</span>
+<span class="kn">from</span> <span class="nn">evolution.mutation</span> <span class="k">import</span> <span class="n">gaussian</span>
+<span class="kn">from</span> <span class="nn">grammar.parse_tree</span> <span class="k">import</span> <span class="n">ParseTree</span>
+<span class="kn">from</span> <span class="nn">grove</span> <span class="k">import</span> <span class="n">config</span><span class="p">,</span> <span class="n">logger</span>
+
+
+<span class="k">class</span> <span class="nc">GESAgent</span><span class="p">(</span><span class="n">Agent</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An agent targeting GESwarm simulations. Such agents include a parse tree that represents a set of rules that are</span>
+<span class="sd">    used by the simulator to (hopefully) produce interesting collective behaviors.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">grammar</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">GESAgent</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">genome</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">genome</span> <span class="o">=</span> <span class="p">[</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">)</span> <span class="k">for</span> <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">genome_lb</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">genome_ub</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parse_tree</span> <span class="o">=</span> <span class="n">ParseTree</span><span class="p">(</span><span class="n">GESAgent</span><span class="o">.</span><span class="n">grammar</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">genome</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">agent_init</span><span class="p">(</span><span class="n">population_size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A function used by the genetic algorithm that initializes a population of agents.</span>
+<span class="sd">    :param population_size: The size of the population.</span>
+<span class="sd">    :return: A list of initialized agents, length equal to the population size.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="p">[</span><span class="n">GESAgent</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="n">population_size</span><span class="p">)]</span>
+
+
+<span class="k">def</span> <span class="nf">pre_evaluation</span><span class="p">(</span><span class="n">agents</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Pre-evaluation function prepares agents for evaluation. In this case, a genome is used to generate a parse tree,</span>
+<span class="sd">    which is used during evaluation.</span>
+<span class="sd">    :param agents: The list of agents to map the generation of parse trees over.</span>
+<span class="sd">    :return: The updated list of agents with generated parse trees.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">for</span> <span class="n">agent</span> <span class="ow">in</span> <span class="n">agents</span><span class="p">:</span>
+
+        <span class="n">agent</span><span class="o">.</span><span class="n">parse_tree</span><span class="o">.</span><span class="n">generate</span><span class="p">()</span>
+        <span class="n">agent</span><span class="o">.</span><span class="n">payload</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">parse_tree</span><span class="o">.</span><span class="n">serialize</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">agents</span>
+
+
+<span class="k">def</span> <span class="nf">evaluation</span><span class="p">(</span><span class="n">payload</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Evaluation function that executes a simulation with the specified payload. In this case the payload is a serialized</span>
+<span class="sd">    parse tree that defines the legal transformation that can take place in the dynamic state machine.</span>
+<span class="sd">    :param payload: The payload (serialized parse tree) to evaluate.</span>
+<span class="sd">    :return: The evaluation value determined by executing the evaluation function with the payload.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="kn">import</span> <span class="nn">os</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="s1">&#39;/Users/Zivia/Research/output/simulations&#39;</span><span class="p">)</span>
+
+    <span class="kn">import</span> <span class="nn">traceback</span>
+
+    <span class="k">try</span><span class="p">:</span>
+
+        <span class="kn">import</span> <span class="nn">sys</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;/Users/Zivia/Research/grove&#39;</span><span class="p">)</span>
+
+        <span class="kn">from</span> <span class="nn">simulation.entity</span> <span class="k">import</span> <span class="n">SimAgent</span><span class="p">,</span> <span class="n">Food</span><span class="p">,</span> <span class="n">Nest</span>
+        <span class="kn">from</span> <span class="nn">simulation.environment</span> <span class="k">import</span> <span class="n">Environment</span>
+        <span class="kn">from</span> <span class="nn">simulation.simulation</span> <span class="k">import</span> <span class="n">Simulation</span>
+
+        <span class="kn">import</span> <span class="nn">thriftpy.transport</span> <span class="k">as</span> <span class="nn">tp</span>
+        <span class="kn">import</span> <span class="nn">thriftpy.protocol</span> <span class="k">as</span> <span class="nn">pc</span>
+        <span class="kn">import</span> <span class="nn">thriftpy</span>
+
+        <span class="c1"># Path to Thrift</span>
+        <span class="n">thrift_path</span> <span class="o">=</span> <span class="s1">&#39;/Users/Zivia/Research/grove-examples/cpfa_ges/thrift/foraging.thrift&#39;</span>
+
+        <span class="c1"># Compile the Thrift and read the grammar.</span>
+        <span class="n">module_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">thrift_path</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_thrift&#39;</span>
+        <span class="n">thrift</span> <span class="o">=</span> <span class="n">thriftpy</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">thrift_path</span><span class="p">,</span> <span class="n">module_name</span><span class="o">=</span><span class="n">module_name</span><span class="p">)</span>
+
+        <span class="n">transportIn</span> <span class="o">=</span> <span class="n">tp</span><span class="o">.</span><span class="n">TMemoryBuffer</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+        <span class="n">protocolIn</span> <span class="o">=</span> <span class="n">pc</span><span class="o">.</span><span class="n">TBinaryProtocol</span><span class="p">(</span><span class="n">transportIn</span><span class="p">)</span>
+        <span class="n">root</span> <span class="o">=</span> <span class="n">thrift</span><span class="o">.</span><span class="n">Root</span><span class="p">()</span>
+        <span class="n">root</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">protocolIn</span><span class="p">)</span>
+
+        <span class="n">seed</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">maxint</span><span class="p">)</span>
+        <span class="n">rand</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">Random</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+
+        <span class="c1"># Create the entities for the simulation.</span>
+        <span class="n">agents</span> <span class="o">=</span> <span class="p">[</span><span class="n">SimAgent</span><span class="p">(</span><span class="n">position</span><span class="o">=</span><span class="p">(</span><span class="n">rand</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">11</span><span class="p">),</span> <span class="n">rand</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">11</span><span class="p">)))</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="mi">5</span><span class="p">)]</span>
+        <span class="n">nest</span> <span class="o">=</span> <span class="n">Nest</span><span class="p">(</span><span class="n">position</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+        <span class="n">food</span> <span class="o">=</span> <span class="p">[</span><span class="n">Food</span><span class="p">(</span><span class="n">position</span><span class="o">=</span><span class="p">(</span><span class="n">rand</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="n">rand</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="n">rand</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">20</span><span class="p">)]),</span> <span class="n">rand</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="n">rand</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="n">rand</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">20</span><span class="p">)])))</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="mi">80</span><span class="p">)]</span>
+
+        <span class="n">entities</span> <span class="o">=</span> <span class="n">agents</span> <span class="o">+</span> <span class="p">[</span><span class="n">nest</span><span class="p">]</span> <span class="o">+</span> <span class="n">food</span>
+
+        <span class="c1"># Create the environment for the simulation.</span>
+        <span class="n">env</span> <span class="o">=</span> <span class="n">Environment</span><span class="p">()</span>
+
+        <span class="c1"># Create and execute the simulation.</span>
+        <span class="n">sim</span> <span class="o">=</span> <span class="n">Simulation</span><span class="p">(</span><span class="n">environment</span><span class="o">=</span><span class="n">env</span><span class="p">,</span> <span class="n">entities</span><span class="o">=</span><span class="n">entities</span><span class="p">,</span> <span class="n">parse_tree</span><span class="o">=</span><span class="n">root</span><span class="p">)</span>
+        <span class="n">sim</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+
+        <span class="c1"># Get the food tags collected, and return as the evaluation score.</span>
+        <span class="n">nest</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Nest</span><span class="p">),</span> <span class="n">sim</span><span class="o">.</span><span class="n">entities</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;random_seed&#39;</span><span class="p">:</span> <span class="n">seed</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="n">nest</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">food_count</span><span class="p">}</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+
+        <span class="nb">print</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">post_evaluation</span><span class="p">(</span><span class="n">agents</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Post-evaluation function performs data collection and/or alters agents after evaluation. In this case, no action</span>
+<span class="sd">    is needed, so the agents are simply returned.</span>
+<span class="sd">    :param agents: The list of agents.</span>
+<span class="sd">    :return: The list of agents.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">agents</span>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+
+    <span class="c1"># Parser for command line arguments.</span>
+    <span class="kn">import</span> <span class="nn">argparse</span>
+
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;grove&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-config&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;./cpfa_ges/grove-config.json&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-p&#39;</span><span class="p">,</span> <span class="s1">&#39;--population&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-g&#39;</span><span class="p">,</span> <span class="s1">&#39;--generations&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-c&#39;</span><span class="p">,</span> <span class="s1">&#39;--crossover_function&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;truncation&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-m&#39;</span><span class="p">,</span> <span class="s1">&#39;--mutation_function&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;one_point&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-s&#39;</span><span class="p">,</span> <span class="s1">&#39;--selection_function&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;gaussian&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-b&#39;</span><span class="p">,</span> <span class="s1">&#39;--grammar&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-l&#39;</span><span class="p">,</span> <span class="s1">&#39;--log_path&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="c1"># Load the grammar file.</span>
+    <span class="kn">from</span> <span class="nn">grammar.grammar</span> <span class="k">import</span> <span class="n">Grammar</span>
+
+    <span class="n">GESAgent</span><span class="o">.</span><span class="n">grammar</span> <span class="o">=</span> <span class="n">Grammar</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">grammar</span><span class="p">)</span>
+
+    <span class="c1"># Load the grove configuration.</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">load_config</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">config</span><span class="p">)</span>
+
+    <span class="c1"># Initialize the grove logger.</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">init_logger</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">log_path</span><span class="p">)</span>
+
+    <span class="c1"># Change the current directory, for logging purposes.</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">log_path</span><span class="p">)</span>
+
+    <span class="c1"># Run the genetic algorithm.</span>
+    <span class="n">evolve</span><span class="p">(</span>
+        <span class="n">population_size</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">population</span> <span class="ow">or</span> <span class="n">config</span><span class="o">.</span><span class="n">grove_config</span><span class="p">[</span><span class="s1">&#39;ga&#39;</span><span class="p">][</span><span class="s1">&#39;parameters&#39;</span><span class="p">][</span><span class="s1">&#39;population&#39;</span><span class="p">],</span>
+        <span class="n">generations</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">generations</span> <span class="ow">or</span> <span class="n">config</span><span class="o">.</span><span class="n">grove_config</span><span class="p">[</span><span class="s1">&#39;ga&#39;</span><span class="p">][</span><span class="s1">&#39;parameters&#39;</span><span class="p">][</span><span class="s1">&#39;generations&#39;</span><span class="p">],</span>
+        <span class="n">repeats</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">grove_config</span><span class="p">[</span><span class="s1">&#39;ga&#39;</span><span class="p">][</span><span class="s1">&#39;parameters&#39;</span><span class="p">][</span><span class="s1">&#39;repeats&#39;</span><span class="p">],</span>
+        <span class="n">agent_func</span><span class="o">=</span><span class="n">agent_init</span><span class="p">,</span>
+        <span class="n">pre_evaluation</span><span class="o">=</span><span class="n">pre_evaluation</span><span class="p">,</span>
+        <span class="n">evaluation</span><span class="o">=</span><span class="n">evaluation</span><span class="p">,</span>
+        <span class="n">post_evaluation</span><span class="o">=</span><span class="n">post_evaluation</span><span class="p">,</span>
+        <span class="n">selection</span><span class="o">=</span><span class="n">tournament</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+        <span class="n">crossover</span><span class="o">=</span><span class="n">one_point</span><span class="p">(),</span>
+        <span class="n">mutation</span><span class="o">=</span><span class="n">gaussian</span><span class="p">(),</span>
+        <span class="n">nodes</span><span class="o">=</span><span class="p">[],</span>
+        <span class="n">depends</span><span class="o">=</span><span class="p">[],</span>
+        <span class="n">debug</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">grove_config</span><span class="p">[</span><span class="s1">&#39;debug&#39;</span><span class="p">]</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="reference">
+<span id="refgeswarm"></span><h2>Reference<a class="headerlink" href="#reference" title="Permalink to this headline">¶</a></h2>
+<p><em>Ferrante, Eliseo, et al. &#8220;GESwarm: Grammatical evolution for the automatic synthesis of collective behaviors in swarm
+robotics.&#8221; Proceedings of the 15th annual conference on Genetic and evolutionary computation. ACM, 2013.</em></p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">GESwarm - Recreating a Generic CPFA</a><ul>
+<li><a class="reference internal" href="#formal-grammar">Formal Grammar</a></li>
+<li><a class="reference internal" href="#grove-configuration">Grove Configuration</a></li>
+<li><a class="reference internal" href="#main">Main</a></li>
+<li><a class="reference internal" href="#reference">Reference</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Examples</a><ul>
+      <li>Previous: <a href="fuzzystringmatching.html" title="previous chapter">Fuzzy String Matching</a></li>
+      <li>Next: <a href="../api/index.html" title="next chapter">Library Reference</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/examples/geswarm.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Troy Squillaci.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      
+      |
+      <a href="../_sources/examples/geswarm.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,492 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>simulation package &mdash; Grove 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="top" title="Grove 0.1.0 documentation" href="../index.html" />
+    <link rel="up" title="grove" href="modules.html" />
+    <link rel="next" title="About Grove" href="../about.html" />
+    <link rel="prev" title="grove package" href="grove.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="simulation-package">
+<h1>simulation package<a class="headerlink" href="#simulation-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-simulation.behaviors">
+<span id="simulation-behaviors-module"></span><h2>simulation.behaviors module<a class="headerlink" href="#module-simulation.behaviors" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="simulation.behaviors.drop_food">
+<code class="descclassname">simulation.behaviors.</code><code class="descname">drop_food</code><span class="sig-paren">(</span><em>agent=None</em>, <em>entities=None</em>, <em>environment=None</em><span class="sig-paren">)</span><a class="headerlink" href="#simulation.behaviors.drop_food" title="Permalink to this definition">¶</a></dt>
+<dd><p>Behavior that causes an agent to drop food.
+:param agent: The agent to perform the behavior.
+:param entities: A list of entities in the simulation.
+:param environment: The environment containing the agent.
+:return: The updated agent.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="simulation.behaviors.move_east">
+<code class="descclassname">simulation.behaviors.</code><code class="descname">move_east</code><span class="sig-paren">(</span><em>agent=None</em>, <em>entities=None</em>, <em>environment=None</em><span class="sig-paren">)</span><a class="headerlink" href="#simulation.behaviors.move_east" title="Permalink to this definition">¶</a></dt>
+<dd><p>Behavior that causes an agent to move east one unit.
+:param agent: The agent to perform the behavior.
+:param entities: A list of entities in the simulation.
+:param environment: The environment containing the agent.
+:return: The updated agent.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="simulation.behaviors.move_north">
+<code class="descclassname">simulation.behaviors.</code><code class="descname">move_north</code><span class="sig-paren">(</span><em>agent=None</em>, <em>entities=None</em>, <em>environment=None</em><span class="sig-paren">)</span><a class="headerlink" href="#simulation.behaviors.move_north" title="Permalink to this definition">¶</a></dt>
+<dd><p>Behavior that causes an agent to move north one unit.
+:param agent: The agent to perform the behavior.
+:param entities: A list of entities in the simulation.
+:param environment: The environment containing the agent.
+:return: The updated agent.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="simulation.behaviors.move_south">
+<code class="descclassname">simulation.behaviors.</code><code class="descname">move_south</code><span class="sig-paren">(</span><em>agent=None</em>, <em>entities=None</em>, <em>environment=None</em><span class="sig-paren">)</span><a class="headerlink" href="#simulation.behaviors.move_south" title="Permalink to this definition">¶</a></dt>
+<dd><p>Behavior that causes an agent to move south one unit.
+:param agent: The agent to perform the behavior.
+:param entities: A list of entities in the simulation.
+:param environment: The environment containing the agent.
+:return: The updated agent.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="simulation.behaviors.move_west">
+<code class="descclassname">simulation.behaviors.</code><code class="descname">move_west</code><span class="sig-paren">(</span><em>agent=None</em>, <em>entities=None</em>, <em>environment=None</em><span class="sig-paren">)</span><a class="headerlink" href="#simulation.behaviors.move_west" title="Permalink to this definition">¶</a></dt>
+<dd><p>Behavior that causes an agent to move west one unit.
+:param agent: The agent to perform the behavior.
+:param entities: A list of entities in the simulation.
+:param environment: The environment containing the agent.
+:return: The updated agent.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="simulation.behaviors.pickup_food">
+<code class="descclassname">simulation.behaviors.</code><code class="descname">pickup_food</code><span class="sig-paren">(</span><em>agent=None</em>, <em>entities=None</em>, <em>environment=None</em><span class="sig-paren">)</span><a class="headerlink" href="#simulation.behaviors.pickup_food" title="Permalink to this definition">¶</a></dt>
+<dd><p>Behavior that causes an agent to pickup food.
+:param agent: The agent to perform the behavior.
+:param entities: A list of entities in the simulation.
+:param environment: The environment containing the agent.
+:return: The updated agent.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="simulation.behaviors.random_walk">
+<code class="descclassname">simulation.behaviors.</code><code class="descname">random_walk</code><span class="sig-paren">(</span><em>agent=None</em>, <em>entities=None</em>, <em>environment=None</em><span class="sig-paren">)</span><a class="headerlink" href="#simulation.behaviors.random_walk" title="Permalink to this definition">¶</a></dt>
+<dd><p>Behavior that causes an agent to walk in a random direction for one time step.
+:param agent: The agent to perform the behavior.
+:param entities: A list of entities in the simulation.
+:param environment: The environment containing the agent.
+:return: The updated agent.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="simulation.behaviors.return_home">
+<code class="descclassname">simulation.behaviors.</code><code class="descname">return_home</code><span class="sig-paren">(</span><em>agent=None</em>, <em>entities=None</em>, <em>environment=None</em><span class="sig-paren">)</span><a class="headerlink" href="#simulation.behaviors.return_home" title="Permalink to this definition">¶</a></dt>
+<dd><p>Behavior (naive) that causes an agent to return to the nest.
+:param agent: The agent to perform the behavior.
+:param entities: A list of entities in the simulation.
+:param environment: The environment containing the agent.
+:return: The updated agent.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-simulation.entity">
+<span id="simulation-entity-module"></span><h2>simulation.entity module<a class="headerlink" href="#module-simulation.entity" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="simulation.entity.Entity">
+<em class="property">class </em><code class="descclassname">simulation.entity.</code><code class="descname">Entity</code><span class="sig-paren">(</span><em>position=(0</em>, <em>0)</em>, <em>size=(1</em>, <em>1)</em>, <em>direction=&lt;Direction.North: (0</em>, <em>)&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#simulation.entity.Entity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>A standard representation of an entity. All entities have the following attributes; a unique ID, a two-dimensional
+body on a two-dimensional grid, a direction indicating the orientiation of the entity, a behavior indicating the
+current behavior the entity is performing, a time counter used for managing simulation time, an inventory that can
+contain other entities, and a boolean indicating whether or not the entity is interactable.</p>
+<dl class="attribute">
+<dt id="simulation.entity.Entity.eid">
+<code class="descname">eid</code><em class="property"> = &lt;method-wrapper 'next' of itertools.count object&gt;</em><a class="headerlink" href="#simulation.entity.Entity.eid" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="simulation.entity.Entity.to_csv">
+<code class="descname">to_csv</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#simulation.entity.Entity.to_csv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of various entity attributes, to be used in a CSV file.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="simulation.entity.Food">
+<em class="property">class </em><code class="descclassname">simulation.entity.</code><code class="descname">Food</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#simulation.entity.Food" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#simulation.entity.Entity" title="simulation.entity.Entity"><code class="xref py py-class docutils literal"><span class="pre">simulation.entity.Entity</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="simulation.entity.Nest">
+<em class="property">class </em><code class="descclassname">simulation.entity.</code><code class="descname">Nest</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#simulation.entity.Nest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#simulation.entity.Entity" title="simulation.entity.Entity"><code class="xref py py-class docutils literal"><span class="pre">simulation.entity.Entity</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="simulation.entity.SimAgent">
+<em class="property">class </em><code class="descclassname">simulation.entity.</code><code class="descname">SimAgent</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#simulation.entity.SimAgent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#simulation.entity.Entity" title="simulation.entity.Entity"><code class="xref py py-class docutils literal"><span class="pre">simulation.entity.Entity</span></code></a></p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-simulation.environment">
+<span id="simulation-environment-module"></span><h2>simulation.environment module<a class="headerlink" href="#module-simulation.environment" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="simulation.environment.Environment">
+<em class="property">class </em><code class="descclassname">simulation.environment.</code><code class="descname">Environment</code><span class="sig-paren">(</span><em>position=(0</em>, <em>20)</em>, <em>size=(20</em>, <em>20)</em><span class="sig-paren">)</span><a class="headerlink" href="#simulation.environment.Environment" title="Permalink to this definition">¶</a></dt>
+<dd><p>An environment is simply a large two-dimensional body that is used by the simulator to determine the boundries
+where agents can reside.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-simulation.lookup">
+<span id="simulation-lookup-module"></span><h2>simulation.lookup module<a class="headerlink" href="#module-simulation.lookup" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-simulation.preconditions">
+<span id="simulation-preconditions-module"></span><h2>simulation.preconditions module<a class="headerlink" href="#module-simulation.preconditions" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="simulation.preconditions.holding_food">
+<code class="descclassname">simulation.preconditions.</code><code class="descname">holding_food</code><span class="sig-paren">(</span><em>agent=None</em>, <em>entities=None</em>, <em>environment=None</em><span class="sig-paren">)</span><a class="headerlink" href="#simulation.preconditions.holding_food" title="Permalink to this definition">¶</a></dt>
+<dd><p>Precondition testing if an agent is holding food.
+:param agent: The agent to test.
+:param entities: The entities associated with the simulation.
+:param environment: The environment to test against.
+:return: Boolean value indicating the result of the test.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="simulation.preconditions.on_border">
+<code class="descclassname">simulation.preconditions.</code><code class="descname">on_border</code><span class="sig-paren">(</span><em>agent=None</em>, <em>entities=None</em>, <em>environment=None</em><span class="sig-paren">)</span><a class="headerlink" href="#simulation.preconditions.on_border" title="Permalink to this definition">¶</a></dt>
+<dd><p>Precondition testing if an agent is along the border of the environment.
+:param agent: The agent to test.
+:param entities: The entities associated with the simulation.
+:param environment: The environment to test against.
+:return: Boolean value indicating the result of the test.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="simulation.preconditions.on_food">
+<code class="descclassname">simulation.preconditions.</code><code class="descname">on_food</code><span class="sig-paren">(</span><em>agent=None</em>, <em>entities=None</em>, <em>environment=None</em><span class="sig-paren">)</span><a class="headerlink" href="#simulation.preconditions.on_food" title="Permalink to this definition">¶</a></dt>
+<dd><p>Precondition testing if an agent is on top of food.
+:param agent: The agent to test.
+:param entities: The entities associated with the simulation.
+:param environment: The environment to test against.
+:return: Boolean value indicating the result of the test.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="simulation.preconditions.on_nest">
+<code class="descclassname">simulation.preconditions.</code><code class="descname">on_nest</code><span class="sig-paren">(</span><em>agent=None</em>, <em>entities=None</em>, <em>environment=None</em><span class="sig-paren">)</span><a class="headerlink" href="#simulation.preconditions.on_nest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Precondition testing if an agent is on top of the nest.
+:param agent: The agent to test.
+:param entities: The entities associated with the simulation.
+:param environment: The environment to test against.
+:return: Boolean value indicating the result of the test.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-simulation.simulation">
+<span id="simulation-simulation-module"></span><h2>simulation.simulation module<a class="headerlink" href="#module-simulation.simulation" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="simulation.simulation.Simulation">
+<em class="property">class </em><code class="descclassname">simulation.simulation.</code><code class="descname">Simulation</code><span class="sig-paren">(</span><em>duration=500</em>, <em>environment=None</em>, <em>entities=None</em>, <em>parse_tree=None</em>, <em>produce_output=True</em><span class="sig-paren">)</span><a class="headerlink" href="#simulation.simulation.Simulation" title="Permalink to this definition">¶</a></dt>
+<dd><p>A simple simulator designed to be used with GESwarm (Grammatical Evolution Swarm). Parse trees containing a set of
+rules dictate the control flow of the simulation. Rules contain a list of preconditions, behaviors, and actions.
+Together these rules may lead to interesting behaviors.</p>
+<p>For more information about GESwarm, see the article (<a class="reference external" href="http://dl.acm.org/citation.cfm?id=2463385">http://dl.acm.org/citation.cfm?id=2463385</a>).</p>
+<dl class="method">
+<dt id="simulation.simulation.Simulation.execute">
+<code class="descname">execute</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#simulation.simulation.Simulation.execute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes the simulation, updating entities and saving their states at each
+time step.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulation.simulation.Simulation.process_rules">
+<code class="descname">process_rules</code><span class="sig-paren">(</span><em>agent</em><span class="sig-paren">)</span><a class="headerlink" href="#simulation.simulation.Simulation.process_rules" title="Permalink to this definition">¶</a></dt>
+<dd><p>Processes the rule set on a given entity.
+:param agent: The agent to evaluate with the rule set.
+:return: The entity, with possible updates.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulation.simulation.Simulation.save_state">
+<code class="descname">save_state</code><span class="sig-paren">(</span><em>entity=None</em><span class="sig-paren">)</span><a class="headerlink" href="#simulation.simulation.Simulation.save_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves the current state of all entities to the state archive.
+:param entity: The entity to add to the state archive</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-simulation.utils">
+<span id="simulation-utils-module"></span><h2>simulation.utils module<a class="headerlink" href="#module-simulation.utils" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="simulation.utils.Direction">
+<em class="property">class </em><code class="descclassname">simulation.utils.</code><code class="descname">Direction</code><a class="headerlink" href="#simulation.utils.Direction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">enum.Enum</span></code></p>
+<p>Cardinal directions used to represent the orientation of entities on a 2D grid.</p>
+<dl class="attribute">
+<dt id="simulation.utils.Direction.East">
+<code class="descname">East</code><em class="property"> = &lt;Direction.East: (1,)&gt;</em><a class="headerlink" href="#simulation.utils.Direction.East" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="simulation.utils.Direction.North">
+<code class="descname">North</code><em class="property"> = &lt;Direction.North: (0,)&gt;</em><a class="headerlink" href="#simulation.utils.Direction.North" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="simulation.utils.Direction.South">
+<code class="descname">South</code><em class="property"> = &lt;Direction.South: (2,)&gt;</em><a class="headerlink" href="#simulation.utils.Direction.South" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="simulation.utils.Direction.West">
+<code class="descname">West</code><em class="property"> = &lt;Direction.West: 3&gt;</em><a class="headerlink" href="#simulation.utils.Direction.West" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="simulation.utils.Point">
+<em class="property">class </em><code class="descclassname">simulation.utils.</code><code class="descname">Point</code><span class="sig-paren">(</span><em>x=None</em>, <em>y=None</em><span class="sig-paren">)</span><a class="headerlink" href="#simulation.utils.Point" title="Permalink to this definition">¶</a></dt>
+<dd><p>A point identified by (x, y) coordinates.</p>
+<dl class="method">
+<dt id="simulation.utils.Point.as_tuple">
+<code class="descname">as_tuple</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#simulation.utils.Point.as_tuple" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a tuple representation of the point.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulation.utils.Point.clone">
+<code class="descname">clone</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#simulation.utils.Point.clone" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clones the point, creating a new point at the same position.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulation.utils.Point.distance_to">
+<code class="descname">distance_to</code><span class="sig-paren">(</span><em>point</em><span class="sig-paren">)</span><a class="headerlink" href="#simulation.utils.Point.distance_to" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the distance from the given point to the current point.
+:param point: The point to compare to.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulation.utils.Point.floatize">
+<code class="descname">floatize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#simulation.utils.Point.floatize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts the position to float values.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulation.utils.Point.integerize">
+<code class="descname">integerize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#simulation.utils.Point.integerize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts the position to integer values.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulation.utils.Point.length">
+<code class="descname">length</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#simulation.utils.Point.length" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the distance from the origin to the current point.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulation.utils.Point.move">
+<code class="descname">move</code><span class="sig-paren">(</span><em>position=None</em><span class="sig-paren">)</span><a class="headerlink" href="#simulation.utils.Point.move" title="Permalink to this definition">¶</a></dt>
+<dd><p>Moves the point to a new position.
+:param position: The new position of the point.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulation.utils.Point.shift">
+<code class="descname">shift</code><span class="sig-paren">(</span><em>delta=None</em><span class="sig-paren">)</span><a class="headerlink" href="#simulation.utils.Point.shift" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shifts a point by some delta.
+:param delta: The amount in each direction to shift the point. Must be a list or tuple.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="simulation.utils.Rectangle">
+<em class="property">class </em><code class="descclassname">simulation.utils.</code><code class="descname">Rectangle</code><span class="sig-paren">(</span><em>top_left=None</em>, <em>bottom_right=None</em><span class="sig-paren">)</span><a class="headerlink" href="#simulation.utils.Rectangle" title="Permalink to this definition">¶</a></dt>
+<dd><p>A rectangle identified by two points (top-left and bottom-right).</p>
+<p>Coordinates are based on the Cartesian coordinate system.</p>
+<p>y+                 top        top-left (x, y) +&#8212;&#8212;&#8212;&#8212;-+
+^                   |                         |             |
+|             left -+- right                  |             |
++ - - - &gt; x+        |                         |             |
+origin            bottom                      +&#8212;&#8212;&#8212;&#8212;-+ bottom-right (x, y)</p>
+<dl class="method">
+<dt id="simulation.utils.Rectangle.contains_point">
+<code class="descname">contains_point</code><span class="sig-paren">(</span><em>point</em><span class="sig-paren">)</span><a class="headerlink" href="#simulation.utils.Rectangle.contains_point" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a boolean indicating if the given point is contained in the rectangle.
+:param point: The point to compare against the current rectangle.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulation.utils.Rectangle.contains_rectangle">
+<code class="descname">contains_rectangle</code><span class="sig-paren">(</span><em>rectangle</em><span class="sig-paren">)</span><a class="headerlink" href="#simulation.utils.Rectangle.contains_rectangle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a boolean indicating if the given rectangle is contained in the current rectangle.
+:param rectangle: The rectangle to compare agianst the current rectangle.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulation.utils.Rectangle.contract">
+<code class="descname">contract</code><span class="sig-paren">(</span><em>amount=1</em><span class="sig-paren">)</span><a class="headerlink" href="#simulation.utils.Rectangle.contract" title="Permalink to this definition">¶</a></dt>
+<dd><p>Contracts the bounds of the rectangle in all directions.
+:param amount: The amount of units to contract.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulation.utils.Rectangle.expand">
+<code class="descname">expand</code><span class="sig-paren">(</span><em>amount=1</em><span class="sig-paren">)</span><a class="headerlink" href="#simulation.utils.Rectangle.expand" title="Permalink to this definition">¶</a></dt>
+<dd><p>Expands the bounds of the rectangle in all directions.
+:param amount: The amount of units to expand.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="simulation.utils.Rectangle.set_points">
+<code class="descname">set_points</code><span class="sig-paren">(</span><em>top_left=None</em>, <em>bottom_right=None</em><span class="sig-paren">)</span><a class="headerlink" href="#simulation.utils.Rectangle.set_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resets the rectangle coordinates.
+:param top_left: The new top-left point to assign to the rectangle.
+:param bottom_right: The new bottom-right point to assign to the rectangle.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="simulation.utils.generate_csv">
+<code class="descclassname">simulation.utils.</code><code class="descname">generate_csv</code><span class="sig-paren">(</span><em>simulation=None</em><span class="sig-paren">)</span><a class="headerlink" href="#simulation.utils.generate_csv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a CSV file from a simulation for further data analysis.
+:param simulation: The simulation containing a valid state archive.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="simulation.utils.generate_mongo">
+<code class="descclassname">simulation.utils.</code><code class="descname">generate_mongo</code><span class="sig-paren">(</span><em>simulation=None</em>, <em>host='localhost'</em>, <em>port=27017</em><span class="sig-paren">)</span><a class="headerlink" href="#simulation.utils.generate_mongo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a simulation to a MongoDB instance for further data analysis.
+:param simulation: The simulation containing a valid state archive.
+:param host: The host to reach the MongoDB instance.
+:param port: The port to reach the MongoDB instance.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-simulation">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-simulation" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">simulation package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-simulation.behaviors">simulation.behaviors module</a></li>
+<li><a class="reference internal" href="#module-simulation.entity">simulation.entity module</a></li>
+<li><a class="reference internal" href="#module-simulation.environment">simulation.environment module</a></li>
+<li><a class="reference internal" href="#module-simulation.lookup">simulation.lookup module</a></li>
+<li><a class="reference internal" href="#module-simulation.preconditions">simulation.preconditions module</a></li>
+<li><a class="reference internal" href="#module-simulation.simulation">simulation.simulation module</a></li>
+<li><a class="reference internal" href="#module-simulation.utils">simulation.utils module</a></li>
+<li><a class="reference internal" href="#module-simulation">Module contents</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Library Reference</a><ul>
+  <li><a href="modules.html">grove</a><ul>
+      <li>Previous: <a href="grove.html" title="previous chapter">grove package</a></li>
+      <li>Next: <a href="../about.html" title="next chapter">About Grove</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/api/simulation.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Troy Squillaci.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.8</a>
+      
+      |
+      <a href="../_sources/api/simulation.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
