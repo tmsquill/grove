@@ -1,6 +1,12 @@
 # Compiled Sources #
 *.pyc
 
+# Python Egg #
+grove.egg-info/
+
+# Distribution #
+dist/
+
 # Data #
 *.csv
 
