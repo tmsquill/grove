@@ -20,16 +20,24 @@ def load_mongo(object_id=None, host='localhost', port=27017):
     return data
 
 
-def generate_mongo(generations=None, host='localhost', port=27017):
+def generate_mongo(generations=None, host='localhost', port=27017, uri=None):
 
     """
     Adds an evolutionary run to a MongoDB instance for further data analysis.
     :param generations: The generations containing archives of the agents at each generation.
     :param host: The host to reach the MongoDB instance.
     :param port: The port to reach the MongoDB instance.
+    :param uri: The URI used to establish a remote MongoDB connection.
     """
 
-    connection = MongoClient(host, port)
+    if uri:
+
+        connection = MongoClient(uri)
+
+    else:
+
+        connection = MongoClient(host, port)
+
     evolutions = connection['grove']['evolutions']
 
     data = [[(generation.id, agent.genome, agent.value, agent.random_seed) for agent in generation.agents] for generation in generations]
@@ -37,8 +45,16 @@ def generate_mongo(generations=None, host='localhost', port=27017):
     _id = evolutions.insert({'generations': data})
     connection.close()
 
-    print 'Saved evolution data to MongoDB instance at ' + host + ':' + str(port) + \
-          ' -> db.grove.evolutions with ObjectId: ' + str(_id)
+    if uri:
+
+        print 'Saved evolution data to MongoDB instance at ' + uri + '-> db.grove.evolutions with ObjectId: ' + str(_id)
+
+    else:
+
+        print 'Saved evolution data to MongoDB instance at ' + host + ':' + str(port) + \
+              ' -> db.grove.evolutions with ObjectId: ' + str(_id)
+
+    return _id
 
 
 def generate_csv(generations=None):

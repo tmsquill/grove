@@ -205,18 +205,26 @@ class Rectangle:
         self.bottom_right.position[1] += 1
 
 
-def generate_mongo(simulation=None, host='localhost', port=27017):
+def generate_mongo(simulation=None, host='localhost', port=27017, uri=None):
 
     """
     Adds a simulation to a MongoDB instance for further data analysis.
     :param simulation: The simulation containing a valid state archive.
     :param host: The host to reach the MongoDB instance.
     :param port: The port to reach the MongoDB instance.
+    :param uri: The URI used to establish a remote MongoDB connection.
     """
 
     from pymongo import MongoClient
 
-    connection = MongoClient(host, port)
+    if uri:
+
+        connection = MongoClient(uri)
+
+    else:
+
+        connection = MongoClient(host, port)
+
     simulations = connection['grove']['simulations']
 
     data = [state for state in simulation.state_archive]
@@ -224,8 +232,15 @@ def generate_mongo(simulation=None, host='localhost', port=27017):
     _id = simulations.insert({'simulations': data})
     connection.close()
 
-    print 'Saved simulation data to MongoDB instance at ' + host + ':' + str(port) + \
-          ' -> db.grove.simulations with ObjectId ' + str(_id)
+    if uri:
+
+        print 'Saved simulation data to MongoDB instance at ' + uri + \
+              '-> db.grove.evolutions with ObjectId: ' + str(_id)
+
+    else:
+
+        print 'Saved simulation data to MongoDB instance at ' + host + ':' + str(port) + \
+              ' -> db.grove.evolutions with ObjectId: ' + str(_id)
 
     return _id
 
