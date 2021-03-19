@@ -13,7 +13,7 @@ flake8==2.6.0
 futures==3.0.5
 imagesize==0.7.1
 itsdangerous==0.24
-Jinja2==2.8
+Jinja2==2.11.3
 Logbook==0.12.5
 MarkupSafe==0.23
 mccabe==0.5.0
